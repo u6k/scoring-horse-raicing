@@ -67,7 +67,7 @@ $ docker-compose up -d
 Minioのバケットを作成します。
 
 ```
-$ docker-compose exec s3 mkdir /export/investment
+$ docker-compose exec s3 mkdir /export/horse-racing
 ```
 
 テストを実行します。
@@ -79,7 +79,7 @@ $ docker-compose exec app rails test
 簡単に動作確認をします。
 
 ```
-$ curl http://localhost:3000
+$ curl http://localhost:3000/okcomputer/all.json
 ```
 
 外部ネットワークから確認する場合、ngrokでポートを開放します。

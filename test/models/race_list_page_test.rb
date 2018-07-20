@@ -81,10 +81,85 @@ class RaceListPageTest < ActiveSupport::TestCase
     end
 
     # postcondition 2
-
     assert_equal 0, RaceListPage.all.length
 
     assert_not @bucket.object("race_list/race_list.20180716.html").exists?
+  end
+
+  test "find all" do
+    # precondition
+    html1 = File.open("test/fixtures/files/race_list/race_list.20180714.html").read
+    html2 = File.open("test/fixtures/files/race_list/race_list.20180715.html").read
+    html3 = File.open("test/fixtures/files/race_list/race_list.20180716.html").read
+
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180714.html", html1)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180715.html", html2)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180716.html", html3)
+
+    RaceListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0))
+
+    # execute
+    race_list_pages = RaceListPage.all.order(:date)
+
+    # postcondition
+    assert_equal 3, race_list_pages.length
+
+    race_list_page = race_list_pages[0]
+    assert_equal Time.zone.local(2018, 7, 14, 0, 0, 0), race_list_page.date
+    assert_equal Digest::MD5.hexdigest(html1), Digest::MD5.hexdigest(race_list_page.content)
+
+    race_list_page = race_list_pages[1]
+    assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), race_list_page.date
+    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(race_list_page.content)
+
+    race_list_page = race_list_pages[2]
+    assert_equal Time.zone.local(2018, 7, 16, 0, 0, 0), race_list_page.date
+    assert_equal Digest::MD5.hexdigest(html3), Digest::MD5.hexdigest(race_list_page.content)
+  end
+
+  test "find by date" do
+    # precondition
+    html1 = File.open("test/fixtures/files/race_list/race_list.20180714.html").read
+    html2 = File.open("test/fixtures/files/race_list/race_list.20180715.html").read
+    html3 = File.open("test/fixtures/files/race_list/race_list.20180716.html").read
+
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180714.html", html1)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180715.html", html2)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180716.html", html3)
+
+    RaceListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0))
+
+    # execute
+    race_list_page = RaceListPage.find_by_date(2018, 7, 15)
+
+    # postcondition
+    assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), race_list_page.date
+    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(race_list_page.content)
+  end
+
+  test "find by date: not found" do
+    # precondition
+    html1 = File.open("test/fixtures/files/race_list/race_list.20180714.html").read
+    html2 = File.open("test/fixtures/files/race_list/race_list.20180715.html").read
+    html3 = File.open("test/fixtures/files/race_list/race_list.20180716.html").read
+
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180714.html", html1)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180715.html", html2)
+    NetModule.put_s3_object(NetModule.get_s3_bucket, "race_list/race_list.20180716.html", html3)
+
+    RaceListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0))
+    RaceListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0))
+
+    # execute
+    race_list_page = RaceListPage.find_by_date(1900, 1, 1)
+
+    # postcondition
+    assert_nil race_list_page
   end
 
 end

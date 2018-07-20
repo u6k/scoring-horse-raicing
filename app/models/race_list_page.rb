@@ -17,7 +17,25 @@ class RaceListPage < ApplicationRecord
 
     content = NetModule.download_with_get(url)
 
-    _initialize(date, content)
+    race_list_page = find_by_date(year, month, day)
+    if race_list_page.nil?
+      _initialize(date, content)
+    else
+      race_list_page.content = content
+      race_list_page
+    end
+  end
+
+  def self.find_by_date(year, month, day)
+    date = Time.zone.local(year, month, day, 0, 0, 0)
+
+    race_list_pages = RaceListPage.where(date: date)
+
+    if race_list_pages.empty?
+      nil
+    else
+      race_list_pages[0]
+    end
   end
 
   def same?(obj)

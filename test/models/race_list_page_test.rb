@@ -17,6 +17,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.download(year, month, day)
 
     # postcondition 1
+    assert_nil race_list_page.id
     assert_equal Time.zone.local(year, month, day, 0, 0, 0), race_list_page.date
     assert race_list_page.content.length > 0
     assert race_list_page.valid?
@@ -30,9 +31,29 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # postcondition 2
     assert_equal 1, RaceListPage.all.length
-    assert race_list_page.same?(RaceListPage.all[0])
+
+    race_list_page_db = RaceListPage.all[0]
+    assert race_list_page.same?(race_list_page_db)
+    assert_not_nil race_list_page.id
 
     assert @bucket.object("race_list/race_list.20180716.html").exists?
+
+    # execute 3
+    race_list_page_2 = RaceListPage.download(year, month, day)
+
+    # postcondition 3
+    assert_not_nil race_list_page_2.id
+    assert_equal Time.zone.local(year, month, day, 0, 0, 0), race_list_page_2.date
+    assert race_list_page_2.content.length > 0
+    assert race_list_page_2.valid?
+
+    assert_equal 1, RaceListPage.all.length
+
+    # execute 4
+    race_list_page_2.save!
+
+    # postcondition 4
+    assert_equal 1, RaceListPage.all.length
   end
 
   test "download race list page: invalid html" do

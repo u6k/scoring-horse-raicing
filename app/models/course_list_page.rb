@@ -1,8 +1,9 @@
 require "digest/md5"
 
-class RaceListPage < ApplicationRecord
+class CourseListPage < ApplicationRecord
 
   validates :date, presence: true, uniqueness: true
+  validates :url, presence: true
   validate :_validate
 
   attr_accessor :content
@@ -17,31 +18,32 @@ class RaceListPage < ApplicationRecord
 
     content = NetModule.download_with_get(url)
 
-    race_list_page = find_by_date(year, month, day)
-    if race_list_page.nil?
-      _initialize(date, content)
+    course_list_page = find_by_date(year, month, day)
+    if course_list_page.nil?
+      _initialize(date, url, content)
     else
-      race_list_page.content = content
-      race_list_page
+      course_list_page.content = content
+      course_list_page
     end
   end
 
   def self.find_by_date(year, month, day)
     date = Time.zone.local(year, month, day, 0, 0, 0)
 
-    race_list_pages = RaceListPage.where(date: date)
+    course_list_pages = CourseListPage.where(date: date)
 
-    if race_list_pages.empty?
+    if course_list_pages.empty?
       nil
     else
-      race_list_pages[0]
+      course_list_pages[0]
     end
   end
 
   def same?(obj)
-    if not obj.instance_of?(RaceListPage)
+    if not obj.instance_of?(CourseListPage)
       false
     elsif self.date != obj.date \
+      || self.url != obj.url \
       || Digest::MD5.hexdigest(@content) != Digest::MD5.hexdigest(obj.content)
       false
     else
@@ -51,11 +53,11 @@ class RaceListPage < ApplicationRecord
 
   private
 
-  def self._initialize(date, content)
-    race_list_page = RaceListPage.new(date: date)
-    race_list_page.content = content
+  def self._initialize(date, url, content)
+    course_list_page = CourseListPage.new(date: date, url: url)
+    course_list_page.content = content
 
-    race_list_page
+    course_list_page
   end
 
   def _validate
@@ -69,7 +71,7 @@ class RaceListPage < ApplicationRecord
   end
 
   def _build_file_path
-    "race_list/race_list.#{self.date.strftime('%Y%m%d')}.html"
+    "course_list/course_list.#{self.date.strftime('%Y%m%d')}.html"
   end
 
   def _put_html

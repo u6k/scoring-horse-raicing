@@ -1,0 +1,2 @@
+class RaceListPage < ApplicationRecord
+end

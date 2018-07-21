@@ -4,6 +4,7 @@ class CreateRaceListPages < ActiveRecord::Migration[5.2]
       t.string :url
       t.string :course_name
       t.string :timezone
+      t.references :course_list_page, foreign_key: true
 
       t.timestamps
     end

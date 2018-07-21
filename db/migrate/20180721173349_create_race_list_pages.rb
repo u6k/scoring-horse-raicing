@@ -1,7 +1,10 @@
 class CreateRaceListPages < ActiveRecord::Migration[5.2]
   def change
     create_table :race_list_pages do |t|
-      t.datetime :date
+      t.string :url
+      t.string :course_name
+      t.string :timezone
+      t.references :course_list_page, foreign_key: true
 
       t.timestamps
     end

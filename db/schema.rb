@@ -10,15 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_17_080457) do
+ActiveRecord::Schema.define(version: 2018_07_21_173349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "race_list_pages", force: :cascade do |t|
+  create_table "course_list_pages", force: :cascade do |t|
     t.datetime "date"
+    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  create_table "race_list_pages", force: :cascade do |t|
+    t.string "url"
+    t.string "course_name"
+    t.string "timezone"
+    t.bigint "course_list_page_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_list_page_id"], name: "index_race_list_pages_on_course_list_page_id"
+  end
+
+  add_foreign_key "race_list_pages", "course_list_pages"
 end

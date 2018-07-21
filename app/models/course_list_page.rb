@@ -21,11 +21,15 @@ class CourseListPage < ApplicationRecord
 
     course_list_page = find_by_date(year, month, day)
     if course_list_page.nil?
-      _initialize(date, url, content)
-    else
+      course_list_page = CourseListPage.new(date: date, url: url)
       course_list_page.content = content
-      course_list_page
+    else
+      course_list_page.date = date
+      course_list_page.url = url
+      course_list_page.content = content
     end
+
+    course_list_page
   end
 
   def self.find_by_date(year, month, day)
@@ -59,13 +63,6 @@ class CourseListPage < ApplicationRecord
   end
 
   private
-
-  def self._initialize(date, url, content)
-    course_list_page = CourseListPage.new(date: date, url: url)
-    course_list_page.content = content
-
-    course_list_page
-  end
 
   def _validate
     courses = _parse_course

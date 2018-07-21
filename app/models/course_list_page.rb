@@ -6,6 +6,7 @@ class CourseListPage < ApplicationRecord
   validates :url, presence: true
   validate :_validate
 
+  has_many :race_list_pages
   attr_accessor :content
 
   before_save :_put_html
@@ -53,7 +54,7 @@ class CourseListPage < ApplicationRecord
 
   def download_race_list_pages
     race_list_pages = _parse_course.map do |course|
-      RaceListPage.download(course[:course_name], course[:timezone], course[:url])
+      RaceListPage.download(self, course[:course_name], course[:timezone], course[:url])
     end
   end
 

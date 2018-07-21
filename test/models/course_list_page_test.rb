@@ -174,8 +174,6 @@ class CourseListPageTest < ActiveSupport::TestCase
     # postcondition
     assert_equal 5, race_list_pages.length
 
-    p race_list_pages.inspect # TODO
-
     race_list_page = race_list_pages[0]
     assert_equal "帯広競馬場", race_list_page.course_name
     assert_equal "ナイター", race_list_page.timezone
@@ -193,8 +191,8 @@ class CourseListPageTest < ActiveSupport::TestCase
     assert_not @bucket.object("race_list/20180716/race_list.盛岡競馬場.html").exists?
 
     race_list_page = race_list_pages[2]
-    assert_equal "金沢競馬場", race_list_page.course_name
-    assert_equal "薄暮", race_list_page.timezone
+    assert_equal "名古屋競馬場", race_list_page.course_name
+    assert_equal "", race_list_page.timezone
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?

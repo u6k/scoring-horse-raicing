@@ -23,8 +23,9 @@ ActiveRecord::Schema.define(version: 2018_07_20_185911) do
   end
 
   create_table "race_list_pages", force: :cascade do |t|
-    t.datetime "date"
     t.string "url"
+    t.string "course_name"
+    t.string "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

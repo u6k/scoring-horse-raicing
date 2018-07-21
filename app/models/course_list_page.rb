@@ -51,6 +51,12 @@ class CourseListPage < ApplicationRecord
     end
   end
 
+  def download_race_list_pages
+    race_list_pages = _parse_course.map do |course|
+      RaceListPage.download(course[:course_name], course[:timezone], course[:url])
+    end
+  end
+
   private
 
   def self._initialize(date, url, content)
@@ -61,12 +67,22 @@ class CourseListPage < ApplicationRecord
   end
 
   def _validate
+    courses = _parse_course
+
+    if courses.length == 0
+      errors.add(:date, "Invalid html")
+    end
+  end
+
+  def _parse_course
     doc = Nokogiri::HTML.parse(@content, nil, "UTF-8")
 
-    races = doc.xpath("//div[@id='raceToday']/div")
-
-    if races.length == 0
-      errors.add(:date, "Invalid html")
+    courses = doc.xpath("//div[@id='raceToday']/div").map do |course|
+      {
+        course_name: course.xpath("ul[@class='raceName']/li[1]").text,
+        timezone: course.xpath("ul[@class='grade']/li/span").text,
+        url: "https://www.oddspark.com/" + course.xpath("ul[@class='buttons']/li[1]/a").attribute("href").value
+      }
     end
   end
 

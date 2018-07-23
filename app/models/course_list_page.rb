@@ -79,7 +79,7 @@ class CourseListPage < ApplicationRecord
       {
         course_name: course.xpath("ul[@class='raceName']/li[1]").text,
         timezone: course.xpath("ul[@class='grade']/li/span").text,
-        url: "https://www.oddspark.com/" + course.xpath("ul[@class='buttons']/li[1]/a").attribute("href").value
+        url: "https://www.oddspark.com" + course.xpath("ul[@class='buttons']/li[1]/a").attribute("href").value
       }
     end
   end

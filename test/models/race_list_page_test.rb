@@ -9,9 +9,7 @@ class RaceListPageTest < ActiveSupport::TestCase
 
   test "download race list page" do
     # precondition
-    course_list_page_html = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", course_list_page_html)
-    course_list_page = CourseListPage.new(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page = CourseListPage.download(2018, 7, 16)
     course_list_page.save!
 
     # execute 1
@@ -107,6 +105,9 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # postcondition 4
     assert_equal 5, RaceListPage.all.length
+  end
+
+  test "parse" do
   end
 
 end

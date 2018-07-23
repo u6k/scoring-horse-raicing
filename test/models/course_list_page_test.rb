@@ -88,17 +88,14 @@ class CourseListPageTest < ActiveSupport::TestCase
 
   test "find all" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
+    course_list_page_1 = CourseListPage.download(2018, 7, 14)
+    course_list_page_1.save!
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
+    course_list_page_2 = CourseListPage.download(2018, 7, 15)
+    course_list_page_2.save!
 
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page_3 = CourseListPage.download(2018, 7, 16)
+    course_list_page_3.save!
 
     # execute
     course_list_pages = CourseListPage.all.order(:date)
@@ -108,52 +105,41 @@ class CourseListPageTest < ActiveSupport::TestCase
 
     course_list_page = course_list_pages[0]
     assert_equal Time.zone.local(2018, 7, 14, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html1), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_1.content), Digest::MD5.hexdigest(course_list_page.content)
 
     course_list_page = course_list_pages[1]
     assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_2.content), Digest::MD5.hexdigest(course_list_page.content)
 
     course_list_page = course_list_pages[2]
     assert_equal Time.zone.local(2018, 7, 16, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html3), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_3.content), Digest::MD5.hexdigest(course_list_page.content)
   end
 
   test "find by date" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
+    course_list_page_1 = CourseListPage.download(2018, 7, 14)
+    course_list_page_1.save!
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
+    course_list_page_2 = CourseListPage.download(2018, 7, 15)
+    course_list_page_2.save!
 
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page_3 = CourseListPage.download(2018, 7, 16)
+    course_list_page_3.save!
 
     # execute
     course_list_page = CourseListPage.find_by_date(2018, 7, 15)
 
     # postcondition
     assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_2.content), Digest::MD5.hexdigest(course_list_page.content)
   end
 
   test "find by date: not found" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
-
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
-
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    CourseListPage.download(2018, 7, 14).save!
+    CourseListPage.download(2018, 7, 15).save!
+    CourseListPage.download(2018, 7, 16).save!
 
     # execute
     course_list_page = CourseListPage.find_by_date(1900, 1, 1)
@@ -164,9 +150,7 @@ class CourseListPageTest < ActiveSupport::TestCase
 
   test "parse race page" do
     # precondition
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
-    course_list_page = CourseListPage.new(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page = CourseListPage.download(2018, 7, 16)
 
     # execute
     race_list_pages = course_list_page.download_race_list_pages

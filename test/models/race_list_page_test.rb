@@ -46,7 +46,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     course_list_page.race_list_pages.each do |race_list_page_db|
       race_list_page = race_list_pages.find { |i| i.url == race_list_page_db.url }
 
-      assert_equal race_list_page.same?(race_list_page_db)
+      assert race_list_page.same?(race_list_page_db)
     end
 
     assert @bucket.object("race_list/20180716/race_list.帯広競馬場.html").exists?
@@ -63,8 +63,8 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     race_list_pages_2.each do |race_list_page_2|
       assert_not_nil race_list_page_2.id
-      assert race_list_page.content.length > 0
-      assert race_list_page.valid?
+      assert race_list_page_2.content.length > 0
+      assert race_list_page_2.valid?
     end
 
     # execute 4

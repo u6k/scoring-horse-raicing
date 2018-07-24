@@ -88,17 +88,14 @@ class CourseListPageTest < ActiveSupport::TestCase
 
   test "find all" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
+    course_list_page_1 = CourseListPage.download(2018, 7, 14)
+    course_list_page_1.save!
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
+    course_list_page_2 = CourseListPage.download(2018, 7, 15)
+    course_list_page_2.save!
 
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page_3 = CourseListPage.download(2018, 7, 16)
+    course_list_page_3.save!
 
     # execute
     course_list_pages = CourseListPage.all.order(:date)
@@ -108,52 +105,41 @@ class CourseListPageTest < ActiveSupport::TestCase
 
     course_list_page = course_list_pages[0]
     assert_equal Time.zone.local(2018, 7, 14, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html1), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_1.content), Digest::MD5.hexdigest(course_list_page.content)
 
     course_list_page = course_list_pages[1]
     assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_2.content), Digest::MD5.hexdigest(course_list_page.content)
 
     course_list_page = course_list_pages[2]
     assert_equal Time.zone.local(2018, 7, 16, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html3), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_3.content), Digest::MD5.hexdigest(course_list_page.content)
   end
 
   test "find by date" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
+    course_list_page_1 = CourseListPage.download(2018, 7, 14)
+    course_list_page_1.save!
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
+    course_list_page_2 = CourseListPage.download(2018, 7, 15)
+    course_list_page_2.save!
 
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page_3 = CourseListPage.download(2018, 7, 16)
+    course_list_page_3.save!
 
     # execute
     course_list_page = CourseListPage.find_by_date(2018, 7, 15)
 
     # postcondition
     assert_equal Time.zone.local(2018, 7, 15, 0, 0, 0), course_list_page.date
-    assert_equal Digest::MD5.hexdigest(html2), Digest::MD5.hexdigest(course_list_page.content)
+    assert_equal Digest::MD5.hexdigest(course_list_page_2.content), Digest::MD5.hexdigest(course_list_page.content)
   end
 
   test "find by date: not found" do
     # precondition
-    html1 = File.open("test/fixtures/files/course_list/course_list.20180714.html").read
-    html2 = File.open("test/fixtures/files/course_list/course_list.20180715.html").read
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
-
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180714.html", html1)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180715.html", html2)
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
-
-    CourseListPage.create(date: Time.zone.local(2018, 7, 14, 0, 0, 0), url: "http://example.com/course_list.20180714.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 15, 0, 0, 0), url: "http://example.com/course_list.20180715.html")
-    CourseListPage.create(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    CourseListPage.download(2018, 7, 14).save!
+    CourseListPage.download(2018, 7, 15).save!
+    CourseListPage.download(2018, 7, 16).save!
 
     # execute
     course_list_page = CourseListPage.find_by_date(1900, 1, 1)
@@ -164,9 +150,7 @@ class CourseListPageTest < ActiveSupport::TestCase
 
   test "parse race page" do
     # precondition
-    html3 = File.open("test/fixtures/files/course_list/course_list.20180716.html").read
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "course_list/course_list.20180716.html", html3)
-    course_list_page = CourseListPage.new(date: Time.zone.local(2018, 7, 16, 0, 0, 0), url: "http://example.com/course_list.20180716.html")
+    course_list_page = CourseListPage.download(2018, 7, 16)
 
     # execute
     race_list_pages = course_list_page.download_race_list_pages
@@ -174,45 +158,9 @@ class CourseListPageTest < ActiveSupport::TestCase
     # postcondition
     assert_equal 5, race_list_pages.length
 
-    race_list_page = race_list_pages[0]
-    assert_equal "帯広競馬場", race_list_page.course_name
-    assert_equal "ナイター", race_list_page.timezone
-    assert race_list_page.content.length > 0
-    assert race_list_page.course_list_page.same?(course_list_page)
-    assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.帯広競馬場.html").exists?
-
-    race_list_page = race_list_pages[1]
-    assert_equal "盛岡競馬場", race_list_page.course_name
-    assert_equal "薄暮", race_list_page.timezone
-    assert race_list_page.content.length > 0
-    assert race_list_page.course_list_page.same?(course_list_page)
-    assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.盛岡競馬場.html").exists?
-
-    race_list_page = race_list_pages[2]
-    assert_equal "名古屋競馬場", race_list_page.course_name
-    assert_equal "", race_list_page.timezone
-    assert race_list_page.content.length > 0
-    assert race_list_page.course_list_page.same?(course_list_page)
-    assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.金沢競馬場.html").exists?
-
-    race_list_page = race_list_pages[3]
-    assert_equal "高知競馬場", race_list_page.course_name
-    assert_equal "ナイター", race_list_page.timezone
-    assert race_list_page.content.length > 0
-    assert race_list_page.course_list_page.same?(course_list_page)
-    assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.高知競馬場.html").exists?
-
-    race_list_page = race_list_pages[4]
-    assert_equal "佐賀競馬場", race_list_page.course_name
-    assert_equal "薄暮", race_list_page.timezone
-    assert race_list_page.content.length > 0
-    assert race_list_page.course_list_page.same?(course_list_page)
-    assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.佐賀競馬場.html").exists?
+    race_list_pages.each do |race_list_page|
+      assert race_list_page.valid?
+    end
 
     assert_equal 0, RaceListPage.all.length
   end

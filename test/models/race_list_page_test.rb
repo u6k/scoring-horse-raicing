@@ -107,7 +107,75 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_equal 5, RaceListPage.all.length
   end
 
+  test "download race list page: invalid html" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    # execute 1
+    race_list_page = RaceListPage.download(course_list_page, "aaa", "bbb", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=19000101&opTrackCd=01&sponsorCd=01")
+
+    # postcondition 1
+    assert race_list_page.content.length > 0
+    assert race_list_page.invalid?
+    assert_equal "Invalid html", race_list_page.errors[:course_name][0]
+
+    assert_equal 0, RaceListPage.all.length
+
+    assert_not @bucket.object("race_list/19000101/race_list.aaa.html").exists?
+
+    # execute 2
+    assert_raise ActiveRecord::RecordInvalid, "Course name Invalid html" do
+      race_list_page.save!
+    end
+
+    # postcondition 2
+    assert_equal 0, RaceListPage.all.length
+
+    assert_not @bucket.object("race_list/19000101/race_list.aaa.html").exists?
+  end
+
+  test "find all" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_pages = course_list_page.download_race_list_pages
+    race_list_pages.each { |r| r.save! }
+
+    # execute
+    race_list_pages_2 = course_list_page.race_list_pages
+
+    # postcondition
+    assert_equal race_list_pages.length, race_list_pages_2.length
+
+    race_list_pages.each do |race_list_page|
+      race_list_page_2 = race_list_pages_2.find { |r| r.course_name == race_list_page.course_name }
+
+      assert race_list_page.same?(race_list_page_2)
+    end
+  end
+
   test "parse" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_pages = course_list_page.download_race_list_pages
+    race_list_pages.each { |r| r.save! }
+
+    # execute
+    entry_list_pages = race_list_pages[0].download_entry_list_pages
+    refund_list_page = race_list_pages[0].download_refund_list_page
+
+    # postcondition
+    assert_equal 11, entry_list_pages.length
+    entry_list_pages.each { |e| assert e.valid? }
+
+    assert refund_list_page.valid?
+
+    assert_equal 0, EntryListPage.all.length
+    assert_equal 0, RefundListPage.all.length
   end
 
 end

@@ -147,7 +147,7 @@ class EntryListPageTest < ActiveSupport::TestCase
     assert @bucket.object("race_list/20180716/帯広競馬場/11/entry_list.html").exists?
 
     # execute 3
-    entry_list_pages_2 = race_list_page.download_entry_list_pages
+    entry_list_pages_2 = race_list_pages[0].download_entry_list_pages
 
     # postcondition 3
     assert_equal 11, EntryListPage.all.length

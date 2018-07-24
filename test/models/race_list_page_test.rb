@@ -25,7 +25,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.帯広競馬場.html").exists?
+    assert_not @bucket.object("race_list/20180716/帯広競馬場/race_list.html").exists?
 
     race_list_page = race_list_pages[1]
     assert_equal "盛岡競馬場", race_list_page.course_name
@@ -34,7 +34,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.盛岡競馬場.html").exists?
+    assert_not @bucket.object("race_list/20180716/盛岡競馬場/race_list.html").exists?
 
     race_list_page = race_list_pages[2]
     assert_equal "名古屋競馬場", race_list_page.course_name
@@ -43,7 +43,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.金沢競馬場.html").exists?
+    assert_not @bucket.object("race_list/20180716/金沢競馬場/race_list.html").exists?
 
     race_list_page = race_list_pages[3]
     assert_equal "高知競馬場", race_list_page.course_name
@@ -52,7 +52,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.高知競馬場.html").exists?
+    assert_not @bucket.object("race_list/20180716/高知競馬場/race_list.html").exists?
 
     race_list_page = race_list_pages[4]
     assert_equal "佐賀競馬場", race_list_page.course_name
@@ -61,7 +61,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.content.length > 0
     assert race_list_page.course_list_page.same?(course_list_page)
     assert race_list_page.valid?
-    assert_not @bucket.object("race_list/20180716/race_list.佐賀競馬場.html").exists?
+    assert_not @bucket.object("race_list/20180716/佐賀競馬場/race_list.html").exists?
 
     assert_equal 1, CourseListPage.all.length
     assert_equal 0, RaceListPage.all.length
@@ -80,11 +80,11 @@ class RaceListPageTest < ActiveSupport::TestCase
       assert race_list_page.same?(race_list_page_db)
     end
 
-    assert @bucket.object("race_list/20180716/race_list.帯広競馬場.html").exists?
-    assert @bucket.object("race_list/20180716/race_list.盛岡競馬場.html").exists?
-    assert @bucket.object("race_list/20180716/race_list.名古屋競馬場.html").exists?
-    assert @bucket.object("race_list/20180716/race_list.高知競馬場.html").exists?
-    assert @bucket.object("race_list/20180716/race_list.佐賀競馬場.html").exists?
+    assert @bucket.object("race_list/20180716/帯広競馬場/race_list.html").exists?
+    assert @bucket.object("race_list/20180716/盛岡競馬場/race_list.html").exists?
+    assert @bucket.object("race_list/20180716/名古屋競馬場/race_list.html").exists?
+    assert @bucket.object("race_list/20180716/高知競馬場/race_list.html").exists?
+    assert @bucket.object("race_list/20180716/佐賀競馬場/race_list.html").exists?
 
     # execute 3
     race_list_pages_2 = course_list_page.download_race_list_pages
@@ -122,7 +122,7 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     assert_equal 0, RaceListPage.all.length
 
-    assert_not @bucket.object("race_list/19000101/race_list.aaa.html").exists?
+    assert_not @bucket.object("race_list/19000101/aaa/race_list.html").exists?
 
     # execute 2
     assert_raise ActiveRecord::RecordInvalid, "Course name Invalid html" do
@@ -132,7 +132,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     # postcondition 2
     assert_equal 0, RaceListPage.all.length
 
-    assert_not @bucket.object("race_list/19000101/race_list.aaa.html").exists?
+    assert_not @bucket.object("race_list/19000101/aaa/race_list.html").exists?
   end
 
   test "find all" do

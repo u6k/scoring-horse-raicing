@@ -195,42 +195,107 @@ class EntryListPageTest < ActiveSupport::TestCase
     assert_equal 0, EntryListPage.all.length
   end
 
-  # TODO
-  # test "parse" do
-  #   # precondition
-  #   course_list_page = CourseListPage.download(2018, 7, 16)
-  #   course_list_page.save!
+  test "parse" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    race_list_page = RaceListPage.download(course_list_page, "aaa", "bbb", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    entry_list_page = EntryListPage.download(race_list_page, 1, "aaa", "https://www.oddspark.com/keiba/RaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04&raceNb=1")
 
-  #   race_list_pages = course_list_page.download_race_list_pages
-  #   race_list_pages.each { |r| r.save! }
+    # execute
+    data = entry_list_page.parse
 
-  #   entry_list_pages = race_list_pages[0].download_entry_list_pages
+    # postcondition
+    assert_equal "帯広:第1競走", data[:race_info][:place]
+    assert_equal "ダ200m", data[:race_info][:distance]
+    assert_equal "発走時間 14:45", data[:race_info][:start_time]
+    assert_equal "天候", data[:race_info][:weather] # FIXME: 正しい天候を取得する
+    assert_equal "1.9%", data[:race_info][:water]
 
-  #   # execute
-  #   odds_1_page = entry_list_pages[0].download_odds_1_page
-  #   odds_2_page = entry_list_pages[0].download_odds_2_page
-  #   odds_3_page = entry_list_pages[0].download_odds_3_page
-  #   odds_4_page = entry_list_pages[0].download_odds_4_page
-  #   odds_5_page = entry_list_pages[0].download_odds_5_page
-  #   odds_6_page = entry_list_pages[0].download_odds_6_page
-  #   odds_7_page = entry_list_pages[0].download_odds_7_page
-  #   result_page = entry_list_pages[0].download_result_page
-  #   horse_page = entry_list_pages[0].download_horse_page
-  #   jockey_page = entry_list_pages[0].download_jockey_page
-  #   trainer_page = entry_list_pages[0].download_trainer_page
+    assert_equal 8, data[:horses].length
 
-  #   # postcondition
-  #   assert odds_1_page.valid?
-  #   assert odds_2_page.valid?
-  #   assert odds_3_page.valid?
-  #   assert odds_4_page.valid?
-  #   assert odds_5_page.valid?
-  #   assert odds_6_page.valid?
-  #   assert odds_7_page.valid?
-  #   assert result_page.valid?
-  #   assert horse_page.valid?
-  #   assert jockey_page.valid?
-  #   assert trainer_page.valid?
-  # end
+    assert_equal 1, data[:horses][0][:horse][:number]
+    assert_equal "キタノショウナン", data[:horses][0][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190048", data[:horses][0][:horse][:url]
+    assert_equal 893, data[:horses][0][:horse][:weight]
+    assert_equal -3, data[:horses][0][:horse][:weight_diff]
+    assert_equal "西謙一", data[:horses][0][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038070", data[:horses][0][:jockey][:url]
+    assert_equal "服部義", data[:horses][0][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018029", data[:horses][0][:trainer][:url]
+
+    assert_equal 2, data[:horses][1][:horse][:number]
+    assert_equal "ダイナユウヒメ", data[:horses][1][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190060", data[:horses][1][:horse][:url]
+    assert_equal 929, data[:horses][1][:horse][:weight]
+    assert_equal 19, data[:horses][1][:horse][:weight_diff]
+    assert_equal "松本秀", data[:horses][1][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038056", data[:horses][1][:jockey][:url]
+    assert_equal "久田守", data[:horses][1][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018058", data[:horses][1][:trainer][:url]
+    
+    assert_equal 3, data[:horses][2][:horse][:number]
+    assert_equal "カイオー", data[:horses][2][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190168", data[:horses][2][:horse][:url]
+    assert_equal 1000, data[:horses][2][:horse][:weight]
+    assert_equal 20, data[:horses][2][:horse][:weight_diff]
+    assert_equal "工藤篤", data[:horses][2][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038038", data[:horses][2][:jockey][:url]
+    assert_equal "服部義", data[:horses][2][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018029", data[:horses][2][:trainer][:url]
+    
+    assert_equal 4, data[:horses][3][:horse][:number]
+    assert_equal "ウノフクヒメ", data[:horses][3][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190155", data[:horses][3][:horse][:url]
+    assert_equal 873, data[:horses][3][:horse][:weight]
+    assert_equal 27, data[:horses][3][:horse][:weight_diff]
+    assert_equal "藤本匠", data[:horses][3][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038025", data[:horses][3][:jockey][:url]
+    assert_equal "金田勇", data[:horses][3][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018069", data[:horses][3][:trainer][:url]
+    
+    assert_equal 5, data[:horses][4][:horse][:number]
+    assert_equal "ワタシトマランサー", data[:horses][4][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190119", data[:horses][4][:horse][:url]
+    assert_equal 964, data[:horses][4][:horse][:weight]
+    assert_equal -7, data[:horses][4][:horse][:weight_diff]
+    assert_equal "藤野俊", data[:horses][4][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038024", data[:horses][4][:jockey][:url]
+    assert_equal "鈴木邦", data[:horses][4][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018017", data[:horses][4][:trainer][:url]
+    
+    assert_equal 6, data[:horses][5][:horse][:number]
+    assert_equal "ホクトペリドット", data[:horses][5][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190540", data[:horses][5][:horse][:url]
+    assert_equal 915, data[:horses][5][:horse][:weight]
+    assert_equal -4, data[:horses][5][:horse][:weight_diff]
+    assert_equal "島津新", data[:horses][5][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038079", data[:horses][5][:jockey][:url]
+    assert_equal "岩本利", data[:horses][5][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018072", data[:horses][5][:trainer][:url]
+    
+    assert_equal 7, data[:horses][6][:horse][:number]
+    assert_equal "デビットシャルマン", data[:horses][6][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190920", data[:horses][6][:horse][:url]
+    assert_equal 937, data[:horses][6][:horse][:weight]
+    assert_equal 16, data[:horses][6][:horse][:weight_diff]
+    assert_equal "村上章", data[:horses][6][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038047", data[:horses][6][:jockey][:url]
+    assert_equal "小北栄", data[:horses][6][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018066", data[:horses][6][:trainer][:url]
+    
+    assert_equal 8, data[:horses][7][:horse][:number]
+    assert_equal "テンカノサブロウ", data[:horses][7][:horse][:name]
+    assert_equal "https://www.oddspark.com/keiba/HorseDetail.do?lineageNb=2270190906", data[:horses][7][:horse][:url]
+    assert_equal 925, data[:horses][7][:horse][:weight]
+    assert_equal -6, data[:horses][7][:horse][:weight_diff]
+    assert_equal "長澤幸", data[:horses][7][:jockey][:name]
+    assert_equal "https://www.oddspark.com/keiba/JockeyDetail.do?jkyNb=038074", data[:horses][7][:jockey][:url]
+    assert_equal "服部義", data[:horses][7][:trainer][:name]
+    assert_equal "https://www.oddspark.com/keiba/TrainerDetail.do?trainerNb=018029", data[:horses][7][:trainer][:url]
+
+    assert_equal "https://www.oddspark.com/keiba/Odds.do?sponsorCd=04&raceDy=20180716&opTrackCd=03&raceNb=1", data[:odds][:url]
+
+    assert_equal "https://www.oddspark.com/keiba/RaceResult.do?sponsorCd=04&raceDy=20180716&opTrackCd=03&raceNb=1", data[:result][:url]
+  end
 
 end

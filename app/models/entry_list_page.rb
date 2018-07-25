@@ -1,8 +1,8 @@
 class EntryListPage < ApplicationRecord
 
+  validates :url, presence: true, uniqueness: true
   validates :race_number, presence: true
   validates :race_name, presence: true
-  validates :url, presence: true
   validate :_validate
 
   belongs_to :race_list_page
@@ -62,8 +62,8 @@ class EntryListPage < ApplicationRecord
             number: horse_data.xpath("td[4]").text.to_i,
             name: horse_data.xpath("td[5]/a/strong").text,
             url: "https://www.oddspark.com" + horse_data.xpath("td[5]/a").attribute("href").value,
-            weight: horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m).nil? ? nil : horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m)[1].to_i,
-            weight_diff: horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m).nil? ? nil : horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m)[2].to_i,
+            weight: horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m).nil? ? nil : horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m)[1].to_i,
+            weight_diff: horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m).nil? ? nil : horse_data.xpath("td[8]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m)[2].to_i,
           },
           jockey: {
             name: horse_data.xpath("td[6]/a[1]").text,
@@ -80,8 +80,8 @@ class EntryListPage < ApplicationRecord
             number: horse_data.xpath("td[2]").text.to_i,
             name: horse_data.xpath("td[3]/a/strong").text,
             url: "https://www.oddspark.com" + horse_data.xpath("td[3]/a").attribute("href").value,
-            weight: horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m)[1].to_i,
-            weight_diff: horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-]+)/m)[2].to_i,
+            weight: horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m).nil? ? nil : horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m)[1].to_i,
+            weight_diff: horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m).nil? ? nil : horse_data.xpath("td[6]").text.match(/([0-9]+)[\n\t]*([0-9\-\+]+)/m)[2].to_i,
           },
           jockey: {
             name: horse_data.xpath("td[4]/a[1]").text,

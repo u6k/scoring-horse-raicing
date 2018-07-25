@@ -3,7 +3,7 @@ require "digest/md5"
 class CourseListPage < ApplicationRecord
 
   validates :date, presence: true, uniqueness: true
-  validates :url, presence: true
+  validates :url, presence: true, uniqueness: true
   validate :_validate
 
   has_many :race_list_pages

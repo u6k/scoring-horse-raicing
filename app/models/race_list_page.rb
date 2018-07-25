@@ -1,7 +1,7 @@
 class RaceListPage < ApplicationRecord
 
+  validates :url, presence: true, uniqueness: true
   validates :course_name, presence: true
-  validates :url, presence: true
   validate :_validate
 
   belongs_to :course_list_page

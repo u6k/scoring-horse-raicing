@@ -320,4 +320,30 @@ class EntryListPageTest < ActiveSupport::TestCase
     assert_equal 1, EntryListPage.all.length
   end
 
+  test "find all" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "aaa", "bbb", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    entry_list_pages = race_list_page.download_entry_list_pages
+    entry_list_pages.each { |e| e.save! }
+
+    # execute
+    entry_list_pages_db = race_list_page.entry_list_pages
+
+    # postcondition
+    assert_equal 11, EntryListPage.all.length
+
+    assert_equal entry_list_pages.length, entry_list_pages_db.length
+
+    entry_list_pages.each do |entry_list_page|
+      entry_list_page_db = entry_list_pages_db.find { |e| e.url == entry_list_page.url }
+
+      assert entry_list_page.same?(entry_list_page_db)
+    end
+  end
+
 end

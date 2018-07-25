@@ -145,24 +145,6 @@ class EntryListPageTest < ActiveSupport::TestCase
     assert @bucket.object("race_list/20180716/帯広競馬場/9/entry_list.html").exists?
     assert @bucket.object("race_list/20180716/帯広競馬場/10/entry_list.html").exists?
     assert @bucket.object("race_list/20180716/帯広競馬場/11/entry_list.html").exists?
-
-    # execute 3
-    entry_list_pages_2 = race_list_pages[0].download_entry_list_pages
-
-    # postcondition 3
-    assert_equal 11, EntryListPage.all.length
-
-    race_list_pages[0].entry_list_pages.each do |entry_list_page_db|
-      entry_list_page_2 = entry_list_pages_2.find { |e| e.url == entry_list_page_db.url }
-
-      assert entry_list_page_2.same?(entry_list_page_db)
-    end
-
-    # execute 4
-    entry_list_pages_2.each { |e| e.save! }
-
-    # postcondition 4
-    assert_equal 11, EntryListPage.all.length
   end
 
   test "download entry list page: invalid html" do
@@ -296,6 +278,46 @@ class EntryListPageTest < ActiveSupport::TestCase
     assert_equal "https://www.oddspark.com/keiba/Odds.do?sponsorCd=04&raceDy=20180716&opTrackCd=03&raceNb=1", data[:odds][:url]
 
     assert_equal "https://www.oddspark.com/keiba/RaceResult.do?sponsorCd=04&raceDy=20180716&opTrackCd=03&raceNb=1", data[:result][:url]
+  end
+
+  test "save, and overwrite" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "aaa", "bbb", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    # execute 1
+    entry_list_page = EntryListPage.download(race_list_page, 1, "aaa", "https://www.oddspark.com/keiba/RaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04&raceNb=1")
+
+    # postcondition 1
+    assert entry_list_page.valid?
+
+    assert_equal 0, EntryListPage.all.length
+
+    # execute 2
+    entry_list_page.save!
+
+    # postcondition 2
+    assert_equal 1, EntryListPage.all.length
+
+    # execute 3
+    entry_list_page_2 = EntryListPage.download(race_list_page, 1, "aaa", "https://www.oddspark.com/keiba/RaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04&raceNb=1")
+
+    # postcondition 3
+    assert_equal 1, EntryListPage.all.length
+    assert_equal 1, race_list_page.entry_list_pages.length
+
+    race_list_page.entry_list_pages.each do |entry_list_page_db|
+      assert entry_list_page_2.same?(entry_list_page_db)
+    end
+
+    # execute 4
+    entry_list_page_2.save!
+
+    # postcondition 4
+    assert_equal 1, EntryListPage.all.length
   end
 
 end

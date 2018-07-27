@@ -31,6 +31,40 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not @bucket.object("race_list/20180716/帯広競馬場/1/odds_win_place_bracket_quinella.html").exists?
   end
 
+  test "download: invalid html" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "帯広競馬場", "ナイター", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    entry_list_page = EntryListPage.download(race_list_page, 1, "Ｃ２－５", "https://www.oddspark.com/keiba/RaceList.do?raceDy=20180716&opTrackCd=03&raceNb=1&sponsorCd=04")
+    entry_list_page.save!
+
+    # execute 1
+    odds_win_page = OddsWinPage.download(entry_list_page, "https://www.oddspark.com/keiba/Odds.do?sponsorCd=04&raceDy=19000101&opTrackCd=03&raceNb=1")
+
+    # postcondition 1
+    assert 0, OddsWinPage.all.length
+
+    assert_equal "https://www.oddspark.com/keiba/Odds.do?sponsorCd=04&raceDy=19000101&opTrackCd=03&raceNb=1", odds_win_page.url
+    assert odds_win_page.content.length > 0
+    assert odds_win_page.entry_list_page.same?(entry_list_page)
+    assert odds_win_page.invalid?
+    assert_not @bucket.object("race_list/19000101/帯広競馬場/1/odds_win_place_bracket_quinella.html").exists?
+
+    # execute 2
+    assert_raise ActiveRecord::RecordInvalid, "Url Invalid html" do
+      odds_win_page.save!
+    end
+
+    # postcondition 2
+    assert 0, OddsWinPage.all.length
+
+    assert_not @bucket.object("race_list/19000101/帯広競馬場/1/odds_win_place_bracket_quinella.html").exists?
+  end
+
   test "parse 1" do
     # precondition
     course_list_page = CourseListPage.download(2018, 7, 16)

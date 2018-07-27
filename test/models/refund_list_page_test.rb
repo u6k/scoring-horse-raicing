@@ -306,4 +306,24 @@ class RefundListPageTest < ActiveSupport::TestCase
     assert_equal data, expected_data
   end
 
+  test "find all" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "aaa", "bbb", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    refund_list_page = race_list_page.download_refund_list_page
+    refund_list_page.save!
+
+    # execute
+    refund_list_page_db = race_list_page.refund_list_page
+
+    # postcondition
+    assert_equal 1, RefundListPage.all.length
+
+    assert refund_list_page.same?(refund_list_page_db)
+  end
+
 end

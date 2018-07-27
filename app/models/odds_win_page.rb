@@ -103,7 +103,13 @@ class OddsWinPage < ApplicationRecord
   private
 
   def _validate
-    nil # TODO
+    page_data = parse
+
+    if page_data[:win].length == 0 \
+      || page_data[:place].length == 0 \
+      || ((not page_data[:bracket_quinella].nil?) && page_data[:bracket_quinella].length == 0)
+      errors.add(:url, "Invalid html")
+    end
   end
 
   def _build_file_path

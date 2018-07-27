@@ -38,6 +38,36 @@ class RefundListPageTest < ActiveSupport::TestCase
     assert @bucket.object("race_list/20180716/帯広競馬場/refund_list.html").exists?
   end
 
+  test "download: invalid html" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "帯広競馬場", "ナイター", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    # execute 1
+    refund_list_page = RefundListPage.download(race_list_page, "https://www.oddspark.com/keiba/RaceRefund.do?sponsorCd=04&raceDy=19000101&opTrackCd=03")
+
+    # postcondition 1
+    assert refund_list_page.content.length > 0
+    assert refund_list_page.invalid?
+    assert_equal "Invalid html", refund_list_page.errors[:url][0]
+    assert_not @bucket.object("race_list/20180716/帯広競馬場/refund_list.html").exists?
+
+    assert_equal 0, RefundListPage.all.length
+
+    # execute 2
+    assert_raise ActiveRecord::RecordInvalid, "Url Invalid html" do
+      refund_list_page.save!
+    end
+
+    # postcondition 2
+    assert_not @bucket.object("race_list/20180716/帯広競馬場/refund_list.html").exists?
+
+    assert_equal 0, RefundListPage.all.length
+  end
+
   test "parse" do
     # precondition
     course_list_page = CourseListPage.new(date: Time.zone.local(2018, 7, 16), url: "https://www.example.com/course_list_page.html")

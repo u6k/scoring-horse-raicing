@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_23_163906) do
+ActiveRecord::Schema.define(version: 2018_07_27_075812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(version: 2018_07_23_163906) do
     t.index ["race_list_page_id"], name: "index_entry_list_pages_on_race_list_page_id"
   end
 
+  create_table "odds_win_pages", force: :cascade do |t|
+    t.string "url"
+    t.bigint "entry_list_page_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entry_list_page_id"], name: "index_odds_win_pages_on_entry_list_page_id"
+  end
+
   create_table "race_list_pages", force: :cascade do |t|
     t.string "url"
     t.string "course_name"
@@ -51,6 +59,7 @@ ActiveRecord::Schema.define(version: 2018_07_23_163906) do
   end
 
   add_foreign_key "entry_list_pages", "race_list_pages"
+  add_foreign_key "odds_win_pages", "entry_list_pages"
   add_foreign_key "race_list_pages", "course_list_pages"
   add_foreign_key "refund_list_pages", "race_list_pages"
 end

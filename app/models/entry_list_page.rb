@@ -6,6 +6,7 @@ class EntryListPage < ApplicationRecord
   validate :_validate
 
   belongs_to :race_list_page
+  has_one :odds_win_page
   attr_accessor :content
 
   before_save :_put_html
@@ -109,6 +110,12 @@ class EntryListPage < ApplicationRecord
       odds: odds,
       result: result,
     }
+  end
+
+  def download_odds_win_page
+    page_data = parse
+
+    OddsWinPage.download(self, page_data[:odds][:url])
   end
 
   private

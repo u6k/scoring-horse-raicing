@@ -336,6 +336,31 @@ class RefundListPageTest < ActiveSupport::TestCase
     assert_equal data, expected_data
   end
 
+  test "save, and overwrite" do
+    # precondition
+    course_list_page = CourseListPage.download(2018, 7, 16)
+    course_list_page.save!
+
+    race_list_page = RaceListPage.download(course_list_page, "帯広競馬場", "ナイター", "https://www.oddspark.com/keiba/OneDayRaceList.do?raceDy=20180716&opTrackCd=03&sponsorCd=04")
+    race_list_page.save!
+
+    # execute 1
+    refund_list_page = RefundListPage.download(race_list_page, "https://www.oddspark.com/keiba/RaceRefund.do?sponsorCd=04&raceDy=20180716&opTrackCd=03", File.open("test/fixtures/files/refund_list_page.20180716.html").read)
+    refund_list_page.save!
+
+    # postcondition 1
+    assert_equal 1, RefundListPage.all.length
+
+    # execute 2
+    refund_list_page_2 = RefundListPage.download(race_list_page, "https://www.oddspark.com/keiba/RaceRefund.do?sponsorCd=04&raceDy=20180716&opTrackCd=03", File.open("test/fixtures/files/refund_list_page.20180716.html").read)
+    refund_list_page_2.save!
+
+    # postcondition 2
+    assert_equal 1, RefundListPage.all.length
+
+    assert refund_list_page.same?(refund_list_page_2)
+  end
+
   test "find all" do
     # precondition
     course_list_page = CourseListPage.download(2018, 7, 16)

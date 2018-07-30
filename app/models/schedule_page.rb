@@ -1,0 +1,2 @@
+class SchedulePage < ApplicationRecord
+end

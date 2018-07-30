@@ -18,7 +18,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal Time.zone.local(2018, 6, 1), schedule_page.datetime
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
-    assert_not @bucket.objects("html/201807/schedule.html")
+    assert_not @bucket.object("html/201806/schedule.html").exists?
   end
 
   test "download current month" do
@@ -35,7 +35,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal Time.zone.local(current_time.year, current_time.month, 1), schedule_page.datetime
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
-    assert_not @bucket.objects("html/#{current_time.strftime('%Y%m')}/schedule.html")
+    assert_not @bucket.object("html/#{current_time.strftime('%Y%m')}/schedule.html").exists?
   end
 
 end

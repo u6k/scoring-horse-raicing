@@ -46,7 +46,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     # execute
     page_data = schedule_page.parse
 
-    # posrcondition
+    # postcondition
     expected_data = [
       {
         date: Time.zone.local(2018, 6, 2),
@@ -166,6 +166,62 @@ class SchedulePageTest < ActiveSupport::TestCase
     ]
 
     assert_equal page_data, expected_data
+  end
+
+  test "parse: case line skip" do
+    # precondition
+    html = File.open("test/fixtures/files/schedule.201808.html")
+    schedule_page = SchedulePage.download(2018, 8, html)
+
+    # execute
+    page_data = schedule_page.parse
+
+    # postcondition
+    expected_data = [
+      {
+        date: Time.zone.local(2018, 8, 4),
+        url: "https://keiba.yahoo.co.jp/race/list/18010103/",
+        course_name: "札幌"
+      },
+      {
+        date: Time.zone.local(2018, 8, 4),
+        url: "https://keiba.yahoo.co.jp/race/list/18040203/",
+        course_name: "新潟"
+      },
+      {
+        date: Time.zone.local(2018, 8, 4),
+        url: "https://keiba.yahoo.co.jp/race/list/18100203/",
+        course_name: "小倉"
+      },
+      {
+        date: Time.zone.local(2018, 8, 5),
+        url: "https://keiba.yahoo.co.jp/race/list/18010104/",
+        course_name: "札幌"
+      },
+      {
+        date: Time.zone.local(2018, 8, 5),
+        url: "https://keiba.yahoo.co.jp/race/list/18040204/",
+        course_name: "新潟"
+      },
+      {
+        date: Time.zone.local(2018, 8, 5),
+        url: "https://keiba.yahoo.co.jp/race/list/18100204/",
+        course_name: "小倉"
+      },
+    ]
+
+    assert_equal page_data, expected_data
+  end
+
+  test "parse: case content not found" do
+    # precondition
+    schedule_page = SchedulePage.download(1900, 1)
+
+    # execute
+    page_data = schedule_page.parse
+
+    # postcondition
+    assert_nil = page_data
   end
 
 end

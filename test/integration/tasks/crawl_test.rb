@@ -1,12 +1,17 @@
 require 'test_helper'
+require 'rake'
 
 class CrawlTest < ActionDispatch::IntegrationTest
 
   def setup
+    Rails.application.load_tasks
+
     @bucket = NetModule.get_s3_bucket
     @bucket.objects.batch_delete!
+  end
 
-    SchedulePage.all.delete_all
+  def teardown
+    Rake::Task["crawl:download_schedule_pages"].clear
   end
 
   test "download schedule page: case 2018-06" do
@@ -16,10 +21,10 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_not @bucket.object("html/201806/schedule.html").exists?
 
     # execute
-    `rails crawl:download_schedule_pages[2018,6]`
+    Rake::Task["crawl:download_schedule_pages"].invoke(2018, 6)
 
     # NOTE: 引数なしで、全期間をダウンロードする
-    # `rails crawl:download_schedule_pages`
+    # Rake::Task["crawl:download_schedule_pages"].invoke
 
     # postcondition
     assert_equal 1, SchedulePage.all.length

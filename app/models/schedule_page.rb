@@ -28,6 +28,12 @@ class SchedulePage < ApplicationRecord
     schedule_page
   end
 
+  def self.find_by_date(year, month)
+    target_datetime = Time.zone.local(year, month, 1, 0, 0, 0)
+
+    SchedulePage.find_by_datetime(target_datetime)
+  end
+
   def same?(obj)
     if not obj.instance_of?(SchedulePage)
       false

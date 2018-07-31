@@ -57,7 +57,13 @@ class SchedulePage < ApplicationRecord
       end
     end
 
-    page_data.compact
+    page_data.compact!
+
+    if page_data.empty?
+      nil
+    else
+      page_data
+    end
   end
 
 end

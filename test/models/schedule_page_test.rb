@@ -253,4 +253,40 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_nil page_data
   end
 
+  test "save, and overwrite" do
+    # execute 1
+    schedule_page = SchedulePage.download(2018, 6)
+
+    # postcondition 1
+    assert_equal 0, SchedulePage.all.length
+
+    assert schedule_page.valid?
+    assert_not @bucket.object("html/201806/schedule.html").exists?
+
+    # execute 2
+    schedule_page.save!
+
+    # postcondition 2
+    assert_equal 1, SchedulePage.all.length
+
+    assert @bucket.object("html/201806/schedule.html").exists?
+
+    # execute 3
+    schedule_page_2 = SchedulePage.download(2018, 6)
+
+    # postcondition 3
+    assert_equal 1, SchedulePage.all.length
+
+    assert schedule_page_2.valid?
+    assert schedule_page.same?(schedule_page_2)
+
+    # execute 4
+    schedule_page_2.save!
+
+    # postcondition 4
+    assert_equal 1, SchedulePage.all.length
+
+    assert @bucket.object("html/201806/schedule.html").exists?
+  end
+
 end

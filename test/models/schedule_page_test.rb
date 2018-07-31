@@ -38,4 +38,134 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not @bucket.object("html/#{current_time.strftime('%Y%m')}/schedule.html").exists?
   end
 
+  test "parse" do
+    # precondition
+    html = File.open("test/fixtures/files/schedule.201806.html")
+    schedule_page = SchedulePage.download(2018, 6, html)
+
+    # execute
+    page_data = schedule_page.parse
+
+    # posrcondition
+    expected_data = [
+      {
+        date: Time.zone.local(2018, 6, 2),
+        url: "https://keiba.yahoo.co.jp/race/list/18050301/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 2),
+        url: "https://keiba.yahoo.co.jp/race/list/18090301/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 3),
+        url: "https://keiba.yahoo.co.jp/race/list/18050302/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 3),
+        url: "https://keiba.yahoo.co.jp/race/list/18090302/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 9),
+        url: "https://keiba.yahoo.co.jp/race/list/18050303/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 9),
+        url: "https://keiba.yahoo.co.jp/race/list/18090303/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 10),
+        url: "https://keiba.yahoo.co.jp/race/list/18050304/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 10),
+        url: "https://keiba.yahoo.co.jp/race/list/18090304/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 16),
+        url: "https://keiba.yahoo.co.jp/race/list/18020101/",
+        course_name: "函館"
+      },
+      {
+        date: Time.zone.local(2018, 6, 16),
+        url: "https://keiba.yahoo.co.jp/race/list/18050305/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 16),
+        url: "https://keiba.yahoo.co.jp/race/list/18090305/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 17),
+        url: "https://keiba.yahoo.co.jp/race/list/18020102/",
+        course_name: "函館"
+      },
+      {
+        date: Time.zone.local(2018, 6, 17),
+        url: "https://keiba.yahoo.co.jp/race/list/18050306/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 17),
+        url: "https://keiba.yahoo.co.jp/race/list/18090306/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 23),
+        url: "https://keiba.yahoo.co.jp/race/list/18020103/",
+        course_name: "函館"
+      },
+      {
+        date: Time.zone.local(2018, 6, 23),
+        url: "https://keiba.yahoo.co.jp/race/list/18050307/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 23),
+        url: "https://keiba.yahoo.co.jp/race/list/18090307/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 24),
+        url: "https://keiba.yahoo.co.jp/race/list/18020104/",
+        course_name: "函館"
+      },
+      {
+        date: Time.zone.local(2018, 6, 24),
+        url: "https://keiba.yahoo.co.jp/race/list/18050308/",
+        course_name: "東京"
+      },
+      {
+        date: Time.zone.local(2018, 6, 24),
+        url: "https://keiba.yahoo.co.jp/race/list/18090308/",
+        course_name: "阪神"
+      },
+      {
+        date: Time.zone.local(2018, 6, 30),
+        url: "https://keiba.yahoo.co.jp/race/list/18020105/",
+        course_name: "函館"
+      },
+      {
+        date: Time.zone.local(2018, 6, 30),
+        url: "https://keiba.yahoo.co.jp/race/list/18030201/",
+        course_name: "福島"
+      },
+      {
+        date: Time.zone.local(2018, 6, 30),
+        url: "https://keiba.yahoo.co.jp/race/list/18070301/",
+        course_name: "中京"
+      },
+    ]
+
+    assert_equal page_data, expected_data
+  end
+
 end

@@ -313,10 +313,10 @@ class RaceListPageTest < ActiveSupport::TestCase
 
   test "parse" do
     # precondition
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html")
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
 
-    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html")
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
     race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
 
     # execute

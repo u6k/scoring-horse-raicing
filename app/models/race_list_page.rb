@@ -99,7 +99,7 @@ class RaceListPage < ApplicationRecord
   end
 
   def _build_file_path
-    "html/#{schedule_page.date.strftime('%Y%m')}/#{date.strftime('%Y%m%d')}/race_list.html"
+    "html/#{schedule_page.date.strftime('%Y%m')}/#{date.strftime('%Y%m%d')}/#{course_name}/race_list.html"
   end
 
   def _put_html

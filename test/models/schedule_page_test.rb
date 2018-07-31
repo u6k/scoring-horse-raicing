@@ -15,7 +15,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal 0, SchedulePage.all.length
     
     assert_equal "https://keiba.yahoo.co.jp/schedule/list/2018/?month=6", schedule_page.url
-    assert_equal Time.zone.local(2018, 6, 1), schedule_page.datetime
+    assert_equal Time.zone.local(2018, 6, 1), schedule_page.date
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
     assert_not @bucket.object("html/201806/schedule.html").exists?
@@ -32,7 +32,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal 0, SchedulePage.all.length
 
     assert_equal "https://keiba.yahoo.co.jp/schedule/list/#{current_time.year}/?month=#{current_time.month}", schedule_page.url
-    assert_equal Time.zone.local(current_time.year, current_time.month, 1), schedule_page.datetime
+    assert_equal Time.zone.local(current_time.year, current_time.month, 1), schedule_page.date
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
     assert_not @bucket.object("html/#{current_time.strftime('%Y%m')}/schedule.html").exists?
@@ -47,7 +47,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal 0, SchedulePage.all.length
     
     assert_equal "https://keiba.yahoo.co.jp/schedule/list/2018/?month=8", schedule_page.url
-    assert_equal Time.zone.local(2018, 8, 1), schedule_page.datetime
+    assert_equal Time.zone.local(2018, 8, 1), schedule_page.date
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
     assert_not @bucket.object("html/201808/schedule.html").exists?
@@ -61,7 +61,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal 0, SchedulePage.all.length
     
     assert_equal "https://keiba.yahoo.co.jp/schedule/list/1900/?month=1", schedule_page.url
-    assert_equal Time.zone.local(1900, 1, 1), schedule_page.datetime
+    assert_equal Time.zone.local(1900, 1, 1), schedule_page.date
     assert_nil schedule_page.content
     assert schedule_page.invalid?
     assert_not @bucket.object("html/190001/schedule.html").exists?

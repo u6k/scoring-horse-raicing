@@ -1,17 +1,18 @@
 class SchedulePage < ApplicationRecord
 
   validates :url, presence: true, uniqueness: true
-  validates :datetime, presence: true
+  validates :date, presence: true
   validate :_validate
 
   attr_accessor :content
+  has_many :race_list_pages
 
   before_save :_put_html
   after_initialize :_get_html
 
   def self.download(year, month, content = nil)
-    datetime = Time.zone.local(year, month, 1, 0, 0, 0)
-    url = "https://keiba.yahoo.co.jp/schedule/list/#{datetime.year}/?month=#{datetime.month}"
+    date = Time.zone.local(year, month, 1, 0, 0, 0)
+    url = "https://keiba.yahoo.co.jp/schedule/list/#{date.year}/?month=#{date.month}"
 
     if content.nil?
       content = NetModule.download_with_get(url)
@@ -19,9 +20,9 @@ class SchedulePage < ApplicationRecord
 
     schedule_page = find_by_url(url)
     if schedule_page.nil?
-      schedule_page = SchedulePage.new(url: url, datetime: datetime)
+      schedule_page = SchedulePage.new(url: url, date: date)
     else
-      schedule_page.datetime = datetime
+      schedule_page.date = date
     end
     schedule_page.content = content
 
@@ -29,9 +30,11 @@ class SchedulePage < ApplicationRecord
   end
 
   def self.find_by_date(year, month)
-    target_datetime = Time.zone.local(year, month, 1, 0, 0, 0)
+    target_date = Time.zone.local(year, month, 1, 0, 0, 0)
 
-    SchedulePage.find_by_datetime(target_datetime)
+    schedule_pages = SchedulePage.where(date: target_date)
+
+    schedule_pages.empty? ? nil : schedule_pages[0]
   end
 
   def same?(obj)
@@ -52,8 +55,8 @@ class SchedulePage < ApplicationRecord
       course_info = {}
 
       td.text.match(/([0-9]+)日/) do |day|
-        course_info[:date] = Time.zone.local(self.datetime.year, \
-          self.datetime.month, \
+        course_info[:date] = Time.zone.local(self.date.year, \
+          self.date.month, \
           day[1].to_i, \
           0, 0, 0)
       end
@@ -69,7 +72,7 @@ class SchedulePage < ApplicationRecord
       end
 
       if course_info[:date].nil?
-        Rails.logger.warn "SchedulePage(datetime=#{self.datetime.to_s})#parse: skip line: td=#{td.inspect}"
+        Rails.logger.warn "SchedulePage(date=#{self.date.to_s})#parse: skip line: td=#{td.inspect}"
         nil
       elsif course_info[:url].nil?
         nil
@@ -87,6 +90,18 @@ class SchedulePage < ApplicationRecord
     end
   end
 
+  def download_race_list_pages
+    page_data = parse
+
+    if page_data.nil?
+      nil
+    else
+      race_list_pages = page_data.map do |course_info|
+        RaceListPage.download(self, course_info[:url], course_info[:date], course_info[:course_name])
+      end
+    end
+  end
+
   private
 
   def _validate
@@ -99,7 +114,7 @@ class SchedulePage < ApplicationRecord
   end
 
   def _build_file_path
-    "html/#{datetime.strftime('%Y%m')}/schedule.html"
+    "html/#{date.strftime('%Y%m')}/schedule.html"
   end
 
   def _put_html

@@ -37,18 +37,27 @@ class SchedulePage < ApplicationRecord
           0, 0, 0)
       end
 
-      if not td.xpath("a").nil?
-        td.xpath("a").attribute("href").value.match(/\/race\/list\/[0-9]+\//) do |path|
+      if not td.xpath("a").empty?
+        td.xpath("a").attribute("href").value.match(/^\/race\/list\/[0-9]+\/$/) do |path|
           course_info[:url] = "https://keiba.yahoo.co.jp" + path[0]
         end
 
-        td.xpath("a").text.match(/^[0-9]+回(.+?)[0-9]+日/) do |course|
+        td.xpath("a").text.match(/^[0-9]+回(.+?)[0-9]+日$/) do |course|
           course_info[:course_name] = course[1]
         end
       end
 
-      course_info
+      if course_info[:date].nil?
+        Rails.logger.warn "SchedulePage(datetime=#{self.datetime.to_s})#parse: skip line: td=#{td.inspect}"
+        nil
+      elsif course_info[:url].nil?
+        nil
+      else
+        course_info
+      end
     end
+
+    page_data.compact!
   end
 
 end

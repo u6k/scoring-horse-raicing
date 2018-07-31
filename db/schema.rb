@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2018_07_31_080229) do
 
   create_table "schedule_pages", force: :cascade do |t|
     t.string "url"
-    t.datetime "datetime"
+    t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -5,6 +5,7 @@ class SchedulePage < ApplicationRecord
   validate :_validate
 
   attr_accessor :content
+  has_many :race_list_pages
 
   before_save :_put_html
   after_initialize :_get_html
@@ -84,6 +85,18 @@ class SchedulePage < ApplicationRecord
       nil
     else
       page_data
+    end
+  end
+
+  def download_race_list_pages
+    page_data = parse
+
+    if page_data.nil?
+      nil
+    else
+      race_list_pages = page_data.map do |course_info|
+        RaceListPage.download(self, course_info[:url], course_info[:date], course_info[:course_name])
+      end
     end
   end
 

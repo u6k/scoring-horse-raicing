@@ -39,6 +39,11 @@ module NetModule
 
     sleep(1)
 
-    res.body
+    if res.code == "200"
+      res.body
+    else
+      Rails.logger.warn "NetModule#download_with_get: status code not 200 ok: url=#{url}, code=#{res.code}"
+      nil
+    end
   end
 end

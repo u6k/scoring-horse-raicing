@@ -317,7 +317,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
 
     race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html")
-    race_list_page = RaceListPage.download(schedule_page, Time.zone.local(2018, 6, 3), "東京")
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
 
     # execute
     page_data = race_list_page.parse
@@ -406,10 +406,10 @@ class RaceListPageTest < ActiveSupport::TestCase
     html = File.open("test/fixtures/files/schedule.201808.html").read
     schedule_page = SchedulePage.download(2018, 8, html)
 
-    race_list_page = RaceListPage.download(schedule_page, Time.zone.local(1900, 1, 1), "東京", "Invalid html")
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/00000000/", Time.zone.local(1900, 1, 1), "東京", "Invalid html")
 
     # execute
-    page_data = race_list_page
+    page_data = race_list_page.parse
 
     # postcondition
     assert_nil page_data

@@ -28,7 +28,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.schedule_page.same?(schedule_page)
     assert race_list_page.content.length > 0
     assert race_list_page.valid?
-    assert_not @bucket.object("html/201806/20180602/東京/race_list_html").exists?
+    assert_not @bucket.object("html/201806/20180602/東京/race_list.html").exists?
 
     race_list_page = race_list_pages[1]
     assert_equal "https://keiba.yahoo.co.jp/race/list/18090301/", race_list_page.url

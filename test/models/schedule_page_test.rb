@@ -213,15 +213,15 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal page_data, expected_data
   end
 
-  test "parse: case content not found" do
+  test "parse: case invalid html" do
     # precondition
-    schedule_page = SchedulePage.download(1900, 1)
+    schedule_page = SchedulePage.download(1900, 1, "Invalid HTML")
 
     # execute
     page_data = schedule_page.parse
 
     # postcondition
-    assert_nil = page_data
+    assert_nil page_data
   end
 
 end

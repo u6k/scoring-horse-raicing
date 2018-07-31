@@ -34,4 +34,8 @@ namespace :crawl do
     raise "failed" if task_failed
   end
 
+  def build_error_log(e)
+    "#{e.class} (#{e.message}):\n#{e.backtrace.join("\n")}"
+  end
+
 end

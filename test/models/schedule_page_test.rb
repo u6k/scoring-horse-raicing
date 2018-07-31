@@ -290,4 +290,30 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert @bucket.object("html/201806/schedule.html").exists?
   end
 
+  test "find" do
+    # precondition
+    schedule_page_198601 = SchedulePage.download(1986, 1, File.open("test/fixtures/files/schedule.198601.html").read)
+    schedule_page_198601.save!
+
+    schedule_page_201806 = SchedulePage.download(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_201806.save!
+
+    schedule_page_201808 = SchedulePage.download(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
+    schedule_page_201808.save!
+
+    # execute
+    schedule_pages = SchedulePage.all
+
+    schedule_page_2 = SchedulePage.find_by_date(2018, 6)
+
+    # postcondition
+    assert_equal 3, schedule_pages.length
+
+    assert schedule_page_198601.same?(schedule_pages[0])
+    assert schedule_page_201806.same?(schedule_pages[1])
+    assert schedule_page_201808.same?(schedule_pages[2])
+
+    assert schedule_page_201806.same?(schedule_page_2)
+  end
+
 end

@@ -255,7 +255,7 @@ class SchedulePageTest < ActiveSupport::TestCase
 
   test "save, and overwrite" do
     # execute 1
-    html = File.open("test/fixtures/files/schedule.201806.html")
+    html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.download(2018, 6, html)
 
     # postcondition 1

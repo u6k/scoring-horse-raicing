@@ -21,7 +21,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not @bucket.object("html/201806/schedule.html").exists?
   end
 
-  test "download current month" do
+  test "download: case current month" do
     # precondition
     current_time = Time.zone.now
 
@@ -36,6 +36,35 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page.content.length > 0
     assert schedule_page.valid?
     assert_not @bucket.object("html/#{current_time.strftime('%Y%m')}/schedule.html").exists?
+  end
+
+  test "download: case link nothing" do
+    # execute
+    html = File.open("test/fixtures/files/schedule.201808.html").read
+    schedule_page = SchedulePage.download(2018, 8, html)
+
+    # postcondition
+    assert_equal 0, SchedulePage.all.length
+    
+    assert_equal "https://keiba.yahoo.co.jp/schedule/list/2018/?month=8", schedule_page.url
+    assert_equal Time.zone.local(2018, 8, 1), schedule_page.datetime
+    assert schedule_page.content.length > 0
+    assert schedule_page.valid?
+    assert_not @bucket.object("html/201808/schedule.html").exists?
+  end
+
+  test "download: case content not found" do
+    # execute
+    schedule_page = SchedulePage.download(1900, 1)
+
+    # postcondition
+    assert_equal 0, SchedulePage.all.length
+    
+    assert_equal "https://keiba.yahoo.co.jp/schedule/list/1900/?month=1", schedule_page.url
+    assert_equal Time.zone.local(1900, 1, 1), schedule_page.datetime
+    assert_nil schedule_page.content
+    assert schedule_page.invalid?
+    assert_not @bucket.object("html/190001/schedule.html").exists?
   end
 
   test "parse" do

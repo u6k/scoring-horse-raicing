@@ -2,6 +2,7 @@ class SchedulePage < ApplicationRecord
 
   validates :url, presence: true, uniqueness: true
   validates :datetime, presence: true
+  validate :_validate
 
   attr_accessor :content
 
@@ -63,6 +64,17 @@ class SchedulePage < ApplicationRecord
       nil
     else
       page_data
+    end
+  end
+
+  private
+
+  def _validate
+    page_data = parse
+
+    if page_data.nil? \
+      || page_data.length == 0
+      errors.add(:url, "Invalid html")
     end
   end
 

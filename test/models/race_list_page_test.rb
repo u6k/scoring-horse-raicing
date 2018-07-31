@@ -313,10 +313,10 @@ class RaceListPageTest < ActiveSupport::TestCase
 
   test "parse" do
     # precondition
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html")
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
 
-    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html")
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
     race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
 
     # execute
@@ -413,6 +413,49 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # postcondition
     assert_nil page_data
+  end
+
+  test "save, and overwrite" do
+    # precondition
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
+    schedule_page.save!
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+
+    # execute 1
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+
+    # postcondition 1
+    assert_equal 0, RaceListPage.all.length
+
+    assert race_list_page.valid?
+    assert_not @bucket.object("html/201806/20180603/race_list.html").exists?
+
+    # execute 2
+    race_list_page.save!
+
+    # postcondition 2
+    assert_equal 1, RaceListPage.all.length
+
+    assert @bucket.object("html/201806/20180603/race_list.html").exists?
+
+    # execute 3
+    race_list_page_2 = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+
+    # postcondition 3
+    assert_equal 1, RaceListPage.all.length
+
+    assert race_list_page_2.valid?
+    assert race_list_page.same?(race_list_page_2)
+
+    # execute 4
+    race_list_page_2.save!
+
+    # postcondition 4
+    assert_equal 1, RaceListPage.all.length
+
+    assert @bucket.object("html/201806/20180603/race_list.html").exists?
   end
 
 end

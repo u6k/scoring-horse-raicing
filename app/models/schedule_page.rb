@@ -57,7 +57,7 @@ class SchedulePage < ApplicationRecord
       end
     end
 
-    page_data.compact!
+    page_data.compact
   end
 
 end

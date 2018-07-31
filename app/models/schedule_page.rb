@@ -6,6 +6,9 @@ class SchedulePage < ApplicationRecord
 
   attr_accessor :content
 
+  before_save :_put_html
+  after_initialize :_get_html
+
   def self.download(year, month, content = nil)
     datetime = Time.zone.local(year, month, 1, 0, 0, 0)
     url = "https://keiba.yahoo.co.jp/schedule/list/#{datetime.year}/?month=#{datetime.month}"
@@ -23,6 +26,17 @@ class SchedulePage < ApplicationRecord
     schedule_page.content = content
 
     schedule_page
+  end
+
+  def same?(obj)
+    if not obj.instance_of?(SchedulePage)
+      false
+    elsif self.url != obj.url \
+      || self.parse != obj.parse
+      false
+    else
+      true
+    end
   end
 
   def parse
@@ -75,6 +89,26 @@ class SchedulePage < ApplicationRecord
     if page_data.nil? \
       || page_data.length == 0
       errors.add(:url, "Invalid html")
+    end
+  end
+
+  def _build_file_path
+    "html/#{datetime.strftime('%Y%m')}/schedule.html"
+  end
+
+  def _put_html
+    bucket = NetModule.get_s3_bucket
+
+    file_path = _build_file_path
+    NetModule.put_s3_object(bucket, file_path, @content)
+  end
+
+  def _get_html
+    bucket = NetModule.get_s3_bucket
+
+    file_path = _build_file_path
+    if bucket.object(file_path).exists?
+      @content = NetModule.get_s3_object(bucket, file_path)
     end
   end
 

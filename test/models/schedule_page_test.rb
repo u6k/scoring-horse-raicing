@@ -255,7 +255,8 @@ class SchedulePageTest < ActiveSupport::TestCase
 
   test "save, and overwrite" do
     # execute 1
-    schedule_page = SchedulePage.download(2018, 6)
+    html = File.open("test/fixtures/files/schedule.201806.html")
+    schedule_page = SchedulePage.download(2018, 6, html)
 
     # postcondition 1
     assert_equal 0, SchedulePage.all.length
@@ -272,7 +273,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert @bucket.object("html/201806/schedule.html").exists?
 
     # execute 3
-    schedule_page_2 = SchedulePage.download(2018, 6)
+    schedule_page_2 = SchedulePage.download(2018, 6, html)
 
     # postcondition 3
     assert_equal 1, SchedulePage.all.length

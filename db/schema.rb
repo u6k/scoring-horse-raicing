@@ -30,8 +30,10 @@ ActiveRecord::Schema.define(version: 2018_08_01_023110) do
     t.integer "race_number"
     t.datetime "start_datetime"
     t.string "race_name"
+    t.bigint "race_list_page_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["race_list_page_id"], name: "index_result_pages_on_race_list_page_id"
   end
 
   create_table "schedule_pages", force: :cascade do |t|
@@ -42,4 +44,5 @@ ActiveRecord::Schema.define(version: 2018_08_01_023110) do
   end
 
   add_foreign_key "race_list_pages", "schedule_pages"
+  add_foreign_key "result_pages", "race_list_pages"
 end

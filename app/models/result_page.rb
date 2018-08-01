@@ -2,7 +2,6 @@ class ResultPage < ApplicationRecord
 
   validates :url, presence: true, uniqueness: true
   validates :race_number, presence: true
-  validates :start_datetime, presence: true
   validates :race_name, presence: true
   validate :_validate
 

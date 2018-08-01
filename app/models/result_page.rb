@@ -4,9 +4,13 @@ class ResultPage < ApplicationRecord
   validates :race_number, presence: true
   validates :start_datetime, presence: true
   validates :race_name, presence: true
+  validate :_validate
 
   attr_accessor :content
   belongs_to :race_list_page
+
+  before_save :_put_html
+  after_initialize :_get_html
 
   def self.download(race_list_page, url, race_number, start_datetime, race_name, content = nil)
     if content.nil?
@@ -92,6 +96,51 @@ class ResultPage < ApplicationRecord
       nil
     else
       page_data
+    end
+  end
+
+  def same?(obj)
+    if not obj.instance_of?(ResultPage)
+      false
+    elsif self.url != obj.url \
+      || self.race_number != obj.race_number \
+      || self.start_datetime != obj.start_datetime \
+      || self.race_name != obj.race_name \
+      || (not self.race_list_page.same?(obj.race_list_page)) \
+      || self.parse != obj.parse
+      false
+    else
+      true
+    end
+  end
+
+  private
+
+  def _validate
+    page_data = parse
+
+    if page_data.nil?
+      errors.add(:url, "Invalid html")
+    end
+  end
+
+  def _build_file_path
+    "html/#{race_list_page.schedule_page.date.strftime('%Y%m')}/#{race_list_page.date.strftime('%Y%m%d')}/#{race_list_page.course_name}/#{race_number}/result.html"
+  end
+
+  def _put_html
+    bucket = NetModule.get_s3_bucket
+
+    file_path = _build_file_path
+    NetModule.put_s3_object(bucket, file_path, @content)
+  end
+
+  def _get_html
+    bucket = NetModule.get_s3_bucket
+
+    file_path = _build_file_path
+    if bucket.object(file_path).exists?
+      @content = NetModule.get_s3_object(bucket, file_path)
     end
   end
 

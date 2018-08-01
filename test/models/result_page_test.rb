@@ -480,5 +480,52 @@ class ResultPageTest < ActiveSupport::TestCase
     # postcondition
     assert_nil page_data
   end
-    
+
+  test "save, and overwrite" do
+    # precondition
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
+    schedule_page.save!
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+    race_list_page.save!
+
+    result_page_html = File.open("test/fixtures/files/result.20180624.tokyo.10.html").read
+
+    # execute 1
+    result_page = ResultPage.download(race_list_page, "https://keiba.yahoo.co.jp/race/list/18050308/", 10, Time.zone.local(2018, 6, 24, 14, 50, 0), "清里特別", result_page_html)
+
+    # postcondition 1
+    assert_equal 0, ResultPage.all.length
+
+    assert result_page.valid?
+    assert_not @bucket.object("html/201806/20180603/東京/10/result.html").exists?
+
+    # execute 2
+    result_page.save!
+
+    # postcondition 2
+    assert_equal 1, ResultPage.all.length
+
+    assert @bucket.object("html/201806/20180603/東京/10/result.html").exists?
+
+    # execute 3
+    result_page_2 = ResultPage.download(race_list_page, "https://keiba.yahoo.co.jp/race/list/18050308/", 10, Time.zone.local(2018, 6, 24, 14, 50, 0), "清里特別", result_page_html)
+
+    # postcondition 3
+    assert_equal 1, ResultPage.all.length
+
+    assert result_page.valid?
+    assert result_page.same?(result_page_2)
+
+    # execute 4
+    result_page_2.save!
+
+    # postcondition 2
+    assert_equal 1, ResultPage.all.length
+
+    assert @bucket.object("html/201806/20180603/東京/10/result.html").exists?
+  end
+
 end

@@ -160,4 +160,325 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_nil result_pages
   end
 
+  test "parse" do
+    # precondition
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+
+    result_page_html = File.open("test/fixtures/files/result.20180624.tokyo.10.html").read
+    result_page = ResultPage.download(race_list_page, "https://keiba.yahoo.co.jp/race/list/18050308/", 10, Time.zone.local(2018, 6, 24, 14, 50, 0), "清里特別", result_page_html)
+
+    # execute
+    page_data = result_page.parse
+
+    # postcondition
+    expected_data = {
+      menu: {
+        entries: "https://keiba.yahoo.co.jp/race/denma/1805030810/",
+        odds_win: "https://keiba.yahoo.co.jp/odds/tfw/1805030810/",
+      },
+      result: [
+        {
+          order_of_finish: 1,
+          bracket_number: 2,
+          horse_number: 3,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2015104347/",
+          horse_name: "ルッジェーロ",
+          finish_time: 82.7.to_d
+        },
+        {
+          order_of_finish: 2,
+          bracket_number: 5,
+          horse_number: 9,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2013109018/",
+          horse_name: "リスペクトアース",
+          finish_time: 82.7.to_d
+        },
+        {
+          order_of_finish: 3,
+          bracket_number: 1,
+          horse_number: 2,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2015110066/",
+          horse_name: "ジャスパーウィン",
+          finish_time: 82.7.to_d
+        },
+        {
+          order_of_finish: 4,
+          bracket_number: 4,
+          horse_number: 7,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2014103001/",
+          horse_name: "メイショウサチシオ",
+          finish_time: 82.8.to_d
+        },
+        {
+          order_of_finish: 5,
+          bracket_number: 2,
+          horse_number: 4,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2012103491/",
+          horse_name: "ダイワスキャンプ",
+          finish_time: 82.8.to_d
+        },
+        {
+          order_of_finish: 6,
+          bracket_number: 8,
+          horse_number: 16,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2014102262/",
+          horse_name: "ミスパイロ",
+          finish_time: 83.2.to_d
+        },
+        {
+          order_of_finish: 7,
+          bracket_number: 3,
+          horse_number: 6,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2014106109/",
+          horse_name: "ワシントンレガシー",
+          finish_time: 83.3.to_d
+        },
+        {
+          order_of_finish: 8,
+          bracket_number: 6,
+          horse_number: 11,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2013105547/",
+          horse_name: "アオイサンシャイン",
+          finish_time: 83.3.to_d
+        },
+        {
+          order_of_finish: 9,
+          bracket_number: 5,
+          horse_number: 10,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2012105841/",
+          horse_name: "ティアップサンダー",
+          finish_time: 83.3.to_d
+        },
+        {
+          order_of_finish: 10,
+          bracket_number: 1,
+          horse_number: 1,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2013103294/",
+          horse_name: "ララパルーザ",
+          finish_time: 83.4.to_d
+        },
+        {
+          order_of_finish: 11,
+          bracket_number: 7,
+          horse_number: 14,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2013103352/",
+          horse_name: "ノーブルサンズ",
+          finish_time: 83.7.to_d
+        },
+        {
+          order_of_finish: 12,
+          bracket_number: 4,
+          horse_number: 8,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2014104021/",
+          horse_name: "ワンダープラヤアン",
+          finish_time: 83.8.to_d
+        },
+        {
+          order_of_finish: 13,
+          bracket_number: 3,
+          horse_number: 5,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2015105066/",
+          horse_name: "レピアーウィット",
+          finish_time: 83.9.to_d
+        },
+        {
+          order_of_finish: 14,
+          bracket_number: 8,
+          horse_number: 15,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2015102713/",
+          horse_name: "ザイオン",
+          finish_time: 84.1.to_d
+        },
+        {
+          order_of_finish: 15,
+          bracket_number: 6,
+          horse_number: 12,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2012105220/",
+          horse_name: "ペプチドアルマ",
+          finish_time: 84.1.to_d
+        },
+        {
+          order_of_finish: 16,
+          bracket_number: 7,
+          horse_number: 13,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/2014100530/",
+          horse_name: "ヤマトワイルド",
+          finish_time: 85.3.to_d
+        }
+      ]
+    }
+
+    assert_equal page_data, expected_data
+  end
+
+  test "parse: case retire" do
+    # precondition
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+
+    result_page_html = File.open("test/fixtures/files/result.19860126.tyukyou.11.html").read
+    result_page = ResultPage.download(race_list_page, "https://www.example.com/result.19860126.tyukyou.11.html", 11, Time.zone.local(1986, 1, 26, 15, 35, 0), "中京スポーツ杯", result_page_html)
+
+    # execute
+    page_data = result_page.parse
+
+    # postcondition
+    expected_data = {
+      menu: {
+      },
+      result: [
+        {
+          order_of_finish: 1,
+          bracket_number: 5,
+          horse_number: 9,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1981105030/",
+          horse_name: "ハクリョウベル",
+          finish_time: 109.8.to_d
+        },
+        {
+          order_of_finish: 2,
+          bracket_number: 4,
+          horse_number: 8,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982101926/",
+          horse_name: "ルオースポート",
+          finish_time: 109.8.to_d
+        },
+        {
+          order_of_finish: 3,
+          bracket_number: 6,
+          horse_number: 12,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1980102195/",
+          horse_name: "メジロレマノ",
+          finish_time: 110.1.to_d
+        },
+        {
+          order_of_finish: 4,
+          bracket_number: 7,
+          horse_number: 14,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1981105305/",
+          horse_name: "オサイチセンプー",
+          finish_time: 110.2.to_d
+        },
+        {
+          order_of_finish: 5,
+          bracket_number: 3,
+          horse_number: 5,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1980106560/",
+          horse_name: "レインボーピット",
+          finish_time: 110.3.to_d
+        },
+        {
+          order_of_finish: 6,
+          bracket_number: 1,
+          horse_number: 2,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1981103008/",
+          horse_name: "ニットウタチバナ",
+          finish_time: 110.3.to_d
+        },
+        {
+          order_of_finish: 7,
+          bracket_number: 4,
+          horse_number: 7,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1980100417/",
+          horse_name: "テイダイ",
+          finish_time: 110.4.to_d
+        },
+        {
+          order_of_finish: 8,
+          bracket_number: 2,
+          horse_number: 3,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982104865/",
+          horse_name: "ファイブニッポン",
+          finish_time: 110.5.to_d
+        },
+        {
+          order_of_finish: 9,
+          bracket_number: 2,
+          horse_number: 4,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1981102714/",
+          horse_name: "ミスタースナーク",
+          finish_time: 110.6.to_d
+        },
+        {
+          order_of_finish: 10,
+          bracket_number: 6,
+          horse_number: 11,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982101034/",
+          horse_name: "トーアタイヘイ",
+          finish_time: 110.6.to_d
+        },
+        {
+          order_of_finish: 11,
+          bracket_number: 7,
+          horse_number: 13,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1980102046/",
+          horse_name: "アイリスクイン",
+          finish_time: 110.8.to_d
+        },
+        {
+          order_of_finish: 12,
+          bracket_number: 3,
+          horse_number: 6,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1981105157/",
+          horse_name: "エリザベートアイ",
+          finish_time: 111.0.to_d
+        },
+        {
+          order_of_finish: 13,
+          bracket_number: 1,
+          horse_number: 1,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982107263/",
+          horse_name: "コレハル",
+          finish_time: 111.3.to_d
+        },
+        {
+          order_of_finish: 14,
+          bracket_number: 8,
+          horse_number: 16,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982101932/",
+          horse_name: "ダイナソレイユ",
+          finish_time: 111.3.to_d
+        },
+        {
+          order_of_finish: 15,
+          bracket_number: 5,
+          horse_number: 10,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1982106904/",
+          horse_name: "ヘイアンスイート",
+          finish_time: 112.0.to_d
+        },
+        {
+          bracket_number: 8,
+          horse_number: 15,
+          horse_url: "https://keiba.yahoo.co.jp/directory/horse/1980102147/",
+          horse_name: "ドクターゴールド",
+        }
+      ]
+    }
+
+    assert_equal page_data, expected_data
+  end
+
+  test "parse: case invalid html" do
+    # precondition
+    schedule_page = SchedulePage.download(2018, 6, "Invalid html")
+
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", "Invalid html")
+
+    result_page = ResultPage.download(race_list_page, "https://www.example.com/result.19860126.tyukyou.11.html", 11, Time.zone.local(1986, 1, 26, 15, 35, 0), "中京スポーツ杯", "Invalid html")
+
+    # execute
+    page_data = result_page.parse
+
+    # postcondition
+    assert_nil page_data
+  end
+    
 end

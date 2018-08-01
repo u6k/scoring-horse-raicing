@@ -528,4 +528,30 @@ class ResultPageTest < ActiveSupport::TestCase
     assert @bucket.object("html/201806/20180603/東京/10/result.html").exists?
   end
 
+  test "find" do
+    # precondition
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
+    schedule_page.save!
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
+    race_list_page.save!
+
+    result_pages = race_list_page.download_result_pages
+    result_pages.each { |r| r.save! }
+
+    # execute
+    result_pages_db = race_list_page.result_pages
+
+    # postcondition
+    assert 12, result_pages_db.length
+
+    result_pages.each do |result_page|
+      result_page_db = result_pages_db.find { |r| r.url == result_page.url }
+
+      assert result_page.same?(result_page_db)
+    end
+  end
+
 end

@@ -7,6 +7,7 @@ class RaceListPage < ApplicationRecord
 
   attr_accessor :content
   belongs_to :schedule_page
+  has_many :result_pages
 
   before_save :_put_html
   after_initialize :_get_html
@@ -84,6 +85,18 @@ class RaceListPage < ApplicationRecord
       nil
     else
       page_data
+    end
+  end
+
+  def download_result_pages
+    page_data = parse
+
+    if page_data.nil?
+      nil
+    else
+      result_pages = page_data.map do |race_info|
+        ResultPage.download(self, race_info[:url], race_info[:race_number], race_info[:start_datetime], race_info[:race_name])
+      end
     end
   end
 

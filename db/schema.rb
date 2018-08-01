@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_31_080229) do
+ActiveRecord::Schema.define(version: 2018_08_01_023110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,17 @@ ActiveRecord::Schema.define(version: 2018_07_31_080229) do
     t.index ["schedule_page_id"], name: "index_race_list_pages_on_schedule_page_id"
   end
 
+  create_table "result_pages", force: :cascade do |t|
+    t.string "url"
+    t.integer "race_number"
+    t.datetime "start_datetime"
+    t.string "race_name"
+    t.bigint "race_list_page_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_list_page_id"], name: "index_result_pages_on_race_list_page_id"
+  end
+
   create_table "schedule_pages", force: :cascade do |t|
     t.string "url"
     t.datetime "date"
@@ -33,4 +44,5 @@ ActiveRecord::Schema.define(version: 2018_07_31_080229) do
   end
 
   add_foreign_key "race_list_pages", "schedule_pages"
+  add_foreign_key "result_pages", "race_list_pages"
 end

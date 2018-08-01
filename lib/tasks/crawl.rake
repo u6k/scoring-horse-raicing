@@ -68,4 +68,36 @@ namespace :crawl do
     raise "failed" if task_failed
   end
 
+  task :download_result_pages, [:year, :month, :day, :course_name] => :environment do |task, args|
+    Rails.logger.info "download_result_pages: start: year=#{args.year}, month=#{args.month}, day=#{args.day}, course_name=#{args.course_name}"
+
+    if args.year.nil? || args.month.nil?
+      race_list_pages = RaceListPage.all
+    elsif args.day.nil? || args.course_name.nil?
+      race_list_pages = SchedulePage.find_by_date(args.year, args.month).race_list_pages
+    else
+      race_list_pages = RaceListPage.where(date: Time.zone.local(args.year, args.month, args.day, 0, 0, 0), course_name: args.course_name)
+    end
+
+    task_failed = false
+    race_list_pages.each.with_index(1) do |race_list_page, index|
+      Rails.logger.info "download_result_pages: #{index}/#{race_list_pages.length}: start: date=#{race_list_page.date.strftime('%Y%m%d')}, course_name=#{race_list_page.course_name}"
+      begin
+        result_pages = race_list_page.download_result_pages
+        result_pages.each { |r| r.save! }
+        Rails.logger.info "download_result_pages: #{index}/#{race_list_pages.length}: end"
+      rescue => e
+        Rails.logger.error build_error_log(e)
+        task_failed = true
+      end
+    end
+
+    Rails.logger.info "download_result_pages: end"
+    raise "failed" if task_failed
+  end
+
+  def build_error_log(e)
+    "#{e.class} (#{e.message}):\n#{e.backtrace.join("\n")}"
+  end
+
 end

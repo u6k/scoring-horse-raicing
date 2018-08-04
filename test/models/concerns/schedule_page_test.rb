@@ -62,7 +62,7 @@ class SchedulePageTest < ActiveSupport::TestCase
 
   test "download: 当月の場合" do
     # execute - 当月をインスタンス化
-    schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.local.month)
+    schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
 
     # check
     assert 0, SchedulePage.find_all.length

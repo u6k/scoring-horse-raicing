@@ -16,28 +16,12 @@ class SchedulePage
   end
 
   def valid?
-    if @content.nil? && exists?
-      @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_name)
-    end
-
-    if @content.nil?
-      false
-    else
-      true # FIXME
-    end
-  end
-
-  def parse
-    if not valid?
-      raise "Content not cached"
-    end
-
-    [] # FIXME
+    (not _parse.nil?)
   end
 
   def save!
     if not valid?
-      raise "Content not downloaded"
+      raise "Invalid"
     end
 
     NetModule.put_s3_object(NetModule.get_s3_bucket, _build_s3_name, @content)
@@ -51,6 +35,26 @@ class SchedulePage
   end
 
   private
+
+  def _parse
+    if @content.nil? && exists?
+      @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_name)
+    end
+
+    if @content.nil?
+      return nil
+    end
+
+    doc = Nokogiri::HTML.parse(@content, nil, "UTF-8")
+
+    # FIXME
+    table = doc.at_xpath("//table[contains(@class, 'scheLs')]")
+    if table.nil?
+      return nil
+    end
+
+    []
+  end
 
   def _build_s3_name
     "html/schedule/schedule.#{@date.strftime('%Y%m')}.html"

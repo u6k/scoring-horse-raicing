@@ -15,9 +15,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_raises "Content not cached" do
-      schedule_page.parse
-    end
+    assert_not schedule_page.valid?
 
     # execute - ダウンロード
     schedule_page.download!
@@ -26,7 +24,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page.valid?
 
     # execute - 保存
     schedule_page.save!
@@ -35,29 +33,34 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page.valid?
 
-    data1 = schedule_page.parse
+    # execute - 再インスタンス化
+    schedule_page_2 = SchedulePage.new(2018, 6)
+
+    # check
+    assert 0, SchedulePage.find_all.length
+
+    assert schedule_page_2.exists?
+    assert schedule_page_2.valid?
 
     # execute - 再ダウンロードも可能
-    schedule_page.download!
+    schedule_page_2.download!
 
     # check
     assert 1, SchedulePage.find_all.length
 
-    assert schedule_page.exists?
-    assert_not_nil schedule_page.parse
-
-    assert_equal data1, schedule_page.parse
+    assert schedule_page_2.exists?
+    assert schedule_page_2.valid?
 
     # execute - 再保存は上書き
-    schedule_page.save!
+    schedule_page_2.save!
 
     # check
     assert 1, SchedulePage.find_all.length
 
-    assert schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page_2.exists?
+    assert schedule_page_2.valid?
   end
 
   test "download: 当月の場合" do
@@ -68,9 +71,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_raises "Content not cached" do
-      schedule_page.parse
-    end
+    assert_not schedule_page.valid?
 
     # execute - ダウンロード
     schedule_page.download!
@@ -79,7 +80,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page.valid?
 
     # execute - 保存
     schedule_page.save!
@@ -88,9 +89,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
-    assert_not_nil schedule_page.parse
-
-    data1 = schedule_page.parse
+    assert schedule_page.valid?
   end
 
   test "download: 来月(リンクが不完全)の場合" do
@@ -104,7 +103,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page.valid?
 
     # execute - 保存
     schedule_page.save!
@@ -113,7 +112,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
-    assert_not_nil schedule_page.parse
+    assert schedule_page.valid?
   end
 
   test "download: ページが存在しない月の場合" do
@@ -124,25 +123,19 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_raises "Content not cached" do
-      schedule_page.parse
-    end
+    assert_not schedule_page.valid?
 
     # execute - ダウンロード
-    assert_raises "Content not found" do
-      schedule_page.download!
-    end
+    schedule_page.download!
 
     # check
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_raises "Content not cached" do
-      schedule_page.parse
-    end
+    assert_not schedule_page.valid?
 
     # execute - 保存
-    assert_raises "Content not downloaded" do
+    assert_raises "Invalid" do
       schedule_page.save!
     end
 
@@ -150,9 +143,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
-    assert_raises "Content not cached" do
-      schedule_page.parse
-    end
+    assert_not schedule_page.valid?
   end
 
 #  test "parse" do

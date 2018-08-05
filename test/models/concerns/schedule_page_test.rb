@@ -451,30 +451,32 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
   end
 
-#  test "find" do
-#    # precondition
-#    schedule_page_198601 = SchedulePage.download(1986, 1, File.open("test/fixtures/files/schedule.198601.html").read)
-#    schedule_page_198601.save!
-#
-#    schedule_page_201806 = SchedulePage.download(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
-#    schedule_page_201806.save!
-#
-#    schedule_page_201808 = SchedulePage.download(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
-#    schedule_page_201808.save!
-#
-#    # execute
-#    schedule_pages = SchedulePage.all
-#
-#    schedule_page_2 = SchedulePage.find_by_date(2018, 6)
-#
-#    # postcondition
-#    assert_equal 3, schedule_pages.length
-#
-#    assert schedule_page_198601.same?(schedule_pages[0])
-#    assert schedule_page_201806.same?(schedule_pages[1])
-#    assert schedule_page_201808.same?(schedule_pages[2])
-#
-#    assert schedule_page_201806.same?(schedule_page_2)
-#  end
+  test "find" do
+    # execute - データがない状態で検索する
+    schedule_pages = SchedulePage.find_all
+
+    # check
+    assert_equal 0, schedule_pages.length
+
+    # setup - 3件のスケジュールページを保存する
+    schedule_page_198601 = SchedulePage.new(1986, 1, File.open("test/fixtures/files/schedule.198601.html").read)
+    schedule_page_198601.save!
+
+    schedule_page_201806 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_201806.save!
+
+    schedule_page_201808 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
+    schedule_page_201808.save!
+
+    # execute - 検索する
+    schedule_pages = SchedulePage.find_all
+
+    # check
+    assert_equal 3, schedule_pages.length
+
+    assert schedule_page_198601.same?(schedule_pages[0])
+    assert schedule_page_201806.same?(schedule_pages[1])
+    assert schedule_page_201808.same?(schedule_pages[2])
+  end
 
 end

@@ -60,7 +60,7 @@ class SchedulePage
     page_data = doc.xpath("//table[contains(@class, 'scheLs')]/tbody/tr/td[position()=1 and @rowspan='2']").map do |td|
       course_info = {}
 
-      td.text.match(/([0-9]+)$BF|(B/) do |day|
+      td.text.match(/([0-9]+)日/) do |day|
         course_info[:date] = Time.zone.local(self.date.year, \
           self.date.month, \
           day[1].to_i, \
@@ -72,7 +72,7 @@ class SchedulePage
           course_info[:url] = "https://keiba.yahoo.co.jp" + path[0]
         end
 
-        td.xpath("a").text.match(/^[0-9]+$B2s(B(.+?)[0-9]+$BF|(B$/) do |course|
+        td.xpath("a").text.match(/^[0-9]+回(.+?)[0-9]+日$/) do |course|
           course_info[:course_name] = course[1]
         end
       end

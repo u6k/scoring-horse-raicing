@@ -2,10 +2,14 @@ class SchedulePage
   extend ActiveSupport::Concern
 
   def self.find_all
-    NetModule.get_s3_bucket.objects(prefix: "html/schedule/schedule.").map do |s3_obj|
-      date_str = s3_obj.key.match(/schedule\.([0-9]+)\.html/)[1]
-      SchedulePage.new(date_str[0..3].to_i, date_str[4..5].to_i)
+    schedule_pages = NetModule.get_s3_bucket.objects(prefix: "html/schedule/schedule.").map do |s3_obj|
+      if s3_obj.key.match(/schedule\.([0-9]+)\.html$/)
+        date_str = s3_obj.key.match(/schedule\.([0-9]+)\.html/)[1]
+        SchedulePage.new(date_str[0..3].to_i, date_str[4..5].to_i)
+      end
     end
+
+    schedule_pages.compact
   end
 
   def initialize(year, month, content = nil)

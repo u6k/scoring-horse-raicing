@@ -1,6 +1,8 @@
 class SchedulePage
   extend ActiveSupport::Concern
 
+  attr_reader :date, :url
+
   def self.find_all
     schedule_pages = NetModule.get_s3_bucket.objects(prefix: "html/schedule/schedule.").map do |s3_obj|
       if s3_obj.key.match(/schedule\.([0-9]+)\.html$/)
@@ -55,6 +57,27 @@ class SchedulePage
     page_data.map do |course_info|
       RaceListPage.new(course_info[:url], course_info[:date], course_info[:course_name])
     end
+  end
+
+  def same?(obj)
+    if not obj.instance_of?(SchedulePage)
+      return false
+    end
+
+    if self.date != obj.date \
+      || self.url != obj.url
+      return false
+    end
+
+    self.race_list_pages.each do |p1|
+      p2 = obj.race_list_pages.find { |p| p1.url == p.url }
+
+      if not p1.same?(p2)
+        return false
+      end
+    end
+
+    true
   end
 
   private

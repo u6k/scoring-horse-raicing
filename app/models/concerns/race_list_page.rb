@@ -17,4 +17,18 @@ class RaceListPage
     false
   end
 
+  def same?(obj)
+    if not obj.instance_of?(RaceListPage)
+      return false
+    end
+
+    if self.url != obj.url \
+      || self.date != obj.date \
+      || self.course_name != obj.course_name
+      return false
+    end
+
+    true
+  end
+
 end

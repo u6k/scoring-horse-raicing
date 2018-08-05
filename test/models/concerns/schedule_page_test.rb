@@ -390,42 +390,66 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_nil race_list_pages
   end
 
-#  test "save, and overwrite" do
-#    # execute 1
-#    html = File.open("test/fixtures/files/schedule.201806.html").read
-#    schedule_page = SchedulePage.download(2018, 6, html)
-#
-#    # postcondition 1
-#    assert_equal 0, SchedulePage.all.length
-#
-#    assert schedule_page.valid?
-#    assert_not @bucket.object("html/201806/schedule.html").exists?
-#
-#    # execute 2
-#    schedule_page.save!
-#
-#    # postcondition 2
-#    assert_equal 1, SchedulePage.all.length
-#
-#    assert @bucket.object("html/201806/schedule.html").exists?
-#
-#    # execute 3
-#    schedule_page_2 = SchedulePage.download(2018, 6, html)
-#
-#    # postcondition 3
-#    assert_equal 1, SchedulePage.all.length
-#
-#    assert schedule_page_2.valid?
-#    assert schedule_page.same?(schedule_page_2)
-#
-#    # execute 4
-#    schedule_page_2.save!
-#
-#    # postcondition 4
-#    assert_equal 1, SchedulePage.all.length
-#
-#    assert @bucket.object("html/201806/schedule.html").exists?
-#  end
+  test "save, and overwrite" do
+    # execute 1
+    html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, html)
+
+    # postcondition 1
+    assert_equal 0, SchedulePage.find_all.length
+
+    assert_not schedule_page.exists?
+    assert schedule_page.valid?
+
+    # execute 2
+    schedule_page.save!
+
+    # postcondition 2
+    assert_equal 1, SchedulePage.find_all.length
+
+    assert schedule_page.exists?
+    assert schedule_page.valid?
+
+    # execute 3
+    schedule_page.download!
+
+    # postcondition 3
+    assert_equal 1, SchedulePage.find_all.length
+
+    assert schedule_page.exists?
+    assert schedule_page.valid?
+
+    # execute 4
+    schedule_page.save!
+
+    # postcondition 4
+    assert_equal 1, SchedulePage.find_all.length
+
+    assert schedule_page.exists?
+    assert schedule_page.valid?
+  end
+
+  test "can't save: invalid" do
+    # execute 1
+    schedule_page = SchedulePage.new(1900, 1, "Invalid html")
+
+    # postcondition 1
+    assert_equal 0, SchedulePage.find_all.length
+
+    assert_not schedule_page.exists?
+    assert_not schedule_page.valid?
+
+    # execute 2
+    assert_raises "Invalid" do
+      schedule_page.save!
+    end
+
+    # postcondition 2
+    assert_equal 0, SchedulePage.find_all.length
+
+    assert_not schedule_page.exists?
+    assert_not schedule_page.valid?
+  end
 
 #  test "find" do
 #    # precondition

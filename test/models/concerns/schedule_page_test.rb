@@ -147,14 +147,14 @@ class SchedulePageTest < ActiveSupport::TestCase
   end
 
   test "parse" do
-    # precondition
+    # setup
     html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, html)
 
-    # execute
+    # execute - 2018/6のスケジュールをパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
 
-    # postcondition
+    # check
     assert schedule_page.valid?
 
     assert_equal 23, race_list_pages.length
@@ -322,14 +322,14 @@ class SchedulePageTest < ActiveSupport::TestCase
   end
 
   test "parse: case line skip" do
-    # precondition
+    # setup
     html = File.open("test/fixtures/files/schedule.201808.html").read
     schedule_page = SchedulePage.new(2018, 8, html)
 
-    # execute
+    # execute - 2018/8のスケジュール(一部のリンクが不完全)をパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
 
-    # postcondition
+    # check
     assert schedule_page.valid?
 
     assert_equal 6, race_list_pages.length
@@ -378,51 +378,51 @@ class SchedulePageTest < ActiveSupport::TestCase
   end
 
   test "parse: case invalid html" do
-    # precondition
+    # setup - 不正なHTMLでインスタンス化
     schedule_page = SchedulePage.new(1900, 1, "Invalid HTML")
 
     # execute
     race_list_pages = schedule_page.race_list_pages
 
-    # postcondition
+    # check
     assert_not schedule_page.valid?
 
     assert_nil race_list_pages
   end
 
   test "save, and overwrite" do
-    # execute 1
+    # execute - インスタンス化
     html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, html)
 
-    # postcondition 1
+    # check
     assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert schedule_page.valid?
 
-    # execute 2
+    # execute - 保存
     schedule_page.save!
 
-    # postcondition 2
+    # check
     assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
     assert schedule_page.valid?
 
-    # execute 3
+    # execute - 再ダウンロード
     schedule_page.download!
 
-    # postcondition 3
+    # check
     assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
     assert schedule_page.valid?
 
-    # execute 4
+    # execute - 再保存
     schedule_page.save!
 
-    # postcondition 4
+    # check
     assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
@@ -430,21 +430,21 @@ class SchedulePageTest < ActiveSupport::TestCase
   end
 
   test "can't save: invalid" do
-    # execute 1
+    # execute - 不正なHTMLをインスタンス化
     schedule_page = SchedulePage.new(1900, 1, "Invalid html")
 
-    # postcondition 1
+    # check
     assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
-    # execute 2
+    # execute - 保存しようとして例外がスローされる
     assert_raises "Invalid" do
       schedule_page.save!
     end
 
-    # postcondition 2
+    # check
     assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
@@ -477,6 +477,26 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page_198601.same?(schedule_pages[0])
     assert schedule_page_201806.same?(schedule_pages[1])
     assert schedule_page_201808.same?(schedule_pages[2])
+  end
+
+  test "same" do
+    # setup - 比較するデータをインスタンス化
+    schedule_page_1 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_1.save!
+
+    schedule_page_2 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_2.save!
+
+    schedule_page_3 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_3.save!
+
+    schedule_page_4 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
+    schedule_page_4.save!
+
+    # check
+    assert schedule_page_1.same?(schedule_page_2)     # 同じデータはtrue
+    assert_not schedule_page_2.same?(schedule_page_3) # 日付が異なるのでfalse
+    assert_not schedule_page_3.same?(schedule_page_4) # コンテンツが異なるのでfalse
   end
 
 end

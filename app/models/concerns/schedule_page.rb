@@ -10,7 +10,14 @@ class SchedulePage
 
   def initialize(year, month, content = nil)
     @date = Time.zone.local(year, month, 1)
-    @content = content
+
+    if not content.nil?
+      @content = content
+    elsif exists?
+      @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_name)
+    else
+      @content = nil
+    end
   end
 
   def download!
@@ -35,11 +42,13 @@ class SchedulePage
   end
 
   def race_list_pages
-    if not valid?
+    page_data = _parse
+
+    if page_data.nil?
       return nil
     end
 
-    _parse.map do |course_info|
+    page_data.map do |course_info|
       RaceListPage.new(course_info[:url], course_info[:date], course_info[:course_name])
     end
   end
@@ -47,10 +56,6 @@ class SchedulePage
   private
 
   def _parse
-    if @content.nil? && exists?
-      @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_name)
-    end
-
     if @content.nil?
       return nil
     end
@@ -61,10 +66,7 @@ class SchedulePage
       course_info = {}
 
       td.text.match(/([0-9]+)日/) do |day|
-        course_info[:date] = Time.zone.local(self.date.year, \
-          self.date.month, \
-          day[1].to_i, \
-          0, 0, 0)
+        course_info[:date] = Time.zone.local(@date.year, @date.month, day[1].to_i, 0, 0, 0)
       end
 
       if not td.xpath("a").empty?

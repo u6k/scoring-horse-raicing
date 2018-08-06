@@ -1,8 +1,13 @@
 namespace :crawl do
 
-  task :download_schedule_pages, [:year, :month] => :environment do |task, args|
-    Rails.logger.info "download_schedule_pages: start: year=#{args.year}, month=#{args.month}"
+  def build_error_log(e)
+    "#{e.class} (#{e.message}):\n#{e.backtrace.join("\n")}"
+  end
 
+  task :download_schedule_pages, [:year, :month, :missing_only] => :environment do |task, args|
+    Rails.logger.info "download_schedule_pages: start: year=#{args.year}, month=#{args.month}, missing_only=#{args.missing_only}"
+
+    # setup
     if args.year.nil? || args.month.nil?
       target_date = Time.zone.local(1986, 1, 1, 0, 0, 0)
       end_date = Time.zone.local(Time.zone.now.year, Time.zone.now.month, 1, 0, 0, 0)
@@ -11,19 +16,32 @@ namespace :crawl do
       end_date = Time.zone.local(args.year, args.month, 1, 0, 0, 0)
     end
 
+    missing_only = (args.missing_only == "false" ? false : true)
+
+    Rails.logger.info "download_schedule_pages: args: target_date=#{target_date.strftime('%Y%m%d')}, missing_only=#{missing_only}"
+
+    # setting download scope
     dates = []
     while (target_date <= end_date) do
       dates << target_date
       target_date += 1.month
     end
 
+    Rails.logger.info "download_schedule_pages: download scope: dates=#{dates}"
+
+    # download
     task_failed = false
     dates.each.with_index(1) do |date, index|
       Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: start: date=#{date.strftime('%Y%m')}"
       begin
-        schedule_page = SchedulePage.download(date.year, date.month)
-        schedule_page.save!
-        Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: end"
+        schedule_page = SchedulePage.new(date.year, date.month)
+        if missing_only && schedule_page.exists?
+          Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: skip"
+        else
+          schedule_page.download!
+          schedule_page.save!
+          Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: end"
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true
@@ -32,10 +50,6 @@ namespace :crawl do
 
     Rails.logger.info "download_schedule_pages: end"
     raise "failed" if task_failed
-  end
-
-  def build_error_log(e)
-    "#{e.class} (#{e.message}):\n#{e.backtrace.join("\n")}"
   end
 
   task :download_race_list_pages, [:year, :month] => :environment do |task, args|
@@ -94,10 +108,6 @@ namespace :crawl do
 
     Rails.logger.info "download_result_pages: end"
     raise "failed" if task_failed
-  end
-
-  def build_error_log(e)
-    "#{e.class} (#{e.message}):\n#{e.backtrace.join("\n")}"
   end
 
 end

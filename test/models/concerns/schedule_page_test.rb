@@ -12,7 +12,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(2018, 6)
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
@@ -21,7 +21,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download!
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert schedule_page.valid?
@@ -30,7 +30,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
     assert schedule_page.valid?
@@ -39,7 +39,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2 = SchedulePage.new(2018, 6)
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
@@ -48,7 +48,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2.download!
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
@@ -57,7 +57,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2.save!
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
@@ -68,7 +68,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
@@ -77,7 +77,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download!
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert schedule_page.valid?
@@ -86,7 +86,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
     assert schedule_page.valid?
@@ -100,7 +100,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(2018, 8, html)
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert schedule_page.valid?
@@ -109,7 +109,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert 1, SchedulePage.find_all.length
+    assert_equal 1, SchedulePage.find_all.length
 
     assert schedule_page.exists?
     assert schedule_page.valid?
@@ -120,7 +120,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(1900, 1)
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
@@ -129,7 +129,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download!
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
@@ -140,7 +140,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert 0, SchedulePage.find_all.length
+    assert_equal 0, SchedulePage.find_all.length
 
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?

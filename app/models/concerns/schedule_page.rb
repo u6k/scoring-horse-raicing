@@ -55,7 +55,7 @@ class SchedulePage
     end
 
     page_data.map do |course_info|
-      RaceListPage.new(course_info[:url], course_info[:date], course_info[:course_name])
+      RaceListPage.new(course_info[:race_id])
     end
   end
 
@@ -70,7 +70,7 @@ class SchedulePage
     end
 
     self.race_list_pages.each do |p1|
-      p2 = obj.race_list_pages.find { |p| p1.url == p.url }
+      p2 = obj.race_list_pages.find { |p| p1.race_id == p.race_id }
 
       if not p1.same?(p2)
         return false
@@ -97,8 +97,9 @@ class SchedulePage
       end
 
       if not td.xpath("a").empty?
-        td.xpath("a").attribute("href").value.match(/^\/race\/list\/[0-9]+\/$/) do |path|
+        td.xpath("a").attribute("href").value.match(/^\/race\/list\/([0-9]+)\/$/) do |path|
           course_info[:url] = "https://keiba.yahoo.co.jp" + path[0]
+          course_info[:race_id] = path[1]
         end
 
         td.xpath("a").text.match(/^[0-9]+回(.+?)[0-9]+日$/) do |course|

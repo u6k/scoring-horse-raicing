@@ -331,8 +331,10 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.new("18090308", race_list_page_html)
 
     # check
+    assert_equal "18090308", race_list_page.race_id
     assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
     assert_equal "阪神", race_list_page.course_name
+    assert race_list_page.valid?
 
     assert_equal 12, race_list_page.result_pages.length
 
@@ -472,49 +474,80 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil race_list_page.result_pages
   end
 
-#  test "save, and overwrite" do
-#    # precondition
-#    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-#    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
-#    schedule_page.save!
-#
-#    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
-#
-#    # execute 1
-#    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
-#
-#    # postcondition 1
-#    assert_equal 0, RaceListPage.all.length
-#
-#    assert race_list_page.valid?
-#    assert_not @bucket.object("html/201806/20180603/東京/race_list.html").exists?
-#
-#    # execute 2
-#    race_list_page.save!
-#
-#    # postcondition 2
-#    assert_equal 1, RaceListPage.all.length
-#
-#    assert @bucket.object("html/201806/20180603/東京/race_list.html").exists?
-#
-#    # execute 3
-#    race_list_page_2 = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
-#
-#    # postcondition 3
-#    assert_equal 1, RaceListPage.all.length
-#
-#    assert race_list_page_2.valid?
-#    assert race_list_page.same?(race_list_page_2)
-#
-#    # execute 4
-#    race_list_page_2.save!
-#
-#    # postcondition 4
-#    assert_equal 1, RaceListPage.all.length
-#
-#    assert @bucket.object("html/201806/20180603/東京/race_list.html").exists?
-#  end
-#
+  test "save, and overwrite" do
+    # setup
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180624.hanshin.html").read
+
+    # execute - インスタンス化 & パース
+    race_list_page = RaceListPage.new("18090308", race_list_page_html)
+
+    # check
+    assert_equal 0, RaceListPage.find_all.length
+
+    assert_equal "18090308", race_list_page.race_id
+    assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
+    assert_equal "阪神", race_list_page.course_name
+    assert_equal 12, race_list_page.result_pages.length
+    assert race_list_page.valid?
+    assert_not race_list_page.exists?
+
+    # execute - 保存
+    race_list_page.save!
+
+    # check
+    assert_equal 1, RaceListPage.find_all.length
+
+    assert race_list_page.valid?
+    assert race_list_page.exists?
+
+    # execute - 再ダウンロード
+    race_list_page.download_from_web!
+
+    # check
+    assert_equal 1, RaceListPage.find_all.length
+
+    assert race_list_page.valid?
+    assert race_list_page.exists?
+
+    # execute - 再保存
+    race_list_page.save!
+
+    # check
+    assert_equal 1, RaceListPage.find_all.length
+
+    assert race_list_page.valid?
+    assert race_list_page.exists?
+  end
+
+  test "can't save: invalid" do
+    # setup
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+
+    # execute - 不正なHTMLをインスタンス化
+    race_list_page = RaceListPage.new("aaaaaaaa", "Invalid html")
+
+    # check
+    assert_equal 0, RaceListPage.find_all.length
+
+    assert_not race_list_page.valid?
+    assert_not race_list_page.exists?
+
+    # execute - 保存しようとして例外がスローされる
+    assert_raises "Invalid" do
+      race_list_page.save!
+    end
+
+    # check
+    assert_equal 0, RaceListPage.find_all.length
+
+    assert_not race_list_page.valid?
+    assert_not race_list_page.exists?
+  end
+
 #  test "find" do
 #    # precondition
 #    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read

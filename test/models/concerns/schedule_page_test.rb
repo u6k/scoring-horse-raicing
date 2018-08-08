@@ -14,15 +14,18 @@ class SchedulePageTest < ActiveSupport::TestCase
     # check
     assert_equal 0, SchedulePage.find_all.length
 
+    assert_equal Time.zone.local(2018, 6, 1), schedule_page.date
+    assert_nil schedule_page.race_list_pages
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
     # execute - ダウンロード
-    schedule_page.download!
+    schedule_page.download_from_web!
 
     # check
     assert_equal 0, SchedulePage.find_all.length
 
+    assert_equal 23, schedule_page.race_list_pages.length
     assert_not schedule_page.exists?
     assert schedule_page.valid?
 
@@ -32,6 +35,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     # check
     assert_equal 1, SchedulePage.find_all.length
 
+    assert_equal 23, schedule_page.race_list_pages.length
     assert schedule_page.exists?
     assert schedule_page.valid?
 
@@ -41,15 +45,17 @@ class SchedulePageTest < ActiveSupport::TestCase
     # check
     assert_equal 1, SchedulePage.find_all.length
 
+    assert_nil schedule_page_2.race_list_pages
     assert schedule_page_2.exists?
-    assert schedule_page_2.valid?
+    assert_not schedule_page_2.valid?
 
     # execute - 再ダウンロードも可能
-    schedule_page_2.download!
+    schedule_page_2.download_from_s3!
 
     # check
     assert_equal 1, SchedulePage.find_all.length
 
+    assert_equal 23, schedule_page_2.race_list_pages.length
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
 
@@ -59,6 +65,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     # check
     assert_equal 1, SchedulePage.find_all.length
 
+    assert_equal 23, schedule_page_2.race_list_pages.length
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
   end
@@ -74,7 +81,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
 
     # execute - ダウンロード
-    schedule_page.download!
+    schedule_page.download_from_web!
 
     # check
     assert_equal 0, SchedulePage.find_all.length
@@ -126,7 +133,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
 
     # execute - ダウンロード
-    schedule_page.download!
+    schedule_page.download_from_web!
 
     # check
     assert_equal 0, SchedulePage.find_all.length
@@ -148,8 +155,8 @@ class SchedulePageTest < ActiveSupport::TestCase
 
   test "parse" do
     # setup
-    html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, html)
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
 
     # execute - 2018/6のスケジュールをパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
@@ -346,8 +353,8 @@ class SchedulePageTest < ActiveSupport::TestCase
 
   test "parse: case line skip" do
     # setup
-    html = File.open("test/fixtures/files/schedule.201808.html").read
-    schedule_page = SchedulePage.new(2018, 8, html)
+    schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
+    schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
 
     # execute - 2018/8のスケジュール(一部のリンクが不完全)をパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
@@ -410,19 +417,16 @@ class SchedulePageTest < ActiveSupport::TestCase
     # setup - 不正なHTMLでインスタンス化
     schedule_page = SchedulePage.new(1900, 1, "Invalid HTML")
 
-    # execute
-    race_list_pages = schedule_page.race_list_pages
-
     # check
+    assert_equal Time.zone.local(1900, 1, 1), schedule_page.date
+    assert_nil schedule_page.race_list_pages
     assert_not schedule_page.valid?
-
-    assert_nil race_list_pages
   end
 
   test "save, and overwrite" do
     # execute - インスタンス化
-    html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, html)
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
 
     # check
     assert_equal 0, SchedulePage.find_all.length
@@ -440,7 +444,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page.valid?
 
     # execute - 再ダウンロード
-    schedule_page.download!
+    schedule_page.download_from_web!
 
     # check
     assert_equal 1, SchedulePage.find_all.length
@@ -503,9 +507,11 @@ class SchedulePageTest < ActiveSupport::TestCase
     # check
     assert_equal 3, schedule_pages.length
 
-    assert schedule_page_198601.same?(schedule_pages[0])
-    assert schedule_page_201806.same?(schedule_pages[1])
-    assert schedule_page_201808.same?(schedule_pages[2])
+    schedule_pages.each { |s| s.download_from_s3! }
+
+    assert schedule_page_198601.same?(schedule_pages.find { |s| s.date == schedule_page_198601.date })
+    assert schedule_page_201806.same?(schedule_pages.find { |s| s.date == schedule_page_201806.date })
+    assert schedule_page_201808.same?(schedule_pages.find { |s| s.date == schedule_page_201808.date })
   end
 
   test "same" do

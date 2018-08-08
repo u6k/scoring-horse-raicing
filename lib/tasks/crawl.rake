@@ -38,7 +38,7 @@ namespace :crawl do
         if missing_only && schedule_page.exists?
           Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: skip"
         else
-          schedule_page.download!
+          schedule_page.download_from_web!
           schedule_page.save!
           Rails.logger.info "download_schedule_pages: #{index}/#{dates.length}: end"
         end

@@ -163,7 +163,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050301", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -171,7 +171,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090301", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -179,7 +179,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050302", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -187,7 +187,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090302", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -195,7 +195,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050303", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -203,7 +203,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090303", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -211,7 +211,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050304", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -219,7 +219,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090304", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -227,7 +227,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18020101", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -235,7 +235,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050305", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -243,7 +243,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090305", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -251,7 +251,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18020102", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -259,7 +259,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050306", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -267,7 +267,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090306", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -275,7 +275,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18020103", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -283,7 +283,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050307", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -291,7 +291,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090307", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -299,7 +299,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18020104", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -307,7 +307,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18050308", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -315,7 +315,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18090308", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -323,7 +323,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18020105", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -331,7 +331,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18030201", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -339,7 +339,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18070301", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
-    assert_nil race_list_page.entry_pages
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
   end
@@ -361,6 +361,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18010103", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -368,6 +369,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18040203", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -375,6 +377,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18100203", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -382,6 +385,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18010104", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -389,6 +393,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18040204", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -396,6 +401,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_equal "18100204", race_list_page.race_id
     assert_nil race_list_page.date
     assert_nil race_list_page.course_name
+    assert_nil race_list_page.result_pages
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
   end

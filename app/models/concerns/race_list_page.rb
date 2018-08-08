@@ -1,7 +1,7 @@
 class RaceListPage
   extend ActiveSupport::Concern
 
-  attr_reader :race_id, :date, :course_name, :entry_pages
+  attr_reader :race_id, :date, :course_name, :result_pages
 
   def self.find_all
     race_list_pages = NetModule.get_s3_bucket.objects(prefix: "html/race_list/race_list.").map do |s3_obj|
@@ -15,6 +15,9 @@ class RaceListPage
 
   def initialize(race_id, content = nil)
     @race_id = race_id
+    @content = content
+
+    _parse
   end
 
   def download_from_web!
@@ -36,7 +39,7 @@ class RaceListPage
   def valid?
     ((not @date.nil?) \
     && (not @course_name.nil?) \
-    && (not @entry_pages.nil?) \
+    && (not @result_pages.nil?) \
     && (not @content.nil?))
   end
 
@@ -71,21 +74,31 @@ class RaceListPage
 
     doc = Nokogiri::HTML.parse(@content, nil, "UTF-8")
 
-    doc.at_xpath("//div[@id='cornerTit']/h4").text.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
-      @date = Time.zone.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
+    h4 = doc.at_xpath("//div[@id='cornerTit']/h4")
+    if not h4.nil?
+      h4.text.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
+        @date = Time.zone.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
+      end
     end
 
-    @course_name = doc.at_xpath("//li[@id='racePlaceNaviC']/a").text
+    a = doc.at_xpath("//li[@id='racePlaceNaviC']/a")
+    if not a.nil?
+      @course_name = a.text
+    end
 
-    @entry_pages = doc.xpath("//table[@class='scheLs']/tbody/tr").map do |tr|
-      tr.at_xpath("td[@class='wsLB']/a") do |a|
+    @result_pages = doc.xpath("//table[@class='scheLs']/tbody/tr").map do |tr|
+      a = tr.at_xpath("td[@class='wsLB']/a")
+      if not a.nil?
         a.attribute("href").value.match(/^\/race\/result\/([0-9]+)\/$/) do |path|
-          EntryPage.new(path[1])
+          ResultPage.new(path[1])
         end
       end
     end
 
-    @entry_pages.compact!
+    @result_pages.compact!
+    if @result_pages.empty?
+      @result_pages = nil
+    end
   end
 
   def _build_url

@@ -332,7 +332,7 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # check
     assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
-    assert_equal "阪神", race_list_page.course
+    assert_equal "阪神", race_list_page.course_name
 
     assert_equal 12, race_list_page.result_pages.length
 
@@ -343,8 +343,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[1]
     assert_equal "1809030802", result_page.result_id
@@ -353,8 +353,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[2]
     assert_equal "1809030803", result_page.result_id
@@ -363,8 +363,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[3]
     assert_equal "1809030804", result_page.result_id
@@ -373,8 +373,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[4]
     assert_equal "1809030805", result_page.result_id
@@ -383,8 +383,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[5]
     assert_equal "1809030806", result_page.result_id
@@ -393,8 +393,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[6]
     assert_equal "1809030807", result_page.result_id
@@ -403,8 +403,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[7]
     assert_equal "1809030808", result_page.result_id
@@ -413,8 +413,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[8]
     assert_equal "1809030809", result_page.result_id
@@ -423,8 +423,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[9]
     assert_equal "1809030810", result_page.result_id
@@ -433,8 +433,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[10]
     assert_equal "1809030811", result_page.result_id
@@ -443,8 +443,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
 
     result_page = race_list_page.result_pages[11]
     assert_equal "1809030812", result_page.result_id
@@ -453,8 +453,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil result_page.start_datetime
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
-    assert_not result_pages.valid?
-    assert_not result_pages.exists?
+    assert_not result_page.valid?
+    assert_not result_page.exists?
   end
 
   test "parse: case invalid html" do
@@ -466,8 +466,9 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.new("aaaaaaaaaa", "Invalid html")
 
     # postcondition
+    assert_equal "aaaaaaaaaa", race_list_page.race_id
     assert_nil race_list_page.date
-    assert_nil race_list_page.course
+    assert_nil race_list_page.course_name
     assert_nil race_list_page.result_pages
   end
 

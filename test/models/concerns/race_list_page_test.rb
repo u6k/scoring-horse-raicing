@@ -320,110 +320,157 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_not race_list_page.valid?
   end
 
-#  test "parse" do
-#    # precondition
-#    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-#    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
-#
-#    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
-#    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
-#
-#    # execute
-#    page_data = race_list_page.parse
-#
-#    # postcondition
-#    expected_data = [
-#      {
-#        race_number: 1,
-#        start_datetime: Time.zone.local(2018, 6, 3, 10, 5, 0),
-#        race_name: "サラ系3歳未勝利",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030201/"
-#      },
-#      {
-#        race_number: 2,
-#        start_datetime: Time.zone.local(2018, 6, 3, 10, 35, 0),
-#        race_name: "サラ系3歳未勝利",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030202/"
-#      },
-#      {
-#        race_number: 3,
-#        start_datetime: Time.zone.local(2018, 6, 3, 11, 05, 0),
-#        race_name: "サラ系3歳未勝利",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030203/"
-#      },
-#      {
-#        race_number: 4,
-#        start_datetime: Time.zone.local(2018, 6, 3, 11, 35, 0),
-#        race_name: "サラ系3歳未勝利",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030204/"
-#      },
-#      {
-#        race_number: 5,
-#        start_datetime: Time.zone.local(2018, 6, 3, 12, 25, 0),
-#        race_name: "サラ系2歳新馬",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030205/"
-#      },
-#      {
-#        race_number: 6,
-#        start_datetime: Time.zone.local(2018, 6, 3, 12, 55, 0),
-#        race_name: "サラ系2歳新馬",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030206/"
-#      },
-#      {
-#        race_number: 7,
-#        start_datetime: Time.zone.local(2018, 6, 3, 13, 25, 0),
-#        race_name: "サラ系3歳上500万円以下",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030207/"
-#      },
-#      {
-#        race_number: 8,
-#        start_datetime: Time.zone.local(2018, 6, 3, 13, 55, 0),
-#        race_name: "サラ系3歳上500万円以下",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030208/"
-#      },
-#      {
-#        race_number: 9,
-#        start_datetime: Time.zone.local(2018, 6, 3, 14, 25, 0),
-#        race_name: "ホンコンジョッキークラブトロフィー",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030209/"
-#      },
-#      {
-#        race_number: 10,
-#        start_datetime: Time.zone.local(2018, 6, 3, 15, 01, 0),
-#        race_name: "由比ヶ浜特別",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030210/"
-#      },
-#      {
-#        race_number: 11,
-#        start_datetime: Time.zone.local(2018, 6, 3, 15, 40, 0),
-#        race_name: "安田記念（GI）",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030211/"
-#      },
-#      {
-#        race_number: 12,
-#        start_datetime: Time.zone.local(2018, 6, 3, 16, 25, 0),
-#        race_name: "三浦特別",
-#        url: "https://keiba.yahoo.co.jp/race/result/1805030212/"
-#      },
-#    ]
-#
-#    assert_equal page_data, expected_data
-#  end
-#
-#  test "parse: case invalid html" do
-#    # precondition
-#    html = File.open("test/fixtures/files/schedule.201808.html").read
-#    schedule_page = SchedulePage.download(2018, 8, html)
-#
-#    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/00000000/", Time.zone.local(1900, 1, 1), "東京", "Invalid html")
-#
-#    # execute
-#    page_data = race_list_page.parse
-#
-#    # postcondition
-#    assert_nil page_data
-#  end
-#
+  test "parse" do
+    # setup
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+
+    race_list_page_html = File.open("test/fixtures/files/race_list.20180624.hanshin.html").read
+
+    # execute
+    race_list_page = RaceListPage.new("18090308", race_list_page_html)
+
+    # check
+    assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
+    assert_equal "阪神", race_list_page.course
+
+    assert_equal 12, race_list_page.result_pages.length
+
+    result_page = race_list_page.result_pages[0]
+    assert_equal "1809030801", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[1]
+    assert_equal "1809030802", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[2]
+    assert_equal "1809030803", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[3]
+    assert_equal "1809030804", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[4]
+    assert_equal "1809030805", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[5]
+    assert_equal "1809030806", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[6]
+    assert_equal "1809030807", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[7]
+    assert_equal "1809030808", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[8]
+    assert_equal "1809030809", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[9]
+    assert_equal "1809030810", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[10]
+    assert_equal "1809030811", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+
+    result_page = race_list_page.result_pages[11]
+    assert_equal "1809030812", result_page.result_id
+    assert_nil result_page.race_number
+    assert_nil result_page.race_name
+    assert_nil result_page.start_datetime
+    assert_nil result_page.entry_page
+    assert_nil result_page.odds_win_page
+    assert_not result_pages.valid?
+    assert_not result_pages.exists?
+  end
+
+  test "parse: case invalid html" do
+    # setup
+    schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
+    schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
+
+    # execute
+    race_list_page = RaceListPage.new("aaaaaaaaaa", "Invalid html")
+
+    # postcondition
+    assert_nil race_list_page.date
+    assert_nil race_list_page.course
+    assert_nil race_list_page.result_pages
+  end
+
 #  test "save, and overwrite" do
 #    # precondition
 #    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read

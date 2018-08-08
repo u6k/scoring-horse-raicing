@@ -548,23 +548,38 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_not race_list_page.exists?
   end
 
-#  test "find" do
-#    # precondition
-#    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-#    schedule_page = SchedulePage.download(2018, 6, schedule_page_html)
-#    schedule_page.save!
-#
-#    race_list_page_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
-#    race_list_page = RaceListPage.download(schedule_page, "https://keiba.yahoo.co.jp/race/list/18050301/", Time.zone.local(2018, 6, 3), "東京", race_list_page_html)
-#    race_list_page.save!
-#
-#    # execute
-#    race_list_pages = schedule_page.race_list_pages
-#
-#    # postcondition
-#    assert_equal 1, race_list_pages.length
-#
-#    assert race_list_page.same?(race_list_pages[0])
-#  end
-#
+  test "find" do
+    # setup
+    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+
+    race_list_page_1_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
+    race_list_page_1 = RaceListPage.new("18050302", race_list_page_1_html)
+
+    race_list_page_2_html = File.open("test/fixtures/files/race_list.20180624.hanshin.html").read
+    race_list_page_2 = RaceListPage.new("18090308", race_list_page_2_html)
+
+    # execute
+    race_list_pages = RaceListPage.find_all
+
+    # check - 未保存時は0件
+    assert_equal 0, race_list_pages.length
+
+    # setup
+    schedule_page.save!
+    race_list_page_1.save!
+    race_list_page_2.save!
+
+    # execute
+    race_list_pages = RaceListPage.find_all
+
+    race_list_pages.each { |r| r.download_from_s3! }
+
+    # check
+    assert_equal 2, race_list_pages.length
+
+    assert race_list_pages[0].same?(race_list_page_1)
+    assert race_list_pages[1].same?(race_list_page_2)
+  end
+
 end

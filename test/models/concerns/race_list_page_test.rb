@@ -158,6 +158,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     end
 
     # execute - re-instance
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
     race_list_pages_2 = schedule_page.race_list_pages
 
     # check
@@ -256,6 +257,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     end
 
     # execute - re-instance
+    schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
     race_list_pages_2 = schedule_page.race_list_pages
 
     # check

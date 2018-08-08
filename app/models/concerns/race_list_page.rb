@@ -58,7 +58,8 @@ class RaceListPage
 
     if self.race_id != obj.race_id \
       || self.date != obj.date \
-      || self.course_name != obj.course_name
+      || self.course_name != obj.course_name \
+      || self.result_pages.length != obj.result_pages.length
       return false
     end
 

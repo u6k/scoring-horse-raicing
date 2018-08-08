@@ -31,6 +31,10 @@ class SchedulePage
     @content = NetModule.download_with_get(url)
   end
 
+  def download_from_s3!
+    # FIXME
+  end
+
   def exists?
     NetModule.get_s3_bucket.object(_build_s3_name).exists?
   end

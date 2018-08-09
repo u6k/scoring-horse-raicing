@@ -378,7 +378,7 @@ class ResultPageTest < ActiveSupport::TestCase
     # execute
     result_pages = ResultPage.find_all
 
-    result_pages.each { |r| r.download_from_s3!}
+    result_pages.each { |r| r.download_from_s3! }
 
     # check
     assert_equal 4, result_pages.length

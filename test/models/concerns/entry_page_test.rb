@@ -312,4 +312,26 @@ class EntryPageTest < ActiveSupport::TestCase
     assert_not entry_page.exists?
   end
 
+  test "find" do
+    # setup
+    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
+    entry_page = EntryPage.new("1809030801", entry_page_html)
+
+    # check
+    assert_equal 0, EntryPage.find_all.length
+
+    # setup
+    entry_page.save!
+
+    # execute
+    entry_pages = EntryPage.find_all
+
+    entry_pages.each { |e| e.download_from_s3! }
+
+    # check
+    assert_equal 1, EntryPage.find_all.length
+
+    assert entry_page.same?(entry_pages[0])
+  end
+
 end

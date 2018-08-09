@@ -85,8 +85,10 @@ class ResultPage
 
     doc = Nokogiri::HTML.parse(@content, nil, "UTF-8")
 
-    doc.at_xpath("//td[@id='raceNo']").text.match(/^([0-9]+)R$/) do |race_number|
-      @race_number = race_number[1].to_i
+    doc.xpath("//td[@id='raceNo']").each do |td|
+      td.text.match(/^([0-9]+)R$/) do |race_number|
+        @race_number = race_number[1].to_i
+      end
     end
 
     doc.xpath("//p[@id='raceTitDay']").each do |p|

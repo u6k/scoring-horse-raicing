@@ -230,7 +230,7 @@ class ResultPageTest < ActiveSupport::TestCase
 
   test "parse" do
     # setup
-    result_html = File.open("test/fixtures/files/result.20180624.hanshin.html").read
+    result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
 
     # execute
     result_page = ResultPage.new("1809030801", result_html)

@@ -236,12 +236,78 @@ class EntryPageTest < ActiveSupport::TestCase
 
   test "parse: invalid html" do
     # execute
-    entry_page = EntryPage.new("0000000000")
-    entry_page.download_from_web!
+    entry_page = EntryPage.new("0000000000", "Invalid html")
 
     # check
     assert_equal "0000000000", entry_page.entry_id
     assert_nil entry_page.entries
+    assert_not entry_page.valid?
+    assert_not entry_page.exists?
+  end
+
+  test "save, and overwrite" do
+    # setup
+    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
+
+    # execute - インスタンス化 & パース
+    entry_page = EntryPage.new("1809030801", entry_page_html)
+
+    # check
+    assert_equal 0, EntryPage.find_all.length
+
+    assert_equal "1809030801", entry_page.entry_id
+    assert_equal 16, entry_page.entries.length
+    assert entry_page.valid?
+    assert_not entry_page.exists?
+
+    # execute - 保存
+    entry_page.save!
+
+    # check
+    assert_equal 1, EntryPage.find_all.length
+
+    assert entry_page.valid?
+    assert entry_page.exists?
+
+    # execute - 再ダウンロード
+    entry_page.download_from_web!
+
+    # check
+    assert_equal 1, EntryPage.find_all.length
+
+    assert entry_page.valid?
+    assert entry_page.exists?
+
+    # execute - 上書き保存
+    entry_page.save!
+
+    # check
+    assert_equal 1, EntryPage.find_all.length
+
+    assert entry_page.valid?
+    assert entry_page.exists?
+  end
+
+  test "save: invalid" do
+    # execute - インスタンス化 && ダウンロード && パース -> 失敗
+    entry_page = EntryPage.new("0000000000", "Invalid html")
+
+    # check
+    assert_equal 0, EntryPage.find_all.length
+
+    assert_equal "0000000000", entry_page.entry_id
+    assert_nil entry_page.entries
+    assert_not entry_page.valid?
+    assert_not entry_page.exists?
+
+    # execute - 保存しようとして例外がスローされる
+    assert_raises "Invalid" do
+      entry_page.save!
+    end
+
+    # check
+    assert_equal 0, EntryPage.find_all.length
+
     assert_not entry_page.valid?
     assert_not entry_page.exists?
   end

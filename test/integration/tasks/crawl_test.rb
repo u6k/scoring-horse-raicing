@@ -406,6 +406,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
 
   def assert_result_page_20180624_hanshin
     result_pages = ResultPage.find_all
+    result_pages.each { |r| r.download_from_s3! }
 
     assert_equal 1, result_pages.length
 

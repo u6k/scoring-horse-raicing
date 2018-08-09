@@ -103,7 +103,7 @@ class RaceListPage
   end
 
   def _build_url
-    "https://keiba.yahoo.co.jp/race/list/#{race_id}/"
+    "https://keiba.yahoo.co.jp/race/list/#{@race_id}/"
   end
 
   def _build_s3_path

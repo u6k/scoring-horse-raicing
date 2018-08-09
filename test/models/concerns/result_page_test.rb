@@ -118,7 +118,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_equal "1809030811", result_page.result_id
     assert_equal 11, result_page.race_number
     assert_equal Time.zone.local(2018, 6, 24, 15, 40, 0), result_page.start_datetime
-    assert_equal "宝塚記念（GI）", result_page.race_name
+    assert_equal "第59回宝塚記念（GI）", result_page.race_name
 
     result_page = result_pages[11]
     assert_equal "1809030812", result_page.result_id
@@ -144,7 +144,7 @@ class ResultPageTest < ActiveSupport::TestCase
 
     # execute - 再インスタンス化
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
-    race_list_page = RaceListPage.download("18090308", race_list_page_html)
+    race_list_page = RaceListPage.new("18090308", race_list_page_html)
     result_pages_2 = race_list_page.result_pages
 
     # check

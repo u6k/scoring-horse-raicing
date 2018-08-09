@@ -110,6 +110,9 @@ class EntryPage
     end
 
     @entries.compact!
+    if @entries.empty?
+      @entries = nil
+    end
   end
 
   def _build_url

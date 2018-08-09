@@ -352,16 +352,16 @@ class ResultPageTest < ActiveSupport::TestCase
   test "find" do
     # setup
     result_page_1_html = File.open("test/fixtures/files/result.19860126.tyukyou.11.html").read
-    result_page_1 = ResultPage.new("19860126.tyukyou.11", result_page_1_html)
+    result_page_1 = ResultPage.new("001", result_page_1_html)
 
     result_page_2_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
-    result_page_2 = ResultPage.new("20180624.hanshin.1", result_page_2_html)
+    result_page_2 = ResultPage.new("002", result_page_2_html)
 
     result_page_3_html = File.open("test/fixtures/files/result.20180624.tokyo.10.html").read
-    result_page_3 = ResultPage.new("20180624.tokyo.10", result_page_3_html)
+    result_page_3 = ResultPage.new("003", result_page_3_html)
 
     result_page_4_html = File.open("test/fixtures/files/result.20180728.kokura.1.html").read
-    result_page_4 = ResultPage.new("20180728.kokura.1", result_page_4_html)
+    result_page_4 = ResultPage.new("004", result_page_4_html)
 
     # execute
     result_pages = ResultPage.find_all
@@ -383,10 +383,10 @@ class ResultPageTest < ActiveSupport::TestCase
     # check
     assert_equal 4, result_pages.length
 
-    assert result_pages[0].same?(result_page_1)
-    assert result_pages[1].same?(result_page_2)
-    assert result_pages[2].same?(result_page_3)
-    assert result_pages[3].same?(result_page_4)
+    assert result_page_1.same?(result_pages.find { |r| r.result_id == result_page_1.result_id })
+    assert result_page_2.same?(result_pages.find { |r| r.result_id == result_page_2.result_id })
+    assert result_page_3.same?(result_pages.find { |r| r.result_id == result_page_3.result_id })
+    assert result_page_4.same?(result_pages.find { |r| r.result_id == result_page_4.result_id })
   end
 
 end

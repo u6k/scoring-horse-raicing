@@ -7,4 +7,8 @@ class EntryPage
     @entry_id = entry_id
   end
 
+  def same?(obj)
+    true
+  end
+
 end

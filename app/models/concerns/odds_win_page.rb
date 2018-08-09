@@ -7,4 +7,8 @@ class OddsWinPage
     @odds_win_id = odds_win_id
   end
 
+  def same?(obj)
+    true
+  end
+
 end

@@ -52,30 +52,36 @@ namespace :crawl do
     raise "failed" if task_failed
   end
 
-  task :download_race_list_pages, [:year, :month, :missing_only] => :environment do |task, args|
-    Rails.logger.info "download_race_list_pages: start: year=#{args.year}, month=#{args.month}, missing_only=#{args.missing_only}"
+  task :download_race_list_pages, [:year, :month, :race_id, :missing_only] => :environment do |task, args|
+    Rails.logger.info "download_race_list_pages: start: year=#{args.year}, month=#{args.month}, race_id=#{args.race_id}, missing_only=#{args.missing_only}"
 
     # setup
-    if args.year.nil? || args.month.nil?
-      schedule_pages = SchedulePage.find_all
+    if (not args.year.nil?) || (not args.month.nil?)
+      Rails.logger.info "download_race_list_pages: setup: year=#{args.year}, month=#{args.month}"
+
+      Rails.logger.info "download_race_list_pages: setup: schedule_page download_from_s3"
+      schedule_page = SchedulePage.new(args.year.to_i, args.month.to_i)
+      schedule_page.download_from_s3!
+
+      race_list_pages = schedule_page.race_list_pages
+    elsif (not args.race_id.nil?)
+      Rails.logger.info "download_race_list_pages: setup: race_id=#{args.race_id}"
+
+      race_list_pages = [RaceListPage.new(args.race_id)]
     else
-      schedule_pages = [SchedulePage.new(args.year.to_i, args.month.to_i)]
+      Rails.logger.info "download_race_list_pages: setup: all period"
+
+      race_list_pages = []
+      schedule_pages = SchedulePage.find_all
+      schedule_pages.each.with_index(1) do |schedule_page, index|
+        Rails.logger.info "download_race_list_pages: setup: schedule_page download_from_s3: #{index}/#{schedule_pages.length}"
+
+        schedule_page.download_from_s3!
+        race_list_pages += schedule_page.race_list_pages
+      end
     end
 
     missing_only = (args.missing_only == "false" ? false : true)
-
-    Rails.logger.info "download_race_list_pages: args: schedule_pages=#{schedule_pages.map{|s|s.date.strftime('%Y%m')}}, missing_only=#{missing_only}"
-
-    # schedule_page download from s3
-    race_list_pages = []
-
-    schedule_pages.each.with_index(1) do |schedule_page, index|
-      Rails.logger.info "download_race_list_pages: schedule_page download from s3: #{index}/#{schedule_pages.length}: date=#{schedule_page.date.strftime('%Y%m')}"
-
-      schedule_page.download_from_s3!
-
-      race_list_pages += schedule_page.race_list_pages
-    end
 
     # race_list_page download from web
     task_failed = false

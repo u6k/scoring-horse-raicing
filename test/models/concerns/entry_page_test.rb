@@ -10,7 +10,7 @@ class EntryPageTest < ActiveSupport::TestCase
   test "download" do
     # setup
     result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
-    result_page = ResultPage.new("1809030801", result_html)
+    result_page = ResultPage.new("1809030801", result_page_html)
 
     # execute - インスタンス化
     entry_page = result_page.entry_page
@@ -44,7 +44,7 @@ class EntryPageTest < ActiveSupport::TestCase
     assert entry_page.exists?
 
     # execute - 再インスタンス化
-    result_page = ResultPage.new("1809030801", result_html)
+    result_page = ResultPage.new("1809030801", result_page_html)
     entry_page_2 = result_page.entry_page
 
     # check

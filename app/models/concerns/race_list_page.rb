@@ -67,7 +67,7 @@ class RaceListPage
       self.result_pages.each do |result_page_self|
         result_page_obj = obj.result_pages.find { |r| r.result_id == result_page_self.result_id }
 
-        return false if result_page_self.same?(result_page_obj)
+        return false if not result_page_self.same?(result_page_obj)
       end
     end
 

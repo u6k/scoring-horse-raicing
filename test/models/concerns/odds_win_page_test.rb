@@ -144,4 +144,49 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not odds_win_page.exists?
   end
 
+  test "save, and overwrite" do
+    # setup
+    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.html").read
+
+    # execute
+    odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
+
+    # check
+    assert_equal 0, OddsWinPage.find_all.length
+
+    assert_equal "1809030801", odds_win_page.odds_id
+    assert_not_nil odds_win_page.win_results # FIXME
+    assert_not_nil odds_win_page.place_results # FIXME
+    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert odds_win_page.valid?
+    assert_not odds_win_page.exists?
+
+    # execute - 保存
+    odds_win_page.save!
+
+    # check
+    assert_equal 1, OddsWinPage.find_all.length
+
+    assert odds_win_page.valid?
+    assert odds_win_page.exists?
+
+    # execute - 再ダウンロード
+    odds_win_page.download_from_web!
+
+    # check
+    assert_equal 1, OddsWinPage.find_all.length
+
+    assert odds_win_page.valid?
+    assert odds_win_page.exists?
+
+    # execute - 再保存
+    odds_win_page.save!
+
+    # check
+    assert_equal 1, OddsWinPage.find_all.length
+
+    assert odds_win_page.valid?
+    assert odds_win_page.exists?
+  end
+
 end

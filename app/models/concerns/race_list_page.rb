@@ -59,7 +59,7 @@ class RaceListPage
     if self.race_id != obj.race_id \
       || self.date != obj.date \
       || self.course_name != obj.course_name \
-      || self.result_pages.length != obj.result_pages.length
+      || self.result_pages.nil? != obj.result_pages.nil?
       return false
     end
 

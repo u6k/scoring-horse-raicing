@@ -55,7 +55,7 @@ class EntryPage
     end
 
     if @entry_id != obj.entry_id \
-      || @entries.length != obj.entries.length
+      || @entries.nil? != obj.entries.nil?
       return false
     end
 

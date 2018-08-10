@@ -54,7 +54,7 @@ class SchedulePage
     end
 
     if self.date != obj.date \
-      || self.race_list_pages.length != obj.race_list_pages.length
+      || self.race_list_pages.nil? != obj.race_list_pages.nil?
       return false
     end
 

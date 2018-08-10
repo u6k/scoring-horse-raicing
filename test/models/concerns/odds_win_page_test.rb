@@ -189,4 +189,58 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert odds_win_page.exists?
   end
 
+  test "save: invalid" do
+    # execute - 不正なHTMLをインスタンス化
+    odds_win_page = OddsWinPage.new("0000000000", "Invalid html")
+
+    # check
+    assert_equal 0, OddsWinPage.find_all.length
+
+    assert_not odds_win_page.valid?
+    assert_not odds_win_page.exists?
+
+    # execute - 保存しようとして例外がスローされる
+    assert_raises "Invalid" do
+      odds_win_page.save!
+    end
+
+    # check
+    assert_equal 0, OddsWinPage.find_all.length
+
+    assert_not odds_win_page.valid?
+    assert_not odds_win_page.exists?
+  end
+
+  test "find" do
+    # setup
+    odds_win_page_1_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
+    odds_win_page_1 = OddsWinPage.new("1809030801", odds_win_page_1_html)
+
+    odds_win_page_2_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.2.html").read
+    odds_win_page_2 = OddsWinPage.new("1809030802", odds_win_page_2_html)
+
+    odds_win_page_3_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.3.html").read
+    odds_win_page_3 = OddsWinPage.new("1809030803", odds_win_page_3_html)
+
+    # check
+    assert_equal 0, OddsWinPage.find_all.length
+
+    # setup
+    odds_win_page_1.save!
+    odds_win_page_2.save!
+    odds_win_page_3.save!
+
+    # execute
+    odds_win_pages = OddsWinPage.find_all
+
+    odds_win_pages.each { |o| o.download_from_s3! }
+
+    # check
+    assert_equal 3, odds_win_pages.length
+
+    assert odds_win_page_1.same?(odds_win_pages.find { |o| o.odds_id == odds_win_page_1.odds_id })
+    assert odds_win_page_2.same?(odds_win_pages.find { |o| o.odds_id == odds_win_page_2.odds_id })
+    assert odds_win_page_3.same?(odds_win_pages.find { |o| o.odds_id == odds_win_page_3.odds_id })
+  end
+
 end

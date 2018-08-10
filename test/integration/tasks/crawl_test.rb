@@ -115,46 +115,52 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert race_list_page.exists?
   end
 
-  test "download result page: case 2018-06-24 阪神(default missing only)" do
+  test "download race page: case 2018-06-24 阪神(default missing only)" do
     # execute
-    `rails crawl:download_result_pages[,,1809030801]`
+    `rails crawl:download_race_pages[,,1809030801]`
 
     # NOTE: 年月指定で、指定年月のレース結果をダウンロードする
-    # `rails crawl:download_result_pages[2018,6]`
+    # `rails crawl:download_race_pages[2018,6]`
     # NOTE: 引数なしで、全期間をダウンロードする
-    # `rails crawl:download_result_pages`
+    # `rails crawl:download_race_pages`
 
     # check
-    assert_result_page_20180624_hanshin
+    assert_race_page_20180624_hanshin
   end
 
-  test "download result page: case 2018-06-24 阪神, and force download" do
+  test "download race page: case 2018-06-24 阪神, and force download" do
     # setup
+    setup_race_page_20180624_hanshin
+
+    # execute
+    `rails crawl:download_race_pages[,,1809030801,false]`
+
+    # check
+    assert_race_page_20180624_hanshin
+  end
+
+  test "download race page: case 2018-06-24 阪神, and missing only" do
+    # setup
+    setup_race_page_20180624_hanshin
+
+    # execute
+    `rails crawl:download_race_pages[,,1809030801,true]`
+
+    # check
+    assert_race_page_20180624_hanshin
+  end
+
+  def setup_race_page_20180624_hanshin
     result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html")
     result_page = ResultPage.new("1809030801", result_page_html)
     result_page.save!
 
-    # execute
-    `rails crawl:download_result_pages[,,1809030801,false]`
-
-    # check
-    assert_result_page_20180624_hanshin
+    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html")
+    entry_page = EntryPage.new("1809030801", entry_page_html)
+    entry_page.save!
   end
 
-  test "download result page: case 2018-06-24 阪神, and missing only" do
-    # setup
-    result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html")
-    result_page = ResultPage.new("1809030801", result_page_html)
-    result_page.save!
-
-    # execute
-    `rails crawl:download_result_pages[,,1809030801,true]`
-
-    # check
-    assert_result_page_20180624_hanshin
-  end
-
-  def assert_result_page_20180624_hanshin
+  def assert_race_page_20180624_hanshin
     result_pages = ResultPage.find_all
     result_pages.each { |r| r.download_from_s3! }
 
@@ -165,10 +171,17 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_equal 1, result_page.race_number
     assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
-    assert_equal "1809030801", result_page.entry_page.entry_id
     assert_equal "1809030801", result_page.odds_win_page.odds_win_id
     assert result_page.valid?
     assert result_page.exists?
+
+    entry_page = result_page.entry_page
+    entry_page.download_from_s3!
+
+    assert_equal "1809030801", entry_page.entry_id
+    assert_equal 16, entry_page.entries.length
+    assert result_page.entry_page.valid?
+    assert result_page.entry_page.exists?
   end
 
 end

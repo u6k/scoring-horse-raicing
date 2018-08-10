@@ -54,8 +54,16 @@ class SchedulePage
     end
 
     if self.date != obj.date \
-      || self.race_list_pages.length != obj.race_list_pages.length
+      || self.race_list_pages.nil? != obj.race_list_pages.nil?
       return false
+    end
+
+    if (not self.race_list_pages.nil?) && (not obj.race_list_pages.nil?)
+      self.race_list_pages.each do |race_list_page_self|
+        race_list_page_obj = obj.race_list_pages.find { |r| r.race_id == race_list_page_self.race_id }
+
+        return false if not race_list_page_self.same?(race_list_page_obj)
+      end
     end
 
     true

@@ -59,7 +59,9 @@ class ResultPage
     if @result_id != obj.result_id \
       || @race_number != obj.race_number \
       || @race_name != obj.race_name \
-      || @start_datetime != obj.start_datetime
+      || @start_datetime != obj.start_datetime \
+      || @entry_page.nil? != obj.entry_page.nil? \
+      || @odds_win_page.nil? != obj.odds_win_page.nil?
       return false
     end
 

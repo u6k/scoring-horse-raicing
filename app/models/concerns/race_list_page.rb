@@ -59,8 +59,16 @@ class RaceListPage
     if self.race_id != obj.race_id \
       || self.date != obj.date \
       || self.course_name != obj.course_name \
-      || self.result_pages.length != obj.result_pages.length
+      || self.result_pages.nil? != obj.result_pages.nil?
       return false
+    end
+
+    if (not self.result_pages.nil?) && (not obj.result_pages.nil?)
+      self.result_pages.each do |result_page_self|
+        result_page_obj = obj.result_pages.find { |r| r.result_id == result_page_self.result_id }
+
+        return false if not result_page_self.same?(result_page_obj)
+      end
     end
 
     true
@@ -103,7 +111,7 @@ class RaceListPage
   end
 
   def _build_url
-    "https://keiba.yahoo.co.jp/race/list/#{race_id}/"
+    "https://keiba.yahoo.co.jp/race/list/#{@race_id}/"
   end
 
   def _build_s3_path

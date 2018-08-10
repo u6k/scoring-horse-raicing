@@ -115,4 +115,33 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not odds_win_page.exists?
   end
 
+  test "parse" do
+    # setup
+    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.html").read
+
+    # execute
+    odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
+
+    # check
+    assert_equal "1809030801", odds_win_page.odds_id
+    assert_not_nil odds_win_page.win_results # FIXME
+    assert_not_nil odds_win_page.place_results # FIXME
+    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert odds_win_page.valid?
+    assert_not odds_win_page.exists?
+  end
+
+  test "parse: invalid html" do
+    # execute
+    odds_win_page = OddsWinPage.new("0000000000", "Invalid html")
+
+    # check
+    assert_equal "0000000000", odds_win_page.odds_id
+    assert_nil odds_win_page.win_results
+    assert_nil odds_win_page.place_results
+    assert_nil odds_win_page.bracket_quinella_results
+    assert_not odds_win_page.valid?
+    assert_not odds_win_page.exists?
+  end
+
 end

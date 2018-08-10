@@ -146,7 +146,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
 
   test "save, and overwrite" do
     # setup
-    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.html").read
+    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
 
     # execute
     odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)

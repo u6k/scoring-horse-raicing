@@ -176,6 +176,18 @@ namespace :crawl do
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: entry_page end"
           end
         end
+
+        odds_win_page = result_page.odds_win_page
+        if not odds_win_page.nil?
+          if missing_only && odds_win_page.exists?
+            odds_win_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_win_page skip"
+          else
+            odds_win_page.download_from_web!
+            odds_win_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_win_page end"
+          end
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true

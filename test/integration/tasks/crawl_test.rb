@@ -151,13 +151,17 @@ class CrawlTest < ActionDispatch::IntegrationTest
   end
 
   def setup_race_page_20180624_hanshin
-    result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html")
+    result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
     result_page = ResultPage.new("1809030801", result_page_html)
     result_page.save!
 
-    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html")
+    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
     entry_page = EntryPage.new("1809030801", entry_page_html)
     entry_page.save!
+
+    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
+    odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page.save!
   end
 
   def assert_race_page_20180624_hanshin
@@ -171,7 +175,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_equal 1, result_page.race_number
     assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
-    assert_equal "1809030801", result_page.odds_win_page.odds_win_id
+    assert_equal "1809030801", result_page.odds_win_page.odds_id
     assert result_page.valid?
     assert result_page.exists?
 
@@ -182,6 +186,21 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_equal 16, entry_page.entries.length
     assert result_page.entry_page.valid?
     assert result_page.entry_page.exists?
+
+    odds_win_page = result_page.odds_win_page
+    odds_win_page.download_from_s3!
+
+    assert_equal "1809030801", odds_win_page.odds_id
+    assert_not_nil odds_win_page.win_results # FIXME
+    assert_not_nil odds_win_page.place_results # FIXME
+    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
+    assert odds_win_page.valid?
+    assert odds_win_page.exists?
   end
 
 end

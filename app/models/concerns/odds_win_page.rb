@@ -1,7 +1,7 @@
 class OddsWinPage
   extend ActiveSupport::Concern
 
-  attr_reader :odds_id, :win_results, :place_results, :bracket_quinella_results
+  attr_reader :odds_id, :win_results, :place_results, :bracket_quinella_results, :odds_quinella_page, :odds_quinella_place_page, :odds_exacta_page, :odds_trio_page, :odds_trifecta_page
 
   def self.find_all
     odds_win_pages = NetModule.get_s3_bucket.objects(prefix: "html/odds_win/odds_win.").map do |s3_obj|
@@ -59,8 +59,33 @@ class OddsWinPage
     if @odds_id != obj.odds_id \
       || @win_results.nil? != obj.win_results.nil? \
       || @place_results.nil? != obj.place_results.nil? \
-      || @bracket_quinella_results.nil? != obj.bracket_quinella_results.nil?
+      || @bracket_quinella_results.nil? != obj.bracket_quinella_results.nil? \
+      || @odds_quinella_page.nil? != obj.odds_quinella_page.nil? \
+      || @odds_quinella_place_page.nil? != obj.odds_quinella_place_page.nil? \
+      || @odds_exacta_page.nil? != obj.odds_exacta_page.nil? \
+      || @odds_trio_page.nil? != obj.odds_trio_page.nil? \
+      || @odds_trifecta_page.nil? != obj.odds_trifecta_page.nil?
       return false
+    end
+
+    if (not @odds_quinella_page.nil?) && (not obj.odds_quinella_page.nil?)
+      return false if not @odds_quinella_page.same?(obj.odds_quinella_page)
+    end
+
+    if (not @odds_quinella_place_page.nil?) && (not obj.odds_quinella_place_page.nil?)
+      return false if not @odds_quinella_place_page.same?(obj.odds_quinella_place_page)
+    end
+
+    if (not @odds_exacta_page.nil?) && (not obj.odds_exacta_page.nil?)
+      return false if not @odds_exacta_page.same?(obj.odds_exacta_page)
+    end
+
+    if (not @odds_trio_page.nil?) && (not obj.odds_trio_page.nil?)
+      return false if not @odds_trio_page.same?(obj.odds_trio_page)
+    end
+
+    if (not @odds_trifecta_page.nil?) && (not obj.odds_trifecta_page.nil?)
+      return false if not @odds_trifecta_page.same?(obj.odds_trifecta_page)
     end
 
     true
@@ -79,6 +104,30 @@ class OddsWinPage
       @win_results = h3.text # FIXME
       @place_results = h3.text # FIXME
       @bracket_quinella_results = h3.text # FIXME
+    end
+
+    doc.xpath("//ul[@id='oddsNavi']/li/a").each do |a|
+      if a.text == "馬連"
+        a["href"].match(/^\/odds\/ur\/([0-9]+)/) do |odds_id|
+          @odds_quinella_page = OddsQuinellaPage.new(odds_id[1])
+        end
+      elsif a.text == "ワイド"
+        a["href"].match(/^\/odds\/wide\/([0-9]+)/) do |odds_id|
+          @odds_quinella_place_page = OddsQuinellaPlacePage.new(odds_id[1])
+        end
+      elsif a.text == "馬単"
+        a["href"].match(/^\/odds\/ut\/([0-9]+)/) do |odds_id|
+          @odds_exacta_page = OddsExactaPage.new(odds_id[1])
+        end
+      elsif a.text == "3連複"
+        a["href"].match(/^\/odds\/sf\/([0-9]+)/) do |odds_id|
+          @odds_trio_page = OddsTrioPage.new(odds_id[1])
+        end
+      elsif a.text == "3連単"
+        a["href"].match(/^\/odds\/st\/([0-9]+)/) do |odds_id|
+          @odds_trifecta_page = OddsTrifectaPage.new(odds_id[1])
+        end
+      end
     end
   end
 

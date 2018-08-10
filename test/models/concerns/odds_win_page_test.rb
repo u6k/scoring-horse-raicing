@@ -22,6 +22,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_nil odds_win_page.win_results
     assert_nil odds_win_page.place_results
     assert_nil odds_win_page.bracket_quinella_results
+    assert_nil odds_win_page.odds_quinella_page
+    assert_nil odds_win_page.odds_quinella_place_page
+    assert_nil odds_win_page.odds_exacta_page
+    assert_nil odds_win_page.odds_trio_page
+    assert_nil odds_win_page.odds_trifecta_page
     assert_not odds_win_page.valid?
     assert_not odds_win_page.exists?
 
@@ -35,6 +40,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not_nil odds_win_page.win_results # FIXME
     assert_not_nil odds_win_page.place_results # FIXME
     assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
     assert odds_win_page.valid?
     assert_not odds_win_page.exists?
 
@@ -58,6 +68,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_nil odds_win_page_2.win_results
     assert_nil odds_win_page_2.place_results
     assert_nil odds_win_page_2.bracket_quinella_results
+    assert_nil odds_win_page_2.odds_quinella_page
+    assert_nil odds_win_page_2.odds_quinella_place_page
+    assert_nil odds_win_page_2.odds_exacta_page
+    assert_nil odds_win_page_2.odds_trio_page
+    assert_nil odds_win_page_2.odds_trifecta_page
     assert_not odds_win_page_2.valid?
     assert odds_win_page_2.exists?
 
@@ -71,6 +86,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not_nil odds_win_page_2.win_results
     assert_not_nil odds_win_page_2.place_results
     assert_not_nil odds_win_page_2.bracket_quinella_results
+    assert_equal "1809030801", odds_win_page_2.odds_quinella_page.odds_id
+    assert_equal "1809030801", odds_win_page_2.odds_quinella_place_page.odds_id
+    assert_equal "1809030801", odds_win_page_2.odds_exacta_page.odds_id
+    assert_equal "1809030801", odds_win_page_2.odds_trio_page.odds_id
+    assert_equal "1809030801", odds_win_page_2.odds_trifecta_page.odds_id
     assert odds_win_page_2.valid?
     assert odds_win_page_2.exists?
 
@@ -127,6 +147,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not_nil odds_win_page.win_results # FIXME
     assert_not_nil odds_win_page.place_results # FIXME
     assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
     assert odds_win_page.valid?
     assert_not odds_win_page.exists?
   end
@@ -140,6 +165,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_nil odds_win_page.win_results
     assert_nil odds_win_page.place_results
     assert_nil odds_win_page.bracket_quinella_results
+    assert_nil odds_win_page.odds_quinella_page
+    assert_nil odds_win_page.odds_quinella_place_page
+    assert_nil odds_win_page.odds_exacta_page
+    assert_nil odds_win_page.odds_trio_page
+    assert_nil odds_win_page.odds_trifecta_page
     assert_not odds_win_page.valid?
     assert_not odds_win_page.exists?
   end
@@ -158,6 +188,11 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not_nil odds_win_page.win_results # FIXME
     assert_not_nil odds_win_page.place_results # FIXME
     assert_not_nil odds_win_page.bracket_quinella_results # FIXME
+    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
+    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
     assert odds_win_page.valid?
     assert_not odds_win_page.exists?
 

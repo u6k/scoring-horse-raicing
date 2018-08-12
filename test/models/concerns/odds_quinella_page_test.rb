@@ -121,7 +121,7 @@ class OddsQuinellaPageTest < ActiveSupport::TestCase
 
   test "parse: invalid html" do
     # execute
-    odds_quinella_page _ OddsQuinellaPage.new("0000000000", "Invalid html")
+    odds_quinella_page = OddsQuinellaPage.new("0000000000", "Invalid html")
 
     # check
     assert_equal 0, OddsQuinellaPage.find_all.length
@@ -177,7 +177,7 @@ class OddsQuinellaPageTest < ActiveSupport::TestCase
 
   test "save: invalid" do
     # execute - new invalid html
-    odds_quinella_page _ OddsQuinellaPage.new("0000000000", "Invalid html")
+    odds_quinella_page = OddsQuinellaPage.new("0000000000", "Invalid html")
 
     # check
     assert_equal 0, OddsQuinellaPage.find_all.length

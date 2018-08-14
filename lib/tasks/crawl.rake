@@ -236,6 +236,29 @@ namespace :crawl do
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trio_page end"
           end
         end
+
+        odds_trifecta_page = odds_win_page.odds_trifecta_page
+        if not odds_trifecta_page.nil?
+          if missing_only && odds_trifecta_page.exists?
+            odds_trifecta_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_page skip"
+          else
+            odds_trifecta_page.download_from_web!
+            odds_trifecta_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_page end"
+          end
+
+          odds_trifecta_page.odds_trifecta_pages.each do |horse_number, odds_trifecta_sub_page|
+            if missing_only && odds_trifecta_sub_page.exists?
+              odds_trifecta_sub_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_sub_page: #{horse_number}/#{odds_trifecta_sub_page.horse_number}: skip"
+            else
+              odds_trifecta_sub_page.download_from_web!
+              odds_trifecta_sub_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_sub_page: #{horse_number}/#{odds_trifecta_sub_page.horse_number}: end"
+            end
+          end
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true

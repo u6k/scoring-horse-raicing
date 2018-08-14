@@ -178,6 +178,12 @@ class CrawlTest < ActionDispatch::IntegrationTest
     odds_trio_page_html = File.open("test/fixtures/files/odds_trio.20180624.hanshin.1.html").read
     odds_trio_page = OddsTrioPage.new("1809030801", odds_trio_page_html)
     odds_trio_page.save!
+
+    (1..16).each do |horse_number|
+      odds_trifecta_page_html = File.open("test/fixtures/files/odds_trifecta.20180624.hanshin.1.#{horse_number}.html").read
+      odds_trifecta_page = OddsTrifectaPage.new("1809030801", horse_number, odds_trifecta_page_html)
+      odds_trifecta_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r
@@ -249,6 +255,28 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_not_nil odds_trio_page.trio_results # FIXME
     assert odds_trio_page.valid?
     assert odds_trio_page.exists?
+
+    odds_trifecta_page = odds_win_page.odds_trifecta_page
+    odds_trifecta_page.download_from_s3!
+
+    assert_equal "1809030801", odds_trifecta_page.odds_id
+    assert_equal 1, odds_trifecta_page.horse_number
+    assert_not_nil odds_trifecta_page.trifecta_results # FIXME
+    assert_equal 16, odds_trifecta_page.odds_trifecta_pages.length
+    assert odds_trifecta_page.valid?
+    assert odds_trifecta_page.exists?
+
+    (1..16).each do |horse_number|
+      odds_trifecta_sub_page = odds_trifecta_page.odds_trifecta_pages[horse_number]
+      odds_trifecta_sub_page.download_from_s3!
+
+      assert_equal "1809030801", odds_trifecta_sub_page.odds_id
+      assert_equal horse_number, odds_trifecta_sub_page.horse_number
+      assert_not_nil odds_trifecta_sub_page.trifecta_results
+      assert odds_trifecta_sub_page.odds_trifecta_pages.length > 0
+      assert odds_trifecta_sub_page.valid?
+      assert odds_trifecta_sub_page.exists?
+    end
   end
 
 end

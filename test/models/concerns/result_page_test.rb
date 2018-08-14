@@ -241,7 +241,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
     assert_equal "1809030801", result_page.entry_page.entry_id
-    assert_equal "1809030801", result_page.odds_win_page.odds_win_id
+    assert_equal "1809030801", result_page.odds_win_page.odds_id
     assert result_page.valid?
     assert_not result_page.exists?
   end
@@ -295,7 +295,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
     assert_equal "1809030801", result_page.entry_page.entry_id
-    assert_equal "1809030801", result_page.odds_win_page.odds_win_id
+    assert_equal "1809030801", result_page.odds_win_page.odds_id
     assert result_page.valid?
     assert_not result_page.exists?
 

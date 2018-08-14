@@ -176,6 +176,89 @@ namespace :crawl do
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: entry_page end"
           end
         end
+
+        odds_win_page = result_page.odds_win_page
+        if not odds_win_page.nil?
+          if missing_only && odds_win_page.exists?
+            odds_win_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_win_page skip"
+          else
+            odds_win_page.download_from_web!
+            odds_win_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_win_page end"
+          end
+        end
+
+        odds_quinella_page = odds_win_page.odds_quinella_page
+        if not odds_quinella_page.nil?
+          if missing_only && odds_quinella_page.exists?
+            odds_quinella_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_page skip"
+          else
+            odds_quinella_page.download_from_web!
+            odds_quinella_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_page end"
+          end
+        end
+
+        odds_exacta_page = odds_win_page.odds_exacta_page
+        if not odds_exacta_page.nil?
+          if missing_only && odds_exacta_page.exists?
+            odds_exacta_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_exacta_page skip"
+          else
+            odds_exacta_page.download_from_web!
+            odds_exacta_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_exacta_page end"
+          end
+        end
+
+        odds_quinella_place_page = odds_win_page.odds_quinella_place_page
+        if not odds_quinella_place_page.nil?
+          if missing_only && odds_quinella_place_page.exists?
+            odds_quinella_place_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_place_page skip"
+          else
+            odds_quinella_place_page.download_from_web!
+            odds_quinella_place_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_place_page end"
+          end
+        end
+
+        odds_trio_page = odds_win_page.odds_trio_page
+        if not odds_trio_page.nil?
+          if missing_only && odds_trio_page.exists?
+            odds_trio_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trio_page skip"
+          else
+            odds_trio_page.download_from_web!
+            odds_trio_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trio_page end"
+          end
+        end
+
+        odds_trifecta_page = odds_win_page.odds_trifecta_page
+        if not odds_trifecta_page.nil?
+          if missing_only && odds_trifecta_page.exists?
+            odds_trifecta_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_page skip"
+          else
+            odds_trifecta_page.download_from_web!
+            odds_trifecta_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_page end"
+          end
+
+          odds_trifecta_page.odds_trifecta_pages.each do |horse_number, odds_trifecta_sub_page|
+            if missing_only && odds_trifecta_sub_page.exists?
+              odds_trifecta_sub_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_sub_page: #{horse_number}/#{odds_trifecta_sub_page.horse_number}: skip"
+            else
+              odds_trifecta_sub_page.download_from_web!
+              odds_trifecta_sub_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_trifecta_sub_page: #{horse_number}/#{odds_trifecta_sub_page.horse_number}: end"
+            end
+          end
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true

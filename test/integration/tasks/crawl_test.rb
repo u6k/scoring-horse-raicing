@@ -206,7 +206,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert odds_win_page.valid?
     assert odds_win_page.exists?
 
-    odds_quinella_page = result_page.odds_quinella_page
+    odds_quinella_page = odds_win_page.odds_quinella_page
     odds_quinella_page.download_from_s3!
 
     assert_equal "1809030801", odds_quinella_page.odds_id

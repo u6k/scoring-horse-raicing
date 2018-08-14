@@ -200,6 +200,18 @@ namespace :crawl do
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_page end"
           end
         end
+
+        odds_exacta_page = odds_win_page.odds_exacta_page
+        if not odds_exacta_page.nil?
+          if missing_only && odds_exacta_page.exists?
+            odds_exacta_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_exacta_page skip"
+          else
+            odds_exacta_page.download_from_web!
+            odds_exacta_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_exacta_page end"
+          end
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true

@@ -170,6 +170,10 @@ class CrawlTest < ActionDispatch::IntegrationTest
     odds_exacta_page_html = File.open("test/fixtures/files/odds_exacta.20180624.hanshin.1.html").read
     odds_exacta_page = OddsExactaPage.new("1809030801", odds_exacta_page_html)
     odds_exacta_page.save!
+
+    odds_quinella_place_page_html = File.open("test/fixtures/files/odds_quinella_place.20180624.hanshin.1.html").read
+    odds_quinella_place_page = OddsExactaPage.new("1809030801", odds_quinella_place_page_html)
+    odds_quinella_place_page.save!
   end
 
   def assert_race_page_20180624_hanshin_1r
@@ -225,6 +229,14 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_not_nil odds_exacta_page.exacta_results # FIXME
     assert odds_exacta_page.valid?
     assert odds_exacta_page.exists?
+
+    odds_quinella_place_page = odds_win_page.odds_quinella_place_page
+    odds_quinella_place_page.download_from_s3!
+
+    assert_equal "1809030801", odds_quinella_place_page.odds_id
+    assert_not_nil odds_quinella_place_page.quinella_place_results # FIXME
+    assert odds_quinella_place_page.valid?
+    assert odds_quinella_place_page.exists?
   end
 
 end

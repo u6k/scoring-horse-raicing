@@ -30,7 +30,7 @@ class OddsQuinellaPageTest < ActiveSupport::TestCase
     assert_equal 0, OddsQuinellaPage.find_all.length
 
     assert_equal "1809030801", odds_quinella_page.odds_id
-    assert_not_nil odds_quinella_page.quinella_results # TODO
+    assert_not_nil odds_quinella_page.quinella_results # FIXME
     assert odds_quinella_page.valid?
     assert_not odds_quinella_page.exists?
 
@@ -114,7 +114,7 @@ class OddsQuinellaPageTest < ActiveSupport::TestCase
     assert_equal 0, OddsQuinellaPage.find_all.length
 
     assert_equal "1809030801", odds_quinella_page.odds_id
-    assert_not_nil odds_quinella_page.quinella_results # TODO
+    assert_not_nil odds_quinella_page.quinella_results # FIXME
     assert odds_quinella_page.valid?
     assert_not odds_quinella_page.exists?
   end
@@ -143,7 +143,7 @@ class OddsQuinellaPageTest < ActiveSupport::TestCase
     assert_equal 0, OddsQuinellaPage.find_all.length
 
     assert_equal "1809030801", odds_quinella_page.odds_id
-    assert_not_nil odds_quinella_page.quinella_results # TODO
+    assert_not_nil odds_quinella_page.quinella_results # FIXME
     assert odds_quinella_page.valid?
     assert_not odds_quinella_page.exists?
 

@@ -218,6 +218,9 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert odds_quinella_page.valid?
     assert odds_quinella_page.exists?
 
+    odds_exacta_page = odds_win_page.odds_exacta_page
+    odds_exacta_page.download_from_s3!
+
     assert_equal "1809030801", odds_exacta_page.odds_id
     assert_not_nil odds_exacta_page.exacta_results # FIXME
     assert odds_exacta_page.valid?

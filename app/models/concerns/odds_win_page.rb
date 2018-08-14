@@ -125,7 +125,7 @@ class OddsWinPage
         end
       elsif a.text == "3連単"
         a["href"].match(/^\/odds\/st\/([0-9]+)/) do |odds_id|
-          @odds_trifecta_page = OddsTrifectaPage.new(odds_id[1])
+          @odds_trifecta_page = OddsTrifectaPage.new(odds_id[1], nil)
         end
       end
     end

@@ -212,6 +212,18 @@ namespace :crawl do
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_exacta_page end"
           end
         end
+
+        odds_quinella_place_page = odds_win_page.odds_quinella_place_page
+        if not odds_quinella_place_page.nil?
+          if missing_only && odds_quinella_place_page.exists?
+            odds_quinella_place_page.download_from_s3!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_place_page skip"
+          else
+            odds_quinella_place_page.download_from_web!
+            odds_quinella_place_page.save!
+            Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: odds_quinella_place_page end"
+          end
+        end
       rescue => e
         Rails.logger.error build_error_log(e)
         task_failed = true

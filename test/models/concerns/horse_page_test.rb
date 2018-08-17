@@ -509,4 +509,47 @@ class HorsePageTest < ActiveSupport::TestCase
     assert_not horse_page.exists?
   end
 
+  test "save, and overwrite" do
+    # setup
+    horse_page_html = File.open("test/fixtures/files/horse.2015104308.html").read
+
+    # execute - new and parse
+    horse_page = HorsePage.new("2015104308", horse_page_html)
+
+    # check
+    assert_equal 0, HorsePage.find_all.length
+
+    assert_equal "2015104308", horse_page.horse_id
+    assert_equal "プロネルクール", horse_page.horse_name
+    assert horse_page.valid?
+    assert_not horse_page.exists?
+
+    # save
+    horse_page.save!
+
+    # check
+    assert_equal 1, HorsePage.find_all.length
+
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    # execute - re-download from web
+    horse_page.download_from_web!
+
+    # check
+    assert_equal 1, HorsePage.find_all.length
+
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    # execute - save
+    horse_page.save!
+
+    # check
+    assert_equal 1, HorsePage.find_all.length
+
+    assert horse_page.valid?
+    assert horse_page.exists?
+  end
+
 end

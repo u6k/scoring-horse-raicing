@@ -484,4 +484,29 @@ class HorsePageTest < ActiveSupport::TestCase
     assert_not horse_page.exists?
   end
 
+  test "parse" do
+    # setup
+    horse_page_html = File.open("test/fixtures/files/horse.2015104308.html").read
+
+    # execute - new and parse
+    horse_page = HorsePage.new("2015104308", horse_page_html)
+
+    # check
+    assert_equal "2015104308", horse_page.horse_id
+    assert_equal "プロネルクール", horse_page.horse_name
+    assert horse_page.valid?
+    assert_not horse_page.exists?
+  end
+
+  test "parse: invalid html" do
+    # execute - new invalid html
+    horse_page = HorsePage.new("0000000000", "Invalid html")
+
+    # check
+    assert_equal "0000000000", horse_page.horse_id
+    assert_nil horse_page.horse_name
+    assert_not horse_page.valid?
+    assert_not horse_page.exists?
+  end
+
 end

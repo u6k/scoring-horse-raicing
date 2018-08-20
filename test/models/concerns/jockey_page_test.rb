@@ -509,4 +509,51 @@ class JockeyPageTest < ActiveSupport::TestCase
     assert_not jockey_page.exists?
   end
 
+  test "save, and overwrite" do
+    # setup
+    jockey_page_html = File.open("test/fixtures/files/jockey.05339.html").read
+
+    # execute - インスタンス化 & パース
+    jockey_page = JockeyPage.new("05339", jockey_page_html)
+
+    # check
+    assert_equal 0, JockeyPage.find_all.length
+
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert_not jockey_page.exists?
+
+    # execute - 保存
+    jockey_page.save!
+
+    # check
+    assert_equal 1, JockeyPage.find_all.length
+
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+
+    # execute - Webから再ダウンロードする
+    jockey_page.download_from_web!
+
+    # check
+    assert_equal 1, JockeyPage.find_all.length
+
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+
+    # execute - 上書き保存
+    jockey_page.save!
+
+    # check
+    assert_equal 1, JockeyPage.find_all.length
+
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+  end
+
 end

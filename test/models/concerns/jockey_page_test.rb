@@ -16,7 +16,7 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries = entry_page.entries
 
     # check
-    assert_equal 0, HorsePage.find_all.length
+    assert_equal 0, JockeyPage.find_all.length
 
     assert_equal 16, entries.length
 

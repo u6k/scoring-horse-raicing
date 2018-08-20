@@ -224,7 +224,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries.each { |e| e[:trainer].save! }
 
     # check
-    assert_equal 16, TrainerPage.find_all.length
+    assert_equal 15, TrainerPage.find_all.length # 重複している調教師がいるため、16ではなく15
 
     entries.each do |e|
       assert e[:trainer].valid?
@@ -236,7 +236,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2 = entry_page.entries
 
     # check
-    assert_equal 16, TrainerPage.find_all.length
+    assert_equal 15, TrainerPage.find_all.length
 
     assert_equal 16, entries_2.length
 
@@ -340,7 +340,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:trainer].download_from_s3! }
 
     # check
-    assert_equal 16, TrainerPage.find_all.length
+    assert_equal 15, TrainerPage.find_all.length
 
     assert_equal 16, entries_2.length
 
@@ -444,17 +444,17 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:trainer].save! }
 
     # check
-    assert_equal 16, TrainerPage.find_all.length
+    assert_equal 15, TrainerPage.find_all.length
   end
 
   test "download: invalid page" do
     # execute - new invalid page
-    trainer_page = TrainerPage.new("00000")
+    trainer_page = TrainerPage.new("99999")
 
     # check
     assert_equal 0, TrainerPage.find_all.length
 
-    assert_equal "00000", trainer_page.trainer_id
+    assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
     assert_not trainer_page.exists?
@@ -465,7 +465,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     # check
     assert_equal 0, TrainerPage.find_all.length
 
-    assert_equal "00000", trainer_page.trainer_id
+    assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
     assert_not trainer_page.exists?
@@ -478,7 +478,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     # check
     assert_equal 0, TrainerPage.find_all.length
 
-    assert_equal "00000", trainer_page.trainer_id
+    assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
     assert_not trainer_page.exists?
@@ -574,7 +574,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_pages << TrainerPage.new("00356", File.open("test/fixtures/files/trainer.00356.html").read)
     trainer_pages << TrainerPage.new("01157", File.open("test/fixtures/files/trainer.01157.html").read)
     trainer_pages << TrainerPage.new("00438", File.open("test/fixtures/files/trainer.00438.html").read)
-    trainer_pages << TrainerPage.new("01022", File.open("test/fixtures/files/trainer.01022.html").read)
 
     # check - 未保存時は0件
     assert_equal 0, TrainerPage.find_all.length
@@ -587,7 +586,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_pages_2.each { |t| t.download_from_s3! }
 
     # check
-    assert_equal 16, trainer_pages_2.length
+    assert_equal 15, trainer_pages_2.length
 
     trainer_pages_2.each do |trainer_page_2|
       trainer_page = trainer_pages.find { |j| j.trainer_id == trainer_page_2.trainer_id }

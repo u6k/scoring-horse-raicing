@@ -337,7 +337,7 @@ class HorsePageTest < ActiveSupport::TestCase
     assert horse_page_2.exists?
 
     # execute - download from s3
-    entries_2.each { |e| e.download_from_s3! }
+    entries_2.each { |e| e[:horse].download_from_s3! }
 
     # check
     assert_equal 16, HorsePage.find_all.length
@@ -441,7 +441,7 @@ class HorsePageTest < ActiveSupport::TestCase
     assert horse_page_2.exists?
 
     # execute - overwrite
-    entries_2.each { |e| e.save! }
+    entries_2.each { |e| e[:horse].save! }
 
     # check
     assert_equal 16, HorsePage.find_all.length

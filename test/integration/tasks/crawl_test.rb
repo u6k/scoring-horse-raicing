@@ -190,6 +190,12 @@ class CrawlTest < ActionDispatch::IntegrationTest
       horse_page = HorsePage.new(horse_id, horse_page_html)
       horse_page.save!
     end
+
+    ["05339", "01014", "01088", "01114", "01165", "00894", "01034", "05203", "01126", "01019", "01166", "01018", "01130", "05386", "01116", "01154"].each do |jockey_id|
+      jockey_page_html = File.open("test/fixtures/files/jockey.#{jockey_id}.html").read
+      jockey_page = JockeyPage.new(jockey_id, jockey_page_html)
+      jockey_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r
@@ -388,6 +394,105 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_equal "スマートスピカ", horse_page.horse_name
     assert horse_page.valid?
     assert horse_page.exists?
+
+    # jockey page
+    entries.each { |e| e[:jockey].download_from_s3! }
+
+    jockey_page = entries[0][:jockey]
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[1][:jockey]
+    assert_equal "01014", jockey_page.jockey_id
+    assert_equal "福永 祐一", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[2][:jockey]
+    assert_equal "01088", jockey_page.jockey_id
+    assert_equal "川田 将雅", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[3][:jockey]
+    assert_equal "01114", jockey_page.jockey_id
+    assert_equal "田中 健", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[4][:jockey]
+    assert_equal "01165", jockey_page.jockey_id
+    assert_equal "森 裕太朗", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[5][:jockey]
+    assert_equal "00894", jockey_page.jockey_id
+    assert_equal "小牧 太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[6][:jockey]
+    assert_equal "01034", jockey_page.jockey_id
+    assert_equal "酒井 学", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[7][:jockey]
+    assert_equal "05203", jockey_page.jockey_id
+    assert_equal "岩田 康誠", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[8][:jockey]
+    assert_equal "01126", jockey_page.jockey_id
+    assert_equal "松山 弘平", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[9][:jockey]
+    assert_equal "01019", jockey_page.jockey_id
+    assert_equal "秋山 真一郎", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[10][:jockey]
+    assert_equal "01166", jockey_page.jockey_id
+    assert_equal "川又 賢治", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[11][:jockey]
+    assert_equal "01018", jockey_page.jockey_id
+    assert_equal "和田 竜二", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[12][:jockey]
+    assert_equal "01130", jockey_page.jockey_id
+    assert_equal "高倉 稜", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[13][:jockey]
+    assert_equal "05386", jockey_page.jockey_id
+    assert_equal "戸崎 圭太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[14][:jockey]
+    assert_equal "01116", jockey_page.jockey_id
+    assert_equal "藤岡 康太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[15][:jockey]
+    assert_equal "01154", jockey_page.jockey_id
+    assert_equal "松若 風馬", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
   end
 
 end

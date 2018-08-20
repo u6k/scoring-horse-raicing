@@ -49,6 +49,19 @@ class HorsePage
     NetModule.put_s3_object(NetModule.get_s3_bucket, _build_s3_path, @content)
   end
 
+  def same?(obj)
+    if not obj.instance_of?(HorsePage)
+      return false
+    end
+
+    if @horse_id != obj.horse_id \
+      || @horse_name != obj.horse_name
+      return false
+    end
+
+    true
+  end
+
   private
 
   def _parse

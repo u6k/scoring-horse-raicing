@@ -196,6 +196,12 @@ class CrawlTest < ActionDispatch::IntegrationTest
       jockey_page = JockeyPage.new(jockey_id, jockey_page_html)
       jockey_page.save!
     end
+
+    ["01120", "01022", "01046", "01140", "01041", "01073", "01078", "01104", "01050", "01138", "01066", "01111", "00356", "01157", "00438"].each do |trainer_id|
+      trainer_page_html = File.open("test/fixtures/files/trainer.#{trainer_id}.html").read
+      trainer_page = TrainerPage.new(trainer_id, trainer_page_html)
+      trainer_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r
@@ -493,6 +499,105 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert_equal "松若 風馬", jockey_page.jockey_name
     assert jockey_page.valid?
     assert jockey_page.exists?
+
+    # trainer page
+    entries.each { |e| e[:trainer].download_from_s3! }
+
+    trainer_page = entries[0][:trainer]
+    assert_equal "01120", trainer_page.trainer_id
+    assert_equal "千田 輝彦", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[1][:trainer]
+    assert_equal "01022", trainer_page.trainer_id
+    assert_equal "石坂 正", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[2][:trainer]
+    assert_equal "01046", trainer_page.trainer_id
+    assert_equal "鮫島 一歩", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[3][:trainer]
+    assert_equal "01140", trainer_page.trainer_id
+    assert_equal "石橋 守", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[4][:trainer]
+    assert_equal "01041", trainer_page.trainer_id
+    assert_equal "藤沢 則雄", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[5][:trainer]
+    assert_equal "01073", trainer_page.trainer_id
+    assert_equal "宮本 博", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[6][:trainer]
+    assert_equal "01078", trainer_page.trainer_id
+    assert_equal "北出 成人", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[7][:trainer]
+    assert_equal "01104", trainer_page.trainer_id
+    assert_equal "笹田 和秀", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[8][:trainer]
+    assert_equal "01050", trainer_page.trainer_id
+    assert_equal "飯田 雄三", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[9][:trainer]
+    assert_equal "01138", trainer_page.trainer_id
+    assert_equal "浜田 多実雄", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[10][:trainer]
+    assert_equal "01066", trainer_page.trainer_id
+    assert_equal "岡田 稲男", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[11][:trainer]
+    assert_equal "01111", trainer_page.trainer_id
+    assert_equal "鈴木 孝志", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[12][:trainer]
+    assert_equal "00356", trainer_page.trainer_id
+    assert_equal "坂口 正則", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[13][:trainer]
+    assert_equal "01157", trainer_page.trainer_id
+    assert_equal "杉山 晴紀", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[14][:trainer]
+    assert_equal "00438", trainer_page.trainer_id
+    assert_equal "安田 隆行", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[15][:trainer]
+    assert_equal "01022", trainer_page.trainer_id
+    assert_equal "石坂 正", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
   end
 
 end

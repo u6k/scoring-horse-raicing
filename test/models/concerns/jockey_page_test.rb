@@ -484,4 +484,29 @@ class JockeyPageTest < ActiveSupport::TestCase
     assert_not jockey_page.exists?
   end
 
+  test "parse" do
+    # setup
+    jockey_page_html = File.open("test/fixtures/files/jockey.05339.html").read
+
+    # execute - new and parse
+    jockey_page = JockeyPage.new("05339", jockey_page_html)
+
+    # check
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert_not jockey_page.exists?
+  end
+
+  test "parse: invalid html" do
+    # execute - new invalid html
+    jockey_page = JockeyPage.new("00000", "Invalid html")
+
+    # check
+    assert_equal "00000", jockey_page.jockey_id
+    assert_nil jockey_page.jockey_name
+    assert_not jockey_page.valid?
+    assert_not jockey_page.exists?
+  end
+
 end

@@ -175,6 +175,38 @@ namespace :crawl do
             entry_page.save!
             Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: entry_page end"
           end
+
+          entry_page.entries.each.with_index(1) do |entry, sub_index|
+            horse_page = entry[:horse]
+            if missing_only && horse_page.exists?
+              horse_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: horse_page: #{sub_index}/#{entry_page.entries.length}: skip"
+            else
+              horse_page.download_from_web!
+              horse_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: horse_page: #{sub_index}/#{entry_page.entries.length}: end"
+            end
+
+            jockey_page = entry[:jockey]
+            if missing_only && jockey_page.exists?
+              jockey_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: jockey_page: #{sub_index}/#{entry_page.entries.length}: skip"
+            else
+              jockey_page.download_from_web!
+              jockey_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: jockey_page: #{sub_index}/#{entry_page.entries.length}: end"
+            end
+
+            trainer_page = entry[:trainer]
+            if missing_only && trainer_page.exists?
+              trainer_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: trainer_page: #{sub_index}/#{entry_page.entries.length}: skip"
+            else
+              trainer_page.download_from_web!
+              trainer_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: trainer_page: #{sub_index}/#{entry_page.entries.length}: end"
+            end
+          end
         end
 
         odds_win_page = result_page.odds_win_page

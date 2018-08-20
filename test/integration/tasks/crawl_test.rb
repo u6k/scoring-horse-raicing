@@ -184,9 +184,28 @@ class CrawlTest < ActionDispatch::IntegrationTest
       odds_trifecta_page = OddsTrifectaPage.new("1809030801", horse_number, odds_trifecta_page_html)
       odds_trifecta_page.save!
     end
+
+    ["2015104308", "2015104964", "2015100632", "2015100586", "2015103335", "2015104928", "2015106259", "2015102694", "2015102837", "2015105363", "2015101618", "2015102853", "2015103462", "2015103590", "2015104979", "2015103557"].each do |horse_id|
+      horse_page_html = File.open("test/fixtures/files/horse.#{horse_id}.html").read
+      horse_page = HorsePage.new(horse_id, horse_page_html)
+      horse_page.save!
+    end
+
+    ["05339", "01014", "01088", "01114", "01165", "00894", "01034", "05203", "01126", "01019", "01166", "01018", "01130", "05386", "01116", "01154"].each do |jockey_id|
+      jockey_page_html = File.open("test/fixtures/files/jockey.#{jockey_id}.html").read
+      jockey_page = JockeyPage.new(jockey_id, jockey_page_html)
+      jockey_page.save!
+    end
+
+    ["01120", "01022", "01046", "01140", "01041", "01073", "01078", "01104", "01050", "01138", "01066", "01111", "00356", "01157", "00438"].each do |trainer_id|
+      trainer_page_html = File.open("test/fixtures/files/trainer.#{trainer_id}.html").read
+      trainer_page = TrainerPage.new(trainer_id, trainer_page_html)
+      trainer_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r
+    # result page
     result_pages = ResultPage.find_all
     result_pages.each { |r| r.download_from_s3! }
 
@@ -201,6 +220,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert result_page.valid?
     assert result_page.exists?
 
+    # entry page
     entry_page = result_page.entry_page
     entry_page.download_from_s3!
 
@@ -209,6 +229,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert result_page.entry_page.valid?
     assert result_page.entry_page.exists?
 
+    # odds page
     odds_win_page = result_page.odds_win_page
     odds_win_page.download_from_s3!
 
@@ -277,6 +298,306 @@ class CrawlTest < ActionDispatch::IntegrationTest
       assert odds_trifecta_sub_page.valid?
       assert odds_trifecta_sub_page.exists?
     end
+
+    # horse page
+    entries = entry_page.entries
+    entries.each { |e| e[:horse].download_from_s3! }
+
+    assert_equal 16, entries.length
+
+    horse_page = entries[0][:horse]
+    assert_equal "2015104308", horse_page.horse_id
+    assert_equal "プロネルクール", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[1][:horse]
+    assert_equal "2015104964", horse_page.horse_id
+    assert_equal "スーブレット", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[2][:horse]
+    assert_equal "2015100632", horse_page.horse_id
+    assert_equal "アデル", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[3][:horse]
+    assert_equal "2015100586", horse_page.horse_id
+    assert_equal "ヤマニンフィオッコ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[4][:horse]
+    assert_equal "2015103335", horse_page.horse_id
+    assert_equal "メイショウハニー", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[5][:horse]
+    assert_equal "2015104928", horse_page.horse_id
+    assert_equal "レンブランサ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[6][:horse]
+    assert_equal "2015106259", horse_page.horse_id
+    assert_equal "アンジェレッタ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[7][:horse]
+    assert_equal "2015102694", horse_page.horse_id
+    assert_equal "テーオーパートナー", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[8][:horse]
+    assert_equal "2015102837", horse_page.horse_id
+    assert_equal "ウインタイムリープ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[9][:horse]
+    assert_equal "2015105363", horse_page.horse_id
+    assert_equal "モリノマリン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[10][:horse]
+    assert_equal "2015101618", horse_page.horse_id
+    assert_equal "プロムクイーン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[11][:horse]
+    assert_equal "2015102853", horse_page.horse_id
+    assert_equal "ナイスドゥ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[12][:horse]
+    assert_equal "2015103462", horse_page.horse_id
+    assert_equal "アクアレーヌ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[13][:horse]
+    assert_equal "2015103590", horse_page.horse_id
+    assert_equal "モンテルース", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[14][:horse]
+    assert_equal "2015104979", horse_page.horse_id
+    assert_equal "リーズン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[15][:horse]
+    assert_equal "2015103557", horse_page.horse_id
+    assert_equal "スマートスピカ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    # jockey page
+    entries.each { |e| e[:jockey].download_from_s3! }
+
+    jockey_page = entries[0][:jockey]
+    assert_equal "05339", jockey_page.jockey_id
+    assert_equal "C.ルメール", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[1][:jockey]
+    assert_equal "01014", jockey_page.jockey_id
+    assert_equal "福永 祐一", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[2][:jockey]
+    assert_equal "01088", jockey_page.jockey_id
+    assert_equal "川田 将雅", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[3][:jockey]
+    assert_equal "01114", jockey_page.jockey_id
+    assert_equal "田中 健", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[4][:jockey]
+    assert_equal "01165", jockey_page.jockey_id
+    assert_equal "森 裕太朗", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[5][:jockey]
+    assert_equal "00894", jockey_page.jockey_id
+    assert_equal "小牧 太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[6][:jockey]
+    assert_equal "01034", jockey_page.jockey_id
+    assert_equal "酒井 学", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[7][:jockey]
+    assert_equal "05203", jockey_page.jockey_id
+    assert_equal "岩田 康誠", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[8][:jockey]
+    assert_equal "01126", jockey_page.jockey_id
+    assert_equal "松山 弘平", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[9][:jockey]
+    assert_equal "01019", jockey_page.jockey_id
+    assert_equal "秋山 真一郎", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[10][:jockey]
+    assert_equal "01166", jockey_page.jockey_id
+    assert_equal "川又 賢治", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[11][:jockey]
+    assert_equal "01018", jockey_page.jockey_id
+    assert_equal "和田 竜二", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[12][:jockey]
+    assert_equal "01130", jockey_page.jockey_id
+    assert_equal "高倉 稜", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[13][:jockey]
+    assert_equal "05386", jockey_page.jockey_id
+    assert_equal "戸崎 圭太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[14][:jockey]
+    assert_equal "01116", jockey_page.jockey_id
+    assert_equal "藤岡 康太", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+    
+    jockey_page = entries[15][:jockey]
+    assert_equal "01154", jockey_page.jockey_id
+    assert_equal "松若 風馬", jockey_page.jockey_name
+    assert jockey_page.valid?
+    assert jockey_page.exists?
+
+    # trainer page
+    entries.each { |e| e[:trainer].download_from_s3! }
+
+    trainer_page = entries[0][:trainer]
+    assert_equal "01120", trainer_page.trainer_id
+    assert_equal "千田 輝彦", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[1][:trainer]
+    assert_equal "01022", trainer_page.trainer_id
+    assert_equal "石坂 正", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[2][:trainer]
+    assert_equal "01046", trainer_page.trainer_id
+    assert_equal "鮫島 一歩", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[3][:trainer]
+    assert_equal "01140", trainer_page.trainer_id
+    assert_equal "石橋 守", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[4][:trainer]
+    assert_equal "01041", trainer_page.trainer_id
+    assert_equal "藤沢 則雄", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[5][:trainer]
+    assert_equal "01073", trainer_page.trainer_id
+    assert_equal "宮本 博", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[6][:trainer]
+    assert_equal "01078", trainer_page.trainer_id
+    assert_equal "北出 成人", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[7][:trainer]
+    assert_equal "01104", trainer_page.trainer_id
+    assert_equal "笹田 和秀", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[8][:trainer]
+    assert_equal "01050", trainer_page.trainer_id
+    assert_equal "飯田 雄三", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[9][:trainer]
+    assert_equal "01138", trainer_page.trainer_id
+    assert_equal "浜田 多実雄", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[10][:trainer]
+    assert_equal "01066", trainer_page.trainer_id
+    assert_equal "岡田 稲男", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[11][:trainer]
+    assert_equal "01111", trainer_page.trainer_id
+    assert_equal "鈴木 孝志", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[12][:trainer]
+    assert_equal "00356", trainer_page.trainer_id
+    assert_equal "坂口 正則", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[13][:trainer]
+    assert_equal "01157", trainer_page.trainer_id
+    assert_equal "杉山 晴紀", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[14][:trainer]
+    assert_equal "00438", trainer_page.trainer_id
+    assert_equal "安田 隆行", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
+
+    trainer_page = entries[15][:trainer]
+    assert_equal "01022", trainer_page.trainer_id
+    assert_equal "石坂 正", trainer_page.trainer_name
+    assert trainer_page.valid?
+    assert trainer_page.exists?
   end
 
 end

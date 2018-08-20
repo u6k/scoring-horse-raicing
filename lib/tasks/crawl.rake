@@ -196,6 +196,16 @@ namespace :crawl do
               jockey_page.save!
               Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: jockey_page: #{sub_index}/#{entry_page.entries.length}: end"
             end
+
+            trainer_page = entry[:trainer]
+            if missing_only && trainer_page.exists?
+              trainer_page.download_from_s3!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: trainer_page: #{sub_index}/#{entry_page.entries.length}: skip"
+            else
+              trainer_page.download_from_web!
+              trainer_page.save!
+              Rails.logger.info "download_race_pages: download: #{index}/#{result_pages.length}: trainer_page: #{sub_index}/#{entry_page.entries.length}: end"
+            end
           end
         end
 

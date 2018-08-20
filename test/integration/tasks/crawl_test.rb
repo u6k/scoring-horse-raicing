@@ -201,6 +201,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
       trainer_page_html = File.open("test/fixtures/files/trainer.#{trainer_id}.html").read
       trainer_page = TrainerPage.new(trainer_id, trainer_page_html)
       trainer_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r

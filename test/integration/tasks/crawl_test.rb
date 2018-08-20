@@ -184,9 +184,16 @@ class CrawlTest < ActionDispatch::IntegrationTest
       odds_trifecta_page = OddsTrifectaPage.new("1809030801", horse_number, odds_trifecta_page_html)
       odds_trifecta_page.save!
     end
+
+    ["2015104308", "2015104964", "2015100632", "2015100586", "2015103335", "2015104928", "2015106259", "2015102694", "2015102837", "2015105363", "2015101618", "2015102853", "2015103462", "2015103590", "2015104979", "2015103557"].each do |horse_id|
+      horse_page_html = File.open("test/fixtures/files/horse.#{horse_id}.html").read
+      horse_page = HorsePage.new(horse_id, horse_page_html)
+      horse_page.save!
+    end
   end
 
   def assert_race_page_20180624_hanshin_1r
+    # result page
     result_pages = ResultPage.find_all
     result_pages.each { |r| r.download_from_s3! }
 
@@ -201,6 +208,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert result_page.valid?
     assert result_page.exists?
 
+    # entry page
     entry_page = result_page.entry_page
     entry_page.download_from_s3!
 
@@ -209,6 +217,7 @@ class CrawlTest < ActionDispatch::IntegrationTest
     assert result_page.entry_page.valid?
     assert result_page.entry_page.exists?
 
+    # odds page
     odds_win_page = result_page.odds_win_page
     odds_win_page.download_from_s3!
 
@@ -277,6 +286,108 @@ class CrawlTest < ActionDispatch::IntegrationTest
       assert odds_trifecta_sub_page.valid?
       assert odds_trifecta_sub_page.exists?
     end
+
+    # horse page
+    entries = entry_page.entries
+    entries.each { |e| e[:horse].download_from_s3! }
+
+    assert_equal 16, entries.length
+
+    horse_page = entries[0][:horse]
+    assert_equal "2015104308", horse_page.horse_id
+    assert_equal "プロネルクール", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[1][:horse]
+    assert_equal "2015104964", horse_page.horse_id
+    assert_equal "スーブレット", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[2][:horse]
+    assert_equal "2015100632", horse_page.horse_id
+    assert_equal "アデル", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[3][:horse]
+    assert_equal "2015100586", horse_page.horse_id
+    assert_equal "ヤマニンフィオッコ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[4][:horse]
+    assert_equal "2015103335", horse_page.horse_id
+    assert_equal "メイショウハニー", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[5][:horse]
+    assert_equal "2015104928", horse_page.horse_id
+    assert_equal "レンブランサ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[6][:horse]
+    assert_equal "2015106259", horse_page.horse_id
+    assert_equal "アンジェレッタ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[7][:horse]
+    assert_equal "2015102694", horse_page.horse_id
+    assert_equal "テーオーパートナー", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[8][:horse]
+    assert_equal "2015102837", horse_page.horse_id
+    assert_equal "ウインタイムリープ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[9][:horse]
+    assert_equal "2015105363", horse_page.horse_id
+    assert_equal "モリノマリン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[10][:horse]
+    assert_equal "2015101618", horse_page.horse_id
+    assert_equal "プロムクイーン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[11][:horse]
+    assert_equal "2015102853", horse_page.horse_id
+    assert_equal "ナイスドゥ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[12][:horse]
+    assert_equal "2015103462", horse_page.horse_id
+    assert_equal "アクアレーヌ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[13][:horse]
+    assert_equal "2015103590", horse_page.horse_id
+    assert_equal "モンテルース", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[14][:horse]
+    assert_equal "2015104979", horse_page.horse_id
+    assert_equal "リーズン", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
+
+    horse_page = entries[15][:horse]
+    assert_equal "2015103557", horse_page.horse_id
+    assert_equal "スマートスピカ", horse_page.horse_name
+    assert horse_page.valid?
+    assert horse_page.exists?
   end
 
 end

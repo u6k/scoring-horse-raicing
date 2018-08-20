@@ -49,6 +49,19 @@ class JockeyPage
     NetModule.put_s3_object(NetModule.get_s3_bucket, _build_s3_path, @content)
   end
 
+  def same?(obj)
+    if not obj.instance_of?(JockeyPage)
+      return false
+    end
+
+    if @jockey_id != obj.jockey_id \
+      || @jockey_name != obj.jockey_name
+      return false
+    end
+
+    true
+  end
+
   private
 
   def _parse

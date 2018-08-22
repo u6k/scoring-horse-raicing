@@ -4,7 +4,7 @@ class HorsePage
   attr_reader :horse_id, :horse_name
 
   def self.find_all
-    horse_pages = NetModule.get_s3_bucket.objects(prefix: "html/horse/horse.").map do |s3_obj|
+    horse_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/horse/horse.").map do |s3_obj|
       s3_obj.key.match(/horse\.([0-9]+)\.html$/) do |path|
         HorsePage.new(path[1])
       end
@@ -81,7 +81,7 @@ class HorsePage
   end
 
   def _build_s3_path
-    "html/horse/horse.#{horse_id}.html"
+    Rails.application.secrets.s3_folder + "/horse/horse.#{horse_id}.html"
   end
 
 end

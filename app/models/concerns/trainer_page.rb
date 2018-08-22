@@ -4,7 +4,7 @@ class TrainerPage
   attr_reader :trainer_id, :trainer_name
 
   def self.find_all
-    trainer_pages = NetModule.get_s3_bucket.objects(prefix: "html/trainer/trainer.").map do |s3_obj|
+    trainer_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/trainer/trainer.").map do |s3_obj|
       s3_obj.key.match(/trainer\.([0-9]+)\.html$/) do |path|
         TrainerPage.new(path[1])
       end
@@ -81,7 +81,7 @@ class TrainerPage
   end
 
   def _build_s3_path
-    "html/trainer/trainer.#{trainer_id}.html"
+    Rails.application.secrets.s3_folder + "/trainer/trainer.#{trainer_id}.html"
   end
 
 end

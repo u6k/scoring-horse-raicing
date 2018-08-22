@@ -4,7 +4,7 @@ class OddsTrioPage
   attr_reader :odds_id, :trio_results
 
   def self.find_all
-    odds_trio_pages = NetModule.get_s3_bucket.objects(prefix: "html/odds_trio/odds_trio.").map do |s3_obj|
+    odds_trio_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/odds_trio/odds_trio.").map do |s3_obj|
       s3_obj.key.match(/odds_trio\.([0-9]+)\.html$/) do |path|
         OddsTrioPage.new(path[1])
       end
@@ -81,7 +81,7 @@ class OddsTrioPage
   end
 
   def _build_s3_path
-    "html/odds_trio/odds_trio.#{@odds_id}.html"
+    Rails.application.secrets.s3_folder + "/odds_trio/odds_trio.#{@odds_id}.html"
   end
 
 end

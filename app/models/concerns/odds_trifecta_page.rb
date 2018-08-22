@@ -4,7 +4,7 @@ class OddsTrifectaPage
   attr_reader :odds_id, :horse_number, :trifecta_results, :odds_trifecta_pages
 
   def self.find_all
-    odds_trifecta_pages = NetModule.get_s3_bucket.objects(prefix: "html/odds_trifecta/odds_trifecta.").map do |s3_obj|
+    odds_trifecta_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/odds_trifecta/odds_trifecta.").map do |s3_obj|
       s3_obj.key.match(/odds_trifecta\.([0-9]+)\.([0-9]+)\.html$/) do |path|
         OddsTrifectaPage.new(path[1], path[2].to_i)
       end
@@ -102,7 +102,7 @@ class OddsTrifectaPage
   end
 
   def _build_s3_path
-    "html/odds_trifecta/odds_trifecta.#{@odds_id}.#{@horse_number}.html"
+    Rails.application.secrets.s3_folder + "/odds_trifecta/odds_trifecta.#{@odds_id}.#{@horse_number}.html"
   end
 
 end

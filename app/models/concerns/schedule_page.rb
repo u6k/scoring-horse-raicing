@@ -4,7 +4,7 @@ class SchedulePage
   attr_reader :date, :race_list_pages
 
   def self.find_all
-    schedule_pages = NetModule.get_s3_bucket.objects(prefix: "html/schedule/schedule.").map do |s3_obj|
+    schedule_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/schedule/schedule.").map do |s3_obj|
       s3_obj.key.match(/schedule\.([0-9]+)\.html$/) do |path|
         SchedulePage.new(path[1][0..3].to_i, path[1][4..5].to_i)
       end
@@ -95,7 +95,7 @@ class SchedulePage
   end
 
   def _build_s3_path
-    "html/schedule/schedule.#{@date.strftime('%Y%m')}.html"
+    Rails.application.secrets.s3_folder + "/schedule/schedule.#{@date.strftime('%Y%m')}.html"
   end
 
 end

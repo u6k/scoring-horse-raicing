@@ -4,7 +4,7 @@ class OddsQuinellaPlacePage
   attr_reader :odds_id, :quinella_place_results
 
   def self.find_all
-    odds_quinella_place_pages = NetModule.get_s3_bucket.objects(prefix: "html/odds_quinella_place/odds_quinella_place.").map do |s3_obj|
+    odds_quinella_place_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/odds_quinella_place/odds_quinella_place.").map do |s3_obj|
       s3_obj.key.match(/odds_quinella_place\.([0-9]+)\.html$/) do |path|
         OddsQuinellaPlacePage.new(path[1])
       end
@@ -81,7 +81,7 @@ class OddsQuinellaPlacePage
   end
 
   def _build_s3_path
-    "html/odds_quinella_place/odds_quinella_place.#{@odds_id}.html"
+    Rails.application.secrets.s3_folder + "/odds_quinella_place/odds_quinella_place.#{@odds_id}.html"
   end
 
 end

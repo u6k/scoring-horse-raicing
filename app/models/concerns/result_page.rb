@@ -4,7 +4,7 @@ class ResultPage
   attr_reader :result_id, :race_number, :race_name, :start_datetime, :entry_page, :odds_win_page
 
   def self.find_all
-    result_pages = NetModule.get_s3_bucket.objects(prefix: "html/result/result.").map do |s3_obj|
+    result_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/result/result.").map do |s3_obj|
       s3_obj.key.match(/result\.([0-9]+)\.html$/) do |path|
         ResultPage.new(path[1])
       end
@@ -129,7 +129,7 @@ class ResultPage
   end
 
   def _build_s3_path
-    "html/result/result.#{@result_id}.html"
+    Rails.application.secrets.s3_folder + "/result/result.#{@result_id}.html"
   end
 
 end

@@ -4,7 +4,7 @@ class EntryPage
   attr_reader :entry_id, :entries
 
   def self.find_all
-    entry_pages = NetModule.get_s3_bucket.objects(prefix: "html/entry/entry.").map do |s3_obj|
+    entry_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/entry/entry.").map do |s3_obj|
       s3_obj.key.match(/entry\.([0-9]+)\.html$/) do |path|
         EntryPage.new(path[1])
       end
@@ -120,7 +120,7 @@ class EntryPage
   end
 
   def _build_s3_path
-    "html/entry/entry.#{@entry_id}.html"
+    Rails.application.secrets.s3_folder + "/entry/entry.#{@entry_id}.html"
   end
 
 end

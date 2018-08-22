@@ -26,7 +26,8 @@ class CrawlTest < ActionDispatch::IntegrationTest
   test "download schedule page: case 2018-06, and force download" do
     # setup
     schedule_page_html_201806 = File.open("test/fixtures/files/schedule.201806.html").read
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "html/schedule/schedule.201806.html", schedule_page_html_201806)
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html_201806)
+    schedule_page.save!
 
     assert_equal 1, SchedulePage.find_all.length
 
@@ -45,7 +46,8 @@ class CrawlTest < ActionDispatch::IntegrationTest
   test "download schedule page: case 2018-06, and missing only" do
     # setup
     schedule_page_html_201806 = File.open("test/fixtures/files/schedule.201806.html").read
-    NetModule.put_s3_object(NetModule.get_s3_bucket, "html/schedule/schedule.201806.html", schedule_page_html_201806)
+    schedule_page = SchedulePage.new(2018, 6, schedule_page_html_201806)
+    schedule_page.save!
 
     assert_equal 1, SchedulePage.find_all.length
 

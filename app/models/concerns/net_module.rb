@@ -12,18 +12,43 @@ module NetModule
   end
 
   def self.put_s3_object(bucket, file_name, data)
+    # data compress
+    data_7z = StringIO.new("")
+    SevenZipRuby::Writer.open(data_7z) do |szr|
+      szr.level = 9
+      szr.add_data(data, file_name)
+    end
+
+    data_7z.rewind
+    data_7z = data_7z.read
+
+    # TODO: raise "Compress error" if not SevenZipRuby::Reader.verify(data_7z)
+
+    # upload
     obj_original = bucket.object(file_name)
-    obj_original.put(body: data)
+    obj_original.put(body: data_7z)
 
     obj_backup = bucket.object(file_name + ".bak_" + DateTime.now.strftime("%Y%m%d-%H%M%S"))
-    obj_backup.put(body: data)
+    obj_backup.put(body: data_7z)
 
     { original: obj_original.key, backup: obj_backup.key }
   end
 
   def self.get_s3_object(bucket, file_name)
+    # download
     object = bucket.object(file_name)
-    data = object.get.body.read(object.size)
+    data_7z = object.get.body.read(object.size)
+
+    # data extract
+    data_7z = StringIO.new(data_7z)
+    # TODO: raise "Extract error" if not SevenZipRuby::Reader.verify(data_7z)
+
+    data = nil
+    SevenZipRuby::Reader.open(data_7z) do |szr|
+      data = szr.extract_data(file_name)
+    end
+
+    data
   end
 
   def self.download_with_get(url)

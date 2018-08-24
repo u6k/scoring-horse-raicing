@@ -5,7 +5,7 @@ class ResultPage
 
   def self.find_all
     result_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/result/result.").map do |s3_obj|
-      s3_obj.key.match(/result\.([0-9]+)\.html$/) do |path|
+      s3_obj.key.match(/result\.([0-9]+)\.html\.7z$/) do |path|
         ResultPage.new(path[1])
       end
     end
@@ -40,7 +40,7 @@ class ResultPage
   end
 
   def exists?
-    NetModule.get_s3_bucket.object(_build_s3_path).exists?
+    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
   end
 
   def save!

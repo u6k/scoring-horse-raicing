@@ -5,7 +5,7 @@ class SchedulePage
 
   def self.find_all
     schedule_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/schedule/schedule.").map do |s3_obj|
-      s3_obj.key.match(/schedule\.([0-9]+)\.html$/) do |path|
+      s3_obj.key.match(/schedule\.([0-9]+)\.html\.7z$/) do |path|
         SchedulePage.new(path[1][0..3].to_i, path[1][4..5].to_i)
       end
     end
@@ -33,7 +33,7 @@ class SchedulePage
   end
 
   def exists?
-    NetModule.get_s3_bucket.object(_build_s3_path).exists?
+    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
   end
 
   def valid?

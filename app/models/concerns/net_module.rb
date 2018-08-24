@@ -20,9 +20,10 @@ module NetModule
     end
 
     data_7z.rewind
-    data_7z = data_7z.read
+    raise "Compress error" if not SevenZipRuby::Reader.verify(data_7z)
 
-    # TODO: raise "Compress error" if not SevenZipRuby::Reader.verify(data_7z)
+    data_7z.rewind
+    data_7z = data_7z.read
 
     # upload
     obj_original = bucket.object(file_name)
@@ -41,7 +42,9 @@ module NetModule
 
     # data extract
     data_7z = StringIO.new(data_7z)
-    # TODO: raise "Extract error" if not SevenZipRuby::Reader.verify(data_7z)
+    raise "Extract error" if not SevenZipRuby::Reader.verify(data_7z)
+
+    data_7z.rewind
 
     data = nil
     SevenZipRuby::Reader.open(data_7z) do |szr|

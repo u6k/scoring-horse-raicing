@@ -5,7 +5,7 @@ class OddsWinPage
 
   def self.find_all
     odds_win_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/odds_win/odds_win.").map do |s3_obj|
-      s3_obj.key.match(/odds_win\.([0-9]+)\.html$/) do |path|
+      s3_obj.key.match(/odds_win\.([0-9]+)\.html\.7z$/) do |path|
         OddsWinPage.new(path[1])
       end
     end
@@ -40,7 +40,7 @@ class OddsWinPage
   end
 
   def exists?
-    NetModule.get_s3_bucket.object(_build_s3_path).exists?
+    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
   end
 
   def save!

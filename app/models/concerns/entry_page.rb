@@ -5,7 +5,7 @@ class EntryPage
 
   def self.find_all
     entry_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/entry/entry.").map do |s3_obj|
-      s3_obj.key.match(/entry\.([0-9]+)\.html$/) do |path|
+      s3_obj.key.match(/entry\.([0-9]+)\.html\.7z$/) do |path|
         EntryPage.new(path[1])
       end
     end
@@ -38,7 +38,7 @@ class EntryPage
   end
 
   def exists?
-    NetModule.get_s3_bucket.object(_build_s3_path).exists?
+    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
   end
 
   def save!

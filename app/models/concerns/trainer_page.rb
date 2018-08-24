@@ -5,7 +5,7 @@ class TrainerPage
 
   def self.find_all
     trainer_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/trainer/trainer.").map do |s3_obj|
-      s3_obj.key.match(/trainer\.([0-9]+)\.html$/) do |path|
+      s3_obj.key.match(/trainer\.([0-9]+)\.html\.7z$/) do |path|
         TrainerPage.new(path[1])
       end
     end
@@ -38,7 +38,7 @@ class TrainerPage
   end
 
   def exists?
-    NetModule.get_s3_bucket.object(_build_s3_path).exists?
+    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
   end
 
   def save!

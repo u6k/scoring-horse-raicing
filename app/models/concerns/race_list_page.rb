@@ -33,7 +33,7 @@ class RaceListPage
   end
 
   def exists?
-    (not @repo.get_s3_object(_build_s3_path).nil?)
+    @repo.exists_s3_object?(_build_s3_path)
   end
 
   def valid?

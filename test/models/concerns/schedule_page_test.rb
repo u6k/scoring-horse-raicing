@@ -3,8 +3,8 @@ require 'test_helper'
 class SchedulePageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -12,8 +12,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(2018, 6)
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_equal Time.zone.local(2018, 6, 1), schedule_page.date
     assert_nil schedule_page.race_list_pages
     assert_not schedule_page.exists?
@@ -23,8 +21,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download_from_web!
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_equal 23, schedule_page.race_list_pages.length
     assert_not schedule_page.exists?
     assert schedule_page.valid?
@@ -33,8 +29,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert_equal 23, schedule_page.race_list_pages.length
     assert schedule_page.exists?
     assert schedule_page.valid?
@@ -43,8 +37,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2 = SchedulePage.new(2018, 6)
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert_nil schedule_page_2.race_list_pages
     assert schedule_page_2.exists?
     assert_not schedule_page_2.valid?
@@ -53,8 +45,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2.download_from_s3!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert_equal 23, schedule_page_2.race_list_pages.length
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
@@ -63,8 +53,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page_2.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert_equal 23, schedule_page_2.race_list_pages.length
     assert schedule_page_2.exists?
     assert schedule_page_2.valid?
@@ -75,8 +63,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
@@ -84,8 +70,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download_from_web!
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert schedule_page.valid?
 
@@ -93,8 +77,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert schedule_page.exists?
     assert schedule_page.valid?
   end
@@ -107,8 +89,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(2018, 8, html)
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert schedule_page.valid?
 
@@ -116,8 +96,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert schedule_page.exists?
     assert schedule_page.valid?
   end
@@ -127,8 +105,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(1900, 1)
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
@@ -136,8 +112,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download_from_web!
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
@@ -147,8 +121,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
   end
@@ -429,8 +401,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert schedule_page.valid?
 
@@ -438,8 +408,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert schedule_page.exists?
     assert schedule_page.valid?
 
@@ -447,8 +415,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.download_from_web!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert schedule_page.exists?
     assert schedule_page.valid?
 
@@ -456,8 +422,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page.save!
 
     # check
-    assert_equal 1, SchedulePage.find_all.length
-
     assert schedule_page.exists?
     assert schedule_page.valid?
   end
@@ -467,8 +431,6 @@ class SchedulePageTest < ActiveSupport::TestCase
     schedule_page = SchedulePage.new(1900, 1, "Invalid html")
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
 
@@ -478,40 +440,8 @@ class SchedulePageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, SchedulePage.find_all.length
-
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
-  end
-
-  test "find" do
-    # execute - データがない状態で検索する
-    schedule_pages = SchedulePage.find_all
-
-    # check
-    assert_equal 0, schedule_pages.length
-
-    # setup - 3件のスケジュールページを保存する
-    schedule_page_198601 = SchedulePage.new(1986, 1, File.open("test/fixtures/files/schedule.198601.html").read)
-    schedule_page_198601.save!
-
-    schedule_page_201806 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
-    schedule_page_201806.save!
-
-    schedule_page_201808 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
-    schedule_page_201808.save!
-
-    # execute - 検索する
-    schedule_pages = SchedulePage.find_all
-
-    # check
-    assert_equal 3, schedule_pages.length
-
-    schedule_pages.each { |s| s.download_from_s3! }
-
-    assert schedule_page_198601.same?(schedule_pages.find { |s| s.date == schedule_page_198601.date })
-    assert schedule_page_201806.same?(schedule_pages.find { |s| s.date == schedule_page_201806.date })
-    assert schedule_page_201808.same?(schedule_pages.find { |s| s.date == schedule_page_201808.date })
   end
 
   test "same" do

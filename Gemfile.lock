@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/u6k/crawline.git
-  revision: 6942eab354d6cc7fb9e8800770c8050898c1c03f
+  revision: 48004820013ec8ee98e1246ee4b32cc4395eac8e
   specs:
-    crawline (0.2.1)
+    crawline (0.2.3)
       aws-sdk-s3 (~> 1.30, >= 1.30.1)
 
 GEM
@@ -55,7 +55,7 @@ GEM
       io-like (~> 0.3.0)
     arel (9.0.0)
     aws-eventstream (1.0.1)
-    aws-partitions (1.133.0)
+    aws-partitions (1.134.0)
     aws-sdk-core (3.46.0)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
@@ -74,7 +74,7 @@ GEM
       msgpack (~> 1.0)
     builder (3.2.3)
     byebug (10.0.2)
-    capybara (3.12.0)
+    capybara (3.13.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)

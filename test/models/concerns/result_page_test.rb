@@ -3,8 +3,8 @@ require 'test_helper'
 class ResultPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -19,8 +19,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_pages = race_list_page.result_pages
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal 12, result_pages.length
 
     assert_equal "1809030801", result_pages[0].result_id
@@ -50,8 +48,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_pages.each { |r| r.download_from_web! }
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal 12, result_pages.length
 
     result_page = result_pages[0]
@@ -135,8 +131,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_pages.each { |r| r.save! }
 
     # check
-    assert_equal 12, ResultPage.find_all.length
-
     result_pages.each do |result_page|
       assert result_page.valid?
       assert result_page.exists?
@@ -148,8 +142,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_pages_2 = race_list_page.result_pages
 
     # check
-    assert_equal 12, ResultPage.find_all.length
-
     assert_equal 12, result_pages_2.length
 
     assert_equal "1809030801", result_pages_2[0].result_id
@@ -189,9 +181,6 @@ class ResultPageTest < ActiveSupport::TestCase
 
     # execute - 上書き保存
     result_pages_2.each { |r| r.save! }
-
-    # check
-    assert_equal 12, ResultPage.find_all.length
   end
 
   test "download: case invalid html" do
@@ -199,8 +188,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page = ResultPage.new("0000000000")
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal "0000000000", result_page.result_id
     assert_not result_page.valid?
     assert_not result_page.exists?
@@ -209,8 +196,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page.download_from_web!
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal "0000000000", result_page.result_id
     assert_not result_page.valid?
     assert_not result_page.exists?
@@ -221,8 +206,6 @@ class ResultPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal "0000000000", result_page.result_id
     assert_not result_page.valid?
     assert_not result_page.exists?
@@ -288,8 +271,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page = ResultPage.new("1809030801", result_html)
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_equal "1809030801", result_page.result_id
     assert_equal 1, result_page.race_number
     assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
@@ -303,8 +284,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page.save!
 
     # check
-    assert_equal 1, ResultPage.find_all.length
-
     assert result_page.valid?
     assert result_page.exists?
 
@@ -312,8 +291,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page.download_from_web!
 
     # check
-    assert_equal 1, ResultPage.find_all.length
-
     assert result_page.valid?
     assert result_page.exists?
 
@@ -321,8 +298,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page.save!
 
     # check
-    assert_equal 1, ResultPage.find_all.length
-
     assert result_page.valid?
     assert result_page.exists?
   end
@@ -332,8 +307,6 @@ class ResultPageTest < ActiveSupport::TestCase
     result_page = ResultPage.new("0000000000", "Invalid html")
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_not result_page.valid?
     assert_not result_page.exists?
 
@@ -343,50 +316,8 @@ class ResultPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, ResultPage.find_all.length
-
     assert_not result_page.valid?
     assert_not result_page.exists?
-  end
-
-  test "find" do
-    # setup
-    result_page_1_html = File.open("test/fixtures/files/result.19860126.tyukyou.11.html").read
-    result_page_1 = ResultPage.new("001", result_page_1_html)
-
-    result_page_2_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
-    result_page_2 = ResultPage.new("002", result_page_2_html)
-
-    result_page_3_html = File.open("test/fixtures/files/result.20180624.tokyo.10.html").read
-    result_page_3 = ResultPage.new("003", result_page_3_html)
-
-    result_page_4_html = File.open("test/fixtures/files/result.20180728.kokura.1.html").read
-    result_page_4 = ResultPage.new("004", result_page_4_html)
-
-    # execute
-    result_pages = ResultPage.find_all
-
-    # check - 未保存時は0件
-    assert_equal 0, result_pages.length
-
-    # setup
-    result_page_1.save!
-    result_page_2.save!
-    result_page_3.save!
-    result_page_4.save!
-
-    # execute
-    result_pages = ResultPage.find_all
-
-    result_pages.each { |r| r.download_from_s3! }
-
-    # check
-    assert_equal 4, result_pages.length
-
-    assert result_page_1.same?(result_pages.find { |r| r.result_id == result_page_1.result_id })
-    assert result_page_2.same?(result_pages.find { |r| r.result_id == result_page_2.result_id })
-    assert result_page_3.same?(result_pages.find { |r| r.result_id == result_page_3.result_id })
-    assert result_page_4.same?(result_pages.find { |r| r.result_id == result_page_4.result_id })
   end
 
 end

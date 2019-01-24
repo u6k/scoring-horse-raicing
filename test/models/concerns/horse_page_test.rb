@@ -3,8 +3,8 @@ require 'test_helper'
 class HorsePageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class HorsePageTest < ActiveSupport::TestCase
     entries = entry_page.entries
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal 16, entries.length
 
     horse_page = entries[0][:horse]
@@ -120,8 +118,6 @@ class HorsePageTest < ActiveSupport::TestCase
     entries.each { |e| e[:horse].download_from_web! }
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal 16, entries.length
 
     horse_page = entries[0][:horse]
@@ -224,8 +220,6 @@ class HorsePageTest < ActiveSupport::TestCase
     entries.each { |e| e[:horse].save! }
 
     # check
-    assert_equal 16, HorsePage.find_all.length
-
     entries.each do |e|
       assert e[:horse].valid?
       assert e[:horse].exists?
@@ -236,8 +230,6 @@ class HorsePageTest < ActiveSupport::TestCase
     entries_2 = entry_page.entries
 
     # check
-    assert_equal 16, HorsePage.find_all.length
-
     assert_equal 16, entries_2.length
 
     horse_page_2 = entries_2[0][:horse]
@@ -340,8 +332,6 @@ class HorsePageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:horse].download_from_s3! }
 
     # check
-    assert_equal 16, HorsePage.find_all.length
-
     assert_equal 16, entries_2.length
 
     horse_page_2 = entries_2[0][:horse]
@@ -442,9 +432,6 @@ class HorsePageTest < ActiveSupport::TestCase
 
     # execute - overwrite
     entries_2.each { |e| e[:horse].save! }
-
-    # check
-    assert_equal 16, HorsePage.find_all.length
   end
 
   test "download: invalid page" do
@@ -452,8 +439,6 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page = HorsePage.new("0000000000")
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal "0000000000", horse_page.horse_id
     assert_nil horse_page.horse_name
     assert_not horse_page.valid?
@@ -463,8 +448,6 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page.download_from_web!
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal "0000000000", horse_page.horse_id
     assert_nil horse_page.horse_name
     assert_not horse_page.valid?
@@ -476,8 +459,6 @@ class HorsePageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal "0000000000", horse_page.horse_id
     assert_nil horse_page.horse_name
     assert_not horse_page.valid?
@@ -517,8 +498,6 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page = HorsePage.new("2015104308", horse_page_html)
 
     # check
-    assert_equal 0, HorsePage.find_all.length
-
     assert_equal "2015104308", horse_page.horse_id
     assert_equal "プロネルクール", horse_page.horse_name
     assert horse_page.valid?
@@ -528,8 +507,6 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page.save!
 
     # check
-    assert_equal 1, HorsePage.find_all.length
-
     assert horse_page.valid?
     assert horse_page.exists?
 
@@ -537,8 +514,6 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page.download_from_web!
 
     # check
-    assert_equal 1, HorsePage.find_all.length
-
     assert horse_page.valid?
     assert horse_page.exists?
 
@@ -546,53 +521,8 @@ class HorsePageTest < ActiveSupport::TestCase
     horse_page.save!
 
     # check
-    assert_equal 1, HorsePage.find_all.length
-
     assert horse_page.valid?
     assert horse_page.exists?
-  end
-
-  test "find" do
-    # setup
-    horse_pages = []
-    horse_pages << HorsePage.new("2015104308", File.open("test/fixtures/files/horse.2015104308.html").read)
-    horse_pages << HorsePage.new("2015104964", File.open("test/fixtures/files/horse.2015104964.html").read)
-    horse_pages << HorsePage.new("2015100632", File.open("test/fixtures/files/horse.2015100632.html").read)
-    horse_pages << HorsePage.new("2015100586", File.open("test/fixtures/files/horse.2015100586.html").read)
-    horse_pages << HorsePage.new("2015103335", File.open("test/fixtures/files/horse.2015103335.html").read)
-    horse_pages << HorsePage.new("2015104928", File.open("test/fixtures/files/horse.2015104928.html").read)
-    horse_pages << HorsePage.new("2015106259", File.open("test/fixtures/files/horse.2015106259.html").read)
-    horse_pages << HorsePage.new("2015102694", File.open("test/fixtures/files/horse.2015102694.html").read)
-    horse_pages << HorsePage.new("2015102837", File.open("test/fixtures/files/horse.2015102837.html").read)
-    horse_pages << HorsePage.new("2015105363", File.open("test/fixtures/files/horse.2015105363.html").read)
-    horse_pages << HorsePage.new("2015101618", File.open("test/fixtures/files/horse.2015101618.html").read)
-    horse_pages << HorsePage.new("2015102853", File.open("test/fixtures/files/horse.2015102853.html").read)
-    horse_pages << HorsePage.new("2015103462", File.open("test/fixtures/files/horse.2015103462.html").read)
-    horse_pages << HorsePage.new("2015103590", File.open("test/fixtures/files/horse.2015103590.html").read)
-    horse_pages << HorsePage.new("2015104979", File.open("test/fixtures/files/horse.2015104979.html").read)
-    horse_pages << HorsePage.new("2015103557", File.open("test/fixtures/files/horse.2015103557.html").read)
-
-    # execute - non-saved
-    horse_pages_2 = HorsePage.find_all
-
-    # check
-    assert_equal 0, horse_pages_2.length
-
-    # execute - saved
-    horse_pages.each { |h| h.save! }
-
-    horse_pages_2 = HorsePage.find_all
-
-    horse_pages_2.each { |h| h.download_from_s3! }
-
-    # check
-    assert_equal 16, horse_pages_2.length
-
-    horse_pages_2.each do |horse_page_2|
-      horse_page = horse_pages.find { |h| h.horse_id == horse_page_2.horse_id }
-
-      assert horse_page_2.same?(horse_page)
-    end
   end
 
 end

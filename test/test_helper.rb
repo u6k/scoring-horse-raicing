@@ -7,4 +7,13 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def build_resource_repository
+    repo = Crawline::ResourceRepository.new(
+      Rails.application.secrets.s3_access_key,
+      Rails.application.secrets.s3_secret_key,
+      Rails.application.secrets.s3_region,
+      Rails.application.secrets.s3_bucket,
+      Rails.application.secrets.s3_endpoint,
+      true)
+  end
 end

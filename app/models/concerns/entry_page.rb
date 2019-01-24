@@ -3,31 +3,36 @@ class EntryPage
 
   attr_reader :entry_id, :entries
 
-  def self.find_all
-    entry_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/entry/entry.").map do |s3_obj|
-      s3_obj.key.match(/entry\.([0-9]+)\.html\.7z$/) do |path|
-        EntryPage.new(path[1])
-      end
-    end
-
-    entry_pages.compact
-  end
-
   def initialize(entry_id, content = nil)
     @entry_id = entry_id
     @content = content
+
+    @downloader = Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing")
+
+    @repo = Crawline::ResourceRepository.new(
+      Rails.application.secrets.s3_access_key,
+      Rails.application.secrets.s3_secret_key,
+      Rails.application.secrets.s3_region,
+      Rails.application.secrets.s3_bucket,
+      Rails.application.secrets.s3_endpoint,
+      true)
 
     _parse
   end
 
   def download_from_web!
-    @content = NetModule.download_with_get(_build_url)
+    begin
+      @content = @downloader.download_with_get(_build_url)
+    rescue
+      # TODO: Logging warning
+      @content = nil
+    end
 
     _parse
   end
 
   def download_from_s3!
-    @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_path)
+    @content = @repo.get_s3_object(_build_s3_path)
 
     _parse
   end
@@ -38,7 +43,7 @@ class EntryPage
   end
 
   def exists?
-    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
+    @repo.exists_s3_object?(_build_s3_path)
   end
 
   def save!
@@ -46,7 +51,7 @@ class EntryPage
       raise "Invalid"
     end
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, _build_s3_path, @content)
+    @repo.put_s3_object(_build_s3_path, @content)
   end
 
   def same?(obj)

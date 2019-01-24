@@ -3,8 +3,8 @@ require 'test_helper'
 class OddsExactaPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = odds_win_page.odds_exacta_page
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "1809030801", odds_exacta_page.odds_id
     assert_nil odds_exacta_page.exacta_results
     assert_not odds_exacta_page.valid?
@@ -27,8 +25,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.download_from_web!
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "1809030801", odds_exacta_page.odds_id
     assert_not_nil odds_exacta_page.exacta_results # FIXME
     assert odds_exacta_page.valid?
@@ -38,8 +34,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.save!
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert odds_exacta_page.valid?
     assert odds_exacta_page.exists?
 
@@ -48,8 +42,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page_2 = odds_win_page.odds_exacta_page
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert_equal "1809030801", odds_exacta_page_2.odds_id
     assert_nil odds_exacta_page_2.exacta_results
     assert_not odds_exacta_page_2.valid?
@@ -59,16 +51,11 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page_2.download_from_s3!
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert odds_exacta_page_2.valid?
     assert odds_exacta_page_2.exists?
 
     # execute - overwrite
     odds_exacta_page_2.save!
-
-    # check
-    assert_equal 1, OddsExactaPage.find_all.length
   end
 
   test "download: invalid html" do
@@ -76,8 +63,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = OddsExactaPage.new("0000000000", "Invalid html")
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "0000000000", odds_exacta_page.odds_id
     assert_not odds_exacta_page.valid?
     assert_not odds_exacta_page.exists?
@@ -86,8 +71,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.download_from_web!
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_not odds_exacta_page.valid?
     assert_not odds_exacta_page.exists?
 
@@ -97,8 +80,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_not odds_exacta_page.valid?
     assert_not odds_exacta_page.exists?
   end
@@ -111,8 +92,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = OddsExactaPage.new("1809030801", odds_exacta_page_html)
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "1809030801", odds_exacta_page.odds_id
     assert_not_nil odds_exacta_page.exacta_results # FIXME
     assert odds_exacta_page.valid?
@@ -124,8 +103,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = OddsExactaPage.new("0000000000", "Invalid html")
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "0000000000", odds_exacta_page.odds_id
     assert_nil odds_exacta_page.exacta_results
     assert_not odds_exacta_page.valid?
@@ -140,8 +117,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = OddsExactaPage.new("1809030801", odds_exacta_page_html)
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_equal "1809030801", odds_exacta_page.odds_id
     assert_not_nil odds_exacta_page.exacta_results # FIXME
     assert odds_exacta_page.valid?
@@ -151,8 +126,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.save!
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert odds_exacta_page.valid?
     assert odds_exacta_page.exists?
 
@@ -160,8 +133,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.download_from_web!
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert odds_exacta_page.valid?
     assert odds_exacta_page.exists?
 
@@ -169,8 +140,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page.save!
 
     # check
-    assert_equal 1, OddsExactaPage.find_all.length
-
     assert odds_exacta_page.valid?
     assert odds_exacta_page.exists?
   end
@@ -180,8 +149,6 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     odds_exacta_page = OddsExactaPage.new("0000000000", "Invalid html")
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_not odds_exacta_page.valid?
     assert_not odds_exacta_page.exists?
 
@@ -191,42 +158,8 @@ class OddsExactaPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
     assert_not odds_exacta_page.valid?
     assert_not odds_exacta_page.exists?
-  end
-
-  test "find" do
-    # setup
-    odds_exacta_page_1_html = File.open("test/fixtures/files/odds_exacta.20180624.hanshin.1.html").read
-    odds_exacta_page_1 = OddsExactaPage.new("1809030801", odds_exacta_page_1_html)
-
-    odds_exacta_page_2_html = File.open("test/fixtures/files/odds_exacta.20180624.hanshin.2.html").read
-    odds_exacta_page_2 = OddsExactaPage.new("1809030802", odds_exacta_page_2_html)
-
-    odds_exacta_page_3_html = File.open("test/fixtures/files/odds_exacta.20180624.hanshin.3.html").read
-    odds_exacta_page_3 = OddsExactaPage.new("1809030803", odds_exacta_page_3_html)
-
-    # check
-    assert_equal 0, OddsExactaPage.find_all.length
-
-    # setup
-    odds_exacta_page_1.save!
-    odds_exacta_page_2.save!
-    odds_exacta_page_3.save!
-
-    # execute
-    odds_exacta_pages = OddsExactaPage.find_all
-
-    odds_exacta_pages.each { |o| o.download_from_s3! }
-
-    # check
-    assert_equal 3, odds_exacta_pages.length
-
-    assert odds_exacta_page_1.same?(odds_exacta_pages.find { |o| o.odds_id == odds_exacta_page_1.odds_id })
-    assert odds_exacta_page_2.same?(odds_exacta_pages.find { |o| o.odds_id == odds_exacta_page_2.odds_id })
-    assert odds_exacta_page_3.same?(odds_exacta_pages.find { |o| o.odds_id == odds_exacta_page_3.odds_id })
   end
 
 end

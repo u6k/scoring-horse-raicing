@@ -21,7 +21,12 @@ class EntryPage
   end
 
   def download_from_web!
-    @content = @downloader.download_with_get(_build_url)
+    begin
+      @content = @downloader.download_with_get(_build_url)
+    rescue
+      # TODO: Logging warning
+      @content = nil
+    end
 
     _parse
   end

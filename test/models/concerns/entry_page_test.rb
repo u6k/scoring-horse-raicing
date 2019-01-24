@@ -3,8 +3,8 @@ require 'test_helper'
 class EntryPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page = result_page.entry_page
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "1809030801", entry_page.entry_id
     assert_nil entry_page.entries
     assert_not entry_page.valid?
@@ -27,8 +25,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.download_from_web!
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "1809030801", entry_page.entry_id
     assert_equal 16, entry_page.entries.length
     assert entry_page.valid?
@@ -38,8 +34,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.save!
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert entry_page.valid?
     assert entry_page.exists?
 
@@ -48,8 +42,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page_2 = result_page.entry_page
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert_equal "1809030801", entry_page_2.entry_id
     assert_nil entry_page_2.entries
     assert_not entry_page_2.valid?
@@ -59,8 +51,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page_2.download_from_s3!
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert_equal "1809030801", entry_page_2.entry_id
     assert_equal 16, entry_page_2.entries.length
     assert entry_page_2.valid?
@@ -68,9 +58,6 @@ class EntryPageTest < ActiveSupport::TestCase
 
     # execute - 上書き保存
     entry_page_2.save!
-
-    # check
-    assert_equal 1, EntryPage.find_all.length
   end
 
   test "download: case invalid html" do
@@ -78,8 +65,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page = EntryPage.new("0000000000")
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "0000000000", entry_page.entry_id
     assert_nil entry_page.entries
     assert_not entry_page.valid?
@@ -89,8 +74,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.download_from_web!
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "0000000000", entry_page.entry_id
     assert_nil entry_page.entries
     assert_not entry_page.valid?
@@ -102,8 +85,6 @@ class EntryPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_not entry_page.valid?
     assert_not entry_page.exists?
   end
@@ -253,8 +234,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page = EntryPage.new("1809030801", entry_page_html)
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "1809030801", entry_page.entry_id
     assert_equal 16, entry_page.entries.length
     assert entry_page.valid?
@@ -264,8 +243,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.save!
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert entry_page.valid?
     assert entry_page.exists?
 
@@ -273,8 +250,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.download_from_web!
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert entry_page.valid?
     assert entry_page.exists?
 
@@ -282,8 +257,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page.save!
 
     # check
-    assert_equal 1, EntryPage.find_all.length
-
     assert entry_page.valid?
     assert entry_page.exists?
   end
@@ -293,8 +266,6 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page = EntryPage.new("0000000000", "Invalid html")
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_equal "0000000000", entry_page.entry_id
     assert_nil entry_page.entries
     assert_not entry_page.valid?
@@ -306,32 +277,8 @@ class EntryPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, EntryPage.find_all.length
-
     assert_not entry_page.valid?
     assert_not entry_page.exists?
-  end
-
-  test "find" do
-    # setup
-    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
-    entry_page = EntryPage.new("1809030801", entry_page_html)
-
-    # check
-    assert_equal 0, EntryPage.find_all.length
-
-    # setup
-    entry_page.save!
-
-    # execute
-    entry_pages = EntryPage.find_all
-
-    entry_pages.each { |e| e.download_from_s3! }
-
-    # check
-    assert_equal 1, EntryPage.find_all.length
-
-    assert entry_page.same?(entry_pages[0])
   end
 
 end

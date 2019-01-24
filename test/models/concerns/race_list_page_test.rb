@@ -3,8 +3,8 @@ require 'test_helper'
 class RaceListPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages = schedule_page.race_list_pages
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_equal 23, race_list_pages.length
 
     race_list_page = race_list_pages[0]
@@ -139,8 +137,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages.each { |r| r.download_from_web! }
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     race_list_pages.each do |race_list_page|
       assert race_list_page.valid?
       assert_not race_list_page.exists?
@@ -150,8 +146,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages.each { |r| r.save! }
 
     # check
-    assert_equal 23, RaceListPage.find_all.length
-
     race_list_pages.each do |race_list_page|
       assert race_list_page.exists?
       assert race_list_page.valid?
@@ -186,9 +180,6 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # execute - overwrite
     race_list_pages_2.each { |r| r.save! }
-
-    # check
-    assert_equal 23, RaceListPage.find_all.length
   end
 
   test "download: case link skip" do
@@ -200,8 +191,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages = schedule_page.race_list_pages
 
     # postcondition
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_equal 6, race_list_pages.length
 
     race_list_page = race_list_pages[0]
@@ -238,8 +227,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages.each { |r| r.download_from_web! }
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     race_list_pages.each do |race_list_page|
       assert race_list_page.valid?
       assert_not race_list_page.exists?
@@ -249,8 +236,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages.each { |r| r.save! }
 
     # check
-    assert_equal 6, RaceListPage.find_all.length
-
     race_list_pages.each do |race_list_page|
       assert race_list_page.exists?
       assert race_list_page.valid?
@@ -285,9 +270,6 @@ class RaceListPageTest < ActiveSupport::TestCase
 
     # execute - overwrite
     race_list_pages_2.each { |r| r.save! }
-
-    # check
-    assert_equal 6, RaceListPage.find_all.length
   end
 
   test "download: case invalid html" do
@@ -295,8 +277,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.new("00000000")
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_equal "00000000", race_list_page.race_id
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
@@ -305,8 +285,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page.download_from_web!
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
 
@@ -316,8 +294,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_not race_list_page.exists?
     assert_not race_list_page.valid?
   end
@@ -487,8 +463,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.new("18090308", race_list_page_html)
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_equal "18090308", race_list_page.race_id
     assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
     assert_equal "阪神", race_list_page.course_name
@@ -500,8 +474,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page.save!
 
     # check
-    assert_equal 1, RaceListPage.find_all.length
-
     assert race_list_page.valid?
     assert race_list_page.exists?
 
@@ -509,8 +481,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page.download_from_web!
 
     # check
-    assert_equal 1, RaceListPage.find_all.length
-
     assert race_list_page.valid?
     assert race_list_page.exists?
 
@@ -518,8 +488,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page.save!
 
     # check
-    assert_equal 1, RaceListPage.find_all.length
-
     assert race_list_page.valid?
     assert race_list_page.exists?
   end
@@ -533,8 +501,6 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_page = RaceListPage.new("aaaaaaaa", "Invalid html")
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_not race_list_page.valid?
     assert_not race_list_page.exists?
 
@@ -544,44 +510,8 @@ class RaceListPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, RaceListPage.find_all.length
-
     assert_not race_list_page.valid?
     assert_not race_list_page.exists?
-  end
-
-  test "find" do
-    # setup
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
-
-    race_list_page_1_html = File.open("test/fixtures/files/race_list.20180603.tokyo.html").read
-    race_list_page_1 = RaceListPage.new("18050302", race_list_page_1_html)
-
-    race_list_page_2_html = File.open("test/fixtures/files/race_list.20180624.hanshin.html").read
-    race_list_page_2 = RaceListPage.new("18090308", race_list_page_2_html)
-
-    # execute
-    race_list_pages = RaceListPage.find_all
-
-    # check - 未保存時は0件
-    assert_equal 0, race_list_pages.length
-
-    # setup
-    schedule_page.save!
-    race_list_page_1.save!
-    race_list_page_2.save!
-
-    # execute
-    race_list_pages = RaceListPage.find_all
-
-    race_list_pages.each { |r| r.download_from_s3! }
-
-    # check
-    assert_equal 2, race_list_pages.length
-
-    assert race_list_pages[0].same?(race_list_page_1)
-    assert race_list_pages[1].same?(race_list_page_2)
   end
 
 end

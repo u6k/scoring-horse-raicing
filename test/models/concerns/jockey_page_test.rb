@@ -3,8 +3,8 @@ require 'test_helper'
 class JockeyPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries = entry_page.entries
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal 16, entries.length
 
     jockey_page = entries[0][:jockey]
@@ -120,8 +118,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries.each { |e| e[:jockey].download_from_web! }
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal 16, entries.length
 
     jockey_page = entries[0][:jockey]
@@ -224,8 +220,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries.each { |e| e[:jockey].save! }
 
     # check
-    assert_equal 16, JockeyPage.find_all.length
-
     entries.each do |e|
       assert e[:jockey].valid?
       assert e[:jockey].exists?
@@ -236,8 +230,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries_2 = entry_page.entries
 
     # check
-    assert_equal 16, JockeyPage.find_all.length
-
     assert_equal 16, entries_2.length
 
     jockey_page_2 = entries_2[0][:jockey]
@@ -340,8 +332,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:jockey].download_from_s3! }
 
     # check
-    assert_equal 16, JockeyPage.find_all.length
-
     assert_equal 16, entries_2.length
 
     jockey_page_2 = entries_2[0][:jockey]
@@ -442,9 +432,6 @@ class JockeyPageTest < ActiveSupport::TestCase
 
     # execute - overwrite
     entries_2.each { |e| e[:jockey].save! }
-
-    # check
-    assert_equal 16, JockeyPage.find_all.length
   end
 
   test "download: invalid page" do
@@ -452,8 +439,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page = JockeyPage.new("00000")
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal "00000", jockey_page.jockey_id
     assert_nil jockey_page.jockey_name
     assert_not jockey_page.valid?
@@ -463,8 +448,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page.download_from_web!
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal "00000", jockey_page.jockey_id
     assert_nil jockey_page.jockey_name
     assert_not jockey_page.valid?
@@ -476,8 +459,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal "00000", jockey_page.jockey_id
     assert_nil jockey_page.jockey_name
     assert_not jockey_page.valid?
@@ -517,8 +498,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page = JockeyPage.new("05339", jockey_page_html)
 
     # check
-    assert_equal 0, JockeyPage.find_all.length
-
     assert_equal "05339", jockey_page.jockey_id
     assert_equal "C.ルメール", jockey_page.jockey_name
     assert jockey_page.valid?
@@ -528,8 +507,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page.save!
 
     # check
-    assert_equal 1, JockeyPage.find_all.length
-
     assert jockey_page.valid?
     assert jockey_page.exists?
 
@@ -537,8 +514,6 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page.download_from_web!
 
     # check
-    assert_equal 1, JockeyPage.find_all.length
-
     assert_equal "05339", jockey_page.jockey_id
     assert_equal "C.ルメール", jockey_page.jockey_name
     assert jockey_page.valid?
@@ -548,55 +523,10 @@ class JockeyPageTest < ActiveSupport::TestCase
     jockey_page.save!
 
     # check
-    assert_equal 1, JockeyPage.find_all.length
-
     assert_equal "05339", jockey_page.jockey_id
     assert_equal "C.ルメール", jockey_page.jockey_name
     assert jockey_page.valid?
     assert jockey_page.exists?
-  end
-
-  test "find" do
-    # setup
-    jockey_pages = []
-    jockey_pages << JockeyPage.new("05339", File.open("test/fixtures/files/jockey.05339.html").read)
-    jockey_pages << JockeyPage.new("01014", File.open("test/fixtures/files/jockey.01014.html").read)
-    jockey_pages << JockeyPage.new("01088", File.open("test/fixtures/files/jockey.01088.html").read)
-    jockey_pages << JockeyPage.new("01114", File.open("test/fixtures/files/jockey.01114.html").read)
-    jockey_pages << JockeyPage.new("01165", File.open("test/fixtures/files/jockey.01165.html").read)
-    jockey_pages << JockeyPage.new("00894", File.open("test/fixtures/files/jockey.00894.html").read)
-    jockey_pages << JockeyPage.new("01034", File.open("test/fixtures/files/jockey.01034.html").read)
-    jockey_pages << JockeyPage.new("05203", File.open("test/fixtures/files/jockey.05203.html").read)
-    jockey_pages << JockeyPage.new("01126", File.open("test/fixtures/files/jockey.01126.html").read)
-    jockey_pages << JockeyPage.new("01019", File.open("test/fixtures/files/jockey.01019.html").read)
-    jockey_pages << JockeyPage.new("01166", File.open("test/fixtures/files/jockey.01166.html").read)
-    jockey_pages << JockeyPage.new("01018", File.open("test/fixtures/files/jockey.01018.html").read)
-    jockey_pages << JockeyPage.new("01130", File.open("test/fixtures/files/jockey.01130.html").read)
-    jockey_pages << JockeyPage.new("05386", File.open("test/fixtures/files/jockey.05386.html").read)
-    jockey_pages << JockeyPage.new("01116", File.open("test/fixtures/files/jockey.01116.html").read)
-    jockey_pages << JockeyPage.new("01154", File.open("test/fixtures/files/jockey.01154.html").read)
-
-    # execute - 未保存時の検索
-    jockey_pages_2 = JockeyPage.find_all
-
-    # check - 未保存時は0件
-    assert_equal 0, jockey_pages_2.length
-
-    # execute - 保存してから検索
-    jockey_pages.each { |j| j.save! }
-
-    jockey_pages_2 = JockeyPage.find_all
-
-    jockey_pages_2.each { |j| j.download_from_s3! }
-
-    # check
-    assert_equal 16, jockey_pages_2.length
-
-    jockey_pages_2.each do |jockey_page_2|
-      jockey_page = jockey_pages.find { |j| j.jockey_id == jockey_page_2.jockey_id }
-
-      assert jockey_page_2.same?(jockey_page)
-    end
   end
 
 end

@@ -3,31 +3,31 @@ class OddsWinPage
 
   attr_reader :odds_id, :win_results, :place_results, :bracket_quinella_results, :odds_quinella_page, :odds_quinella_place_page, :odds_exacta_page, :odds_trio_page, :odds_trifecta_page
 
-  def self.find_all
-    odds_win_pages = NetModule.get_s3_bucket.objects(prefix: Rails.application.secrets.s3_folder + "/odds_win/odds_win.").map do |s3_obj|
-      s3_obj.key.match(/odds_win\.([0-9]+)\.html\.7z$/) do |path|
-        OddsWinPage.new(path[1])
-      end
-    end
-
-    odds_win_pages.compact
-  end
-
   def initialize(odds_id, content = nil)
     @odds_id = odds_id
     @content = content
+
+    @downloader = Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing")
+
+    @repo = Crawline::ResourceRepository.new(
+      Rails.application.secrets.s3_access_key,
+      Rails.application.secrets.s3_secret_key,
+      Rails.application.secrets.s3_region,
+      Rails.application.secrets.s3_bucket,
+      Rails.application.secrets.s3_endpoint,
+      true)
 
     _parse
   end
 
   def download_from_web!
-    @content = NetModule.download_with_get(_build_url)
+    @content = @downloader.download_with_get(_build_url)
 
     _parse
   end
 
   def download_from_s3!
-    @content = NetModule.get_s3_object(NetModule.get_s3_bucket, _build_s3_path)
+    @content = @repo.get_s3_object(_build_s3_path)
 
     _parse
   end
@@ -40,7 +40,7 @@ class OddsWinPage
   end
 
   def exists?
-    NetModule.exists_s3_object?(NetModule.get_s3_bucket, _build_s3_path)
+    @repo.exists_s3_object?(_build_s3_path)
   end
 
   def save!
@@ -48,7 +48,7 @@ class OddsWinPage
       raise "Invalid"
     end
 
-    NetModule.put_s3_object(NetModule.get_s3_bucket, _build_s3_path, @content)
+    @repo.put_s3_object(_build_s3_path, @content)
   end
 
   def same?(obj)

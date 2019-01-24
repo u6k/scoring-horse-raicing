@@ -3,8 +3,8 @@ require 'test_helper'
 class TrainerPageTest < ActiveSupport::TestCase
 
   def setup
-    @bucket = NetModule.get_s3_bucket
-    @bucket.objects.batch_delete!
+    repo = build_resource_repository
+    repo.remove_s3_objects
   end
 
   test "download" do
@@ -16,8 +16,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries = entry_page.entries
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal 16, entries.length
 
     trainer_page = entries[0][:trainer]
@@ -120,8 +118,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries.each { |e| e[:trainer].download_from_web! }
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal 16, entries.length
 
     trainer_page = entries[0][:trainer]
@@ -224,8 +220,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries.each { |e| e[:trainer].save! }
 
     # check
-    assert_equal 15, TrainerPage.find_all.length # 重複している調教師がいるため、16ではなく15
-
     entries.each do |e|
       assert e[:trainer].valid?
       assert e[:trainer].exists?
@@ -236,8 +230,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2 = entry_page.entries
 
     # check
-    assert_equal 15, TrainerPage.find_all.length
-
     assert_equal 16, entries_2.length
 
     trainer_page_2 = entries_2[0][:trainer]
@@ -340,8 +332,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:trainer].download_from_s3! }
 
     # check
-    assert_equal 15, TrainerPage.find_all.length
-
     assert_equal 16, entries_2.length
 
     trainer_page_2 = entries_2[0][:trainer]
@@ -442,9 +432,6 @@ class TrainerPageTest < ActiveSupport::TestCase
 
     # execute - overwrite
     entries_2.each { |e| e[:trainer].save! }
-
-    # check
-    assert_equal 15, TrainerPage.find_all.length
   end
 
   test "download: invalid page" do
@@ -452,8 +439,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page = TrainerPage.new("99999")
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
@@ -463,8 +448,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page.download_from_web!
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
@@ -476,8 +459,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     end
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal "99999", trainer_page.trainer_id
     assert_nil trainer_page.trainer_name
     assert_not trainer_page.valid?
@@ -517,8 +498,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page = TrainerPage.new("01120", trainer_page_html)
 
     # check
-    assert_equal 0, TrainerPage.find_all.length
-
     assert_equal "01120", trainer_page.trainer_id
     assert_equal "千田 輝彦", trainer_page.trainer_name
     assert trainer_page.valid?
@@ -528,8 +507,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page.save!
 
     # check
-    assert_equal 1, TrainerPage.find_all.length
-
     assert trainer_page.valid?
     assert trainer_page.exists?
 
@@ -537,8 +514,6 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page.download_from_web!
 
     # check
-    assert_equal 1, TrainerPage.find_all.length
-
     assert_equal "01120", trainer_page.trainer_id
     assert_equal "千田 輝彦", trainer_page.trainer_name
     assert trainer_page.valid?
@@ -548,51 +523,10 @@ class TrainerPageTest < ActiveSupport::TestCase
     trainer_page.save!
 
     # check
-    assert_equal 1, TrainerPage.find_all.length
-
     assert_equal "01120", trainer_page.trainer_id
     assert_equal "千田 輝彦", trainer_page.trainer_name
     assert trainer_page.valid?
     assert trainer_page.exists?
-  end
-
-  test "find" do
-    # setup
-    trainer_pages = []
-    trainer_pages << TrainerPage.new("01120", File.open("test/fixtures/files/trainer.01120.html").read)
-    trainer_pages << TrainerPage.new("01022", File.open("test/fixtures/files/trainer.01022.html").read)
-    trainer_pages << TrainerPage.new("01046", File.open("test/fixtures/files/trainer.01046.html").read)
-    trainer_pages << TrainerPage.new("01140", File.open("test/fixtures/files/trainer.01140.html").read)
-    trainer_pages << TrainerPage.new("01041", File.open("test/fixtures/files/trainer.01041.html").read)
-    trainer_pages << TrainerPage.new("01073", File.open("test/fixtures/files/trainer.01073.html").read)
-    trainer_pages << TrainerPage.new("01078", File.open("test/fixtures/files/trainer.01078.html").read)
-    trainer_pages << TrainerPage.new("01104", File.open("test/fixtures/files/trainer.01104.html").read)
-    trainer_pages << TrainerPage.new("01050", File.open("test/fixtures/files/trainer.01050.html").read)
-    trainer_pages << TrainerPage.new("01138", File.open("test/fixtures/files/trainer.01138.html").read)
-    trainer_pages << TrainerPage.new("01066", File.open("test/fixtures/files/trainer.01066.html").read)
-    trainer_pages << TrainerPage.new("01111", File.open("test/fixtures/files/trainer.01111.html").read)
-    trainer_pages << TrainerPage.new("00356", File.open("test/fixtures/files/trainer.00356.html").read)
-    trainer_pages << TrainerPage.new("01157", File.open("test/fixtures/files/trainer.01157.html").read)
-    trainer_pages << TrainerPage.new("00438", File.open("test/fixtures/files/trainer.00438.html").read)
-
-    # check - 未保存時は0件
-    assert_equal 0, TrainerPage.find_all.length
-
-    # execute - 保存してから検索
-    trainer_pages.each { |t| t.save! }
-
-    trainer_pages_2 = TrainerPage.find_all
-
-    trainer_pages_2.each { |t| t.download_from_s3! }
-
-    # check
-    assert_equal 15, trainer_pages_2.length
-
-    trainer_pages_2.each do |trainer_page_2|
-      trainer_page = trainer_pages.find { |j| j.trainer_id == trainer_page_2.trainer_id }
-
-      assert trainer_page_2.same?(trainer_page)
-    end
   end
 
 end

@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "scoring_horse_racing"
+require "crawline"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -10,5 +11,19 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+end
+
+module ScoringHorseRacing::SpecUtil
+  def self.build_resource_repository
+    access_key = ENV["AWS_S3_ACCESS_KEY"]
+    secret_key = ENV["AWS_S3_SECRET_KEY"]
+    region = ENV["AWS_S3_REGION"]
+    bucket = ENV["AWS_S3_BUCKET"]
+    endpoint = ENV["AWS_S3_ENDPOINT"]
+    force_path_style = ENV["AWS_S3_FORCE_PATH_STYLE"]
+
+    # Setup ResourceRepository
+    repo = Crawline::ResourceRepository.new(access_key, secret_key, region, bucket, endpoint, force_path_style)
   end
 end

@@ -1,7 +1,7 @@
 RSpec.describe "result page spec" do
 
   before do
-    repo = build_resource_repository
+    repo = ScoringHorseRacing::SpecUtil.build_resource_repository
     repo.remove_s3_objects
   end
 

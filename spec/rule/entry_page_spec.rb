@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "entry page spec" do
 
-class EntryPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
     result_page = ResultPage.new("1809030801", result_page_html)
@@ -60,7 +58,7 @@ class EntryPageTest < ActiveSupport::TestCase
     entry_page_2.save!
   end
 
-  test "download: case invalid html" do
+  it "download: case invalid html" do
     # execute - 不正なエントリーIDのページをインスタンス化
     entry_page = EntryPage.new("0000000000")
 
@@ -89,7 +87,7 @@ class EntryPageTest < ActiveSupport::TestCase
     assert_not entry_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
 
@@ -215,7 +213,7 @@ class EntryPageTest < ActiveSupport::TestCase
     assert_equal "01154", entry[:jockey].jockey_id
   end
 
-  test "parse: invalid html" do
+  it "parse: invalid html" do
     # execute
     entry_page = EntryPage.new("0000000000", "Invalid html")
 
@@ -226,7 +224,7 @@ class EntryPageTest < ActiveSupport::TestCase
     assert_not entry_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
 
@@ -261,7 +259,7 @@ class EntryPageTest < ActiveSupport::TestCase
     assert entry_page.exists?
   end
 
-  test "save: invalid" do
+  it "save: invalid" do
     # execute - インスタンス化 && ダウンロード && パース -> 失敗
     entry_page = EntryPage.new("0000000000", "Invalid html")
 

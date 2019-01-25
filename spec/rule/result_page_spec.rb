@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "result page spec" do
 
-class ResultPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -183,7 +181,7 @@ class ResultPageTest < ActiveSupport::TestCase
     result_pages_2.each { |r| r.save! }
   end
 
-  test "download: case invalid html" do
+  it "download: case invalid html" do
     # execute - 不正なレースIDのページをインスタンス化
     result_page = ResultPage.new("0000000000")
 
@@ -211,7 +209,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_not result_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
 
@@ -229,7 +227,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_not result_page.exists?
   end
 
-  test "parse: missing link" do
+  it "parse: missing link" do
     # setup
     result_html = File.open("test/fixtures/files/result.19860126.tyukyou.11.html").read
 
@@ -247,7 +245,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_not result_page.exists?
   end
 
-  test "parse: case invalid html" do
+  it "parse: case invalid html" do
     # execute
     result_page = ResultPage.new("0000000000")
     result_page.download_from_web!
@@ -263,7 +261,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert_not result_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
 
@@ -302,7 +300,7 @@ class ResultPageTest < ActiveSupport::TestCase
     assert result_page.exists?
   end
 
-  test "can't save: invalid" do
+  it "can't save: invalid" do
     # execute - 不正なHTMLをインスタンス化
     result_page = ResultPage.new("0000000000", "Invalid html")
 

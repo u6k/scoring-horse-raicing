@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "trainer page spec" do
 
-class TrainerPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
     entry_page = EntryPage.new("1809030801", entry_page_html)
@@ -434,7 +432,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:trainer].save! }
   end
 
-  test "download: invalid page" do
+  it "download: invalid page" do
     # execute - new invalid page
     trainer_page = TrainerPage.new("99999")
 
@@ -465,7 +463,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     assert_not trainer_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     trainer_page_html = File.open("test/fixtures/files/trainer.01120.html").read
 
@@ -479,7 +477,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     assert_not trainer_page.exists?
   end
 
-  test "parse: invalid html" do
+  it "parse: invalid html" do
     # execute - new invalid html
     trainer_page = TrainerPage.new("00000", "Invalid html")
 
@@ -490,7 +488,7 @@ class TrainerPageTest < ActiveSupport::TestCase
     assert_not trainer_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     trainer_page_html = File.open("test/fixtures/files/trainer.01120.html").read
 

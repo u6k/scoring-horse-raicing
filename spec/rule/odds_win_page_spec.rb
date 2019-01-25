@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "odds win page spec" do
 
-class OddsWinPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
     result_page = ResultPage.new("1809030801", result_html)
@@ -88,7 +86,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
     odds_win_page_2.save!
   end
 
-  test "download: case invalid html" do
+  it "download: case invalid html" do
     # execute - 不正なHTMLをインスタンス化
     odds_win_page = OddsWinPage.new("0000000000", "Invalid html")
 
@@ -116,7 +114,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not odds_win_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
 
@@ -137,7 +135,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not odds_win_page.exists?
   end
 
-  test "parse: invalid html" do
+  it "parse: invalid html" do
     # execute
     odds_win_page = OddsWinPage.new("0000000000", "Invalid html")
 
@@ -155,7 +153,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert_not odds_win_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
 
@@ -197,7 +195,7 @@ class OddsWinPageTest < ActiveSupport::TestCase
     assert odds_win_page.exists?
   end
 
-  test "save: invalid" do
+  it "save: invalid" do
     # execute - 不正なHTMLをインスタンス化
     odds_win_page = OddsWinPage.new("0000000000", "Invalid html")
 

@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "odds trio page spec" do
 
-class OddsTrioPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
     odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
@@ -58,7 +56,7 @@ class OddsTrioPageTest < ActiveSupport::TestCase
     odds_trio_page_2.save!
   end
 
-  test "download: invalid html" do
+  it "download: invalid html" do
     # execute - new from invalid html
     odds_trio_page = OddsTrioPage.new("0000000000", "Invalid html")
 
@@ -84,7 +82,7 @@ class OddsTrioPageTest < ActiveSupport::TestCase
     assert_not odds_trio_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     odds_trio_page_html = File.open("test/fixtures/files/odds_trio.20180624.hanshin.1.html").read
 
@@ -98,7 +96,7 @@ class OddsTrioPageTest < ActiveSupport::TestCase
     assert_not odds_trio_page.exists?
   end
 
-  test "parse: invalid html" do
+  it "parse: invalid html" do
     # execute
     odds_trio_page = OddsTrioPage.new("0000000000", "Invalid html")
 
@@ -109,7 +107,7 @@ class OddsTrioPageTest < ActiveSupport::TestCase
     assert_not odds_trio_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     odds_trio_page_html = File.open("test/fixtures/files/odds_trio.20180624.hanshin.1.html").read
 
@@ -144,7 +142,7 @@ class OddsTrioPageTest < ActiveSupport::TestCase
     assert odds_trio_page.exists?
   end
 
-  test "save: invalid" do
+  it "save: invalid" do
     # execute - new invalid html
     odds_trio_page = OddsTrioPage.new("0000000000", "Invalid html")
 

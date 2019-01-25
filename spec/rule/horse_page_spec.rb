@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "horse page spec" do
 
-class HorsePageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
     entry_page = EntryPage.new("1809030801", entry_page_html)
@@ -434,7 +432,7 @@ class HorsePageTest < ActiveSupport::TestCase
     entries_2.each { |e| e[:horse].save! }
   end
 
-  test "download: invalid page" do
+  it "download: invalid page" do
     # execute - new invalid page
     horse_page = HorsePage.new("0000000000")
 
@@ -465,7 +463,7 @@ class HorsePageTest < ActiveSupport::TestCase
     assert_not horse_page.exists?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     horse_page_html = File.open("test/fixtures/files/horse.2015104308.html").read
 
@@ -479,7 +477,7 @@ class HorsePageTest < ActiveSupport::TestCase
     assert_not horse_page.exists?
   end
 
-  test "parse: invalid html" do
+  it "parse: invalid html" do
     # execute - new invalid html
     horse_page = HorsePage.new("0000000000", "Invalid html")
 
@@ -490,7 +488,7 @@ class HorsePageTest < ActiveSupport::TestCase
     assert_not horse_page.exists?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     horse_page_html = File.open("test/fixtures/files/horse.2015104308.html").read
 

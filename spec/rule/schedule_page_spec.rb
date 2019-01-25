@@ -1,23 +1,11 @@
-require 'test_helper'
+RSpec.describe "schedule page spec" do
 
-RSpec.describe ScoringHorseRacing do
-  it "has a version number" do
-    expect(ScoringHorseRacing::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
-  end
-end
-
-class SchedulePageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # execute - 過去月をインスタンス化
     schedule_page = SchedulePage.new(2018, 6)
 
@@ -68,7 +56,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page_2.valid?
   end
 
-  test "download: 当月の場合" do
+  it "download: 当月の場合" do
     # execute - 当月をインスタンス化
     schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
 
@@ -91,7 +79,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page.valid?
   end
 
-  test "download: 来月(リンクが不完全)の場合" do
+  it "download: 来月(リンクが不完全)の場合" do
     # setup
     html = File.open("test/fixtures/files/schedule.201808.html").read
 
@@ -110,7 +98,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page.valid?
   end
 
-  test "download: ページが存在しない月の場合" do
+  it "download: ページが存在しない月の場合" do
     # execute - 存在しない月をインスタンス化
     schedule_page = SchedulePage.new(1900, 1)
 
@@ -135,7 +123,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -333,7 +321,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not race_list_page.valid?
   end
 
-  test "parse: case line skip" do
+  it "parse: case line skip" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
     schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
@@ -395,7 +383,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not race_list_page.valid?
   end
 
-  test "parse: case invalid html" do
+  it "parse: case invalid html" do
     # setup - 不正なHTMLでインスタンス化
     schedule_page = SchedulePage.new(1900, 1, "Invalid HTML")
 
@@ -405,7 +393,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # execute - インスタンス化
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -436,7 +424,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert schedule_page.valid?
   end
 
-  test "can't save: invalid" do
+  it "can't save: invalid" do
     # execute - 不正なHTMLをインスタンス化
     schedule_page = SchedulePage.new(1900, 1, "Invalid html")
 
@@ -454,7 +442,7 @@ class SchedulePageTest < ActiveSupport::TestCase
     assert_not schedule_page.valid?
   end
 
-  test "same" do
+  it "same" do
     # setup - 比較するデータをインスタンス化
     schedule_page_1 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
     schedule_page_1.save!

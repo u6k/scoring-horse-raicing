@@ -1,13 +1,11 @@
-require 'test_helper'
+RSpec.describe "race list page spec" do
 
-class RaceListPageTest < ActiveSupport::TestCase
-
-  def setup
+  before do
     repo = build_resource_repository
     repo.remove_s3_objects
   end
 
-  test "download" do
+  it "download" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -182,7 +180,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages_2.each { |r| r.save! }
   end
 
-  test "download: case link skip" do
+  it "download: case link skip" do
     # precondition
     schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
     schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
@@ -272,7 +270,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     race_list_pages_2.each { |r| r.save! }
   end
 
-  test "download: case invalid html" do
+  it "download: case invalid html" do
     # execute
     race_list_page = RaceListPage.new("00000000")
 
@@ -298,7 +296,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_not race_list_page.valid?
   end
 
-  test "parse" do
+  it "parse" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -437,7 +435,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_not result_page.exists?
   end
 
-  test "parse: case invalid html" do
+  it "parse: case invalid html" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
     schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
@@ -452,7 +450,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert_nil race_list_page.result_pages
   end
 
-  test "save, and overwrite" do
+  it "save, and overwrite" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
@@ -492,7 +490,7 @@ class RaceListPageTest < ActiveSupport::TestCase
     assert race_list_page.exists?
   end
 
-  test "can't save: invalid" do
+  it "can't save: invalid" do
     # setup
     schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
     schedule_page = SchedulePage.new(2018, 6, schedule_page_html)

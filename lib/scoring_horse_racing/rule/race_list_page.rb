@@ -91,7 +91,7 @@ module ScoringHorseRacing::Rule
       h4 = doc.at_xpath("//div[@id='cornerTit']/h4")
       if not h4.nil?
         h4.text.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
-          @date = Time.zone.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
+          @date = Time.new(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
         end
       end
 

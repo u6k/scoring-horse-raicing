@@ -10,7 +10,7 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6)
 
     # check
-    assert_equal Time.zone.local(2018, 6, 1), schedule_page.date
+    assert_equal Time.new(2018, 6, 1), schedule_page.date
     assert_nil schedule_page.race_list_pages
     assert_not schedule_page.exists?
     assert_not schedule_page.valid?
@@ -58,7 +58,7 @@ RSpec.describe "schedule page spec" do
 
   it "download: 当月の場合" do
     # execute - 当月をインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.now.year, Time.now.month)
 
     # check
     assert_not schedule_page.exists?
@@ -388,7 +388,7 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid HTML")
 
     # check
-    assert_equal Time.zone.local(1900, 1, 1), schedule_page.date
+    assert_equal Time.new(1900, 1, 1), schedule_page.date
     assert_nil schedule_page.race_list_pages
     assert_not schedule_page.valid?
   end

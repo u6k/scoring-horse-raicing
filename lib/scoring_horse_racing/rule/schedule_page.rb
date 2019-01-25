@@ -4,7 +4,7 @@ module ScoringHorseRacing::Rule
     attr_reader :date, :race_list_pages
 
     def initialize(year, month, content = nil)
-      @date = Time.zone.local(year, month, 1)
+      @date = Time.new(year, month, 1)
       @content = content
 
       @downloader = Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing")

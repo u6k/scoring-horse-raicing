@@ -102,15 +102,15 @@ module ScoringHorseRacing::Rule
 
       doc.xpath("//p[@id='raceTitDay']").each do |p|
         date = p.children[0].text.strip.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_part|
-          Time.zone.local(date_part[1].to_i, date_part[2].to_i, date_part[3].to_i)
+          Time.new(date_part[1].to_i, date_part[2].to_i, date_part[3].to_i)
         end
 
         time = p.children[4].text.strip.match(/^([0-9]+):([0-9]+)発走/) do |time_part|
-          Time.zone.local(1900, 1, 1, time_part[1].to_i, time_part[2].to_i, 0)
+          Time.new(1900, 1, 1, time_part[1].to_i, time_part[2].to_i, 0)
         end
 
         if (not date.nil?) && (not time.nil?)
-          @start_datetime = Time.zone.local(date.year, date.month, date.day, time.hour, time.min, 0)
+          @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
         end
       end
 

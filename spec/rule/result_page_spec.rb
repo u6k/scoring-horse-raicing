@@ -51,73 +51,73 @@ RSpec.describe "result page spec" do
     result_page = result_pages[0]
     assert_equal "1809030801", result_page.result_id
     assert_equal 1, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
 
     result_page = result_pages[1]
     assert_equal "1809030802", result_page.result_id
     assert_equal 2, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 10, 35, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 10, 35, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
 
     result_page = result_pages[2]
     assert_equal "1809030803", result_page.result_id
     assert_equal 3, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 11, 5, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 11, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
 
     result_page = result_pages[3]
     assert_equal "1809030804", result_page.result_id
     assert_equal 4, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 11, 35, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 11, 35, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
 
     result_page = result_pages[4]
     assert_equal "1809030805", result_page.result_id
     assert_equal 5, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 12, 25, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 12, 25, 0), result_page.start_datetime
     assert_equal "サラ系2歳新馬", result_page.race_name
 
     result_page = result_pages[5]
     assert_equal "1809030806", result_page.result_id
     assert_equal 6, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 12, 55, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 12, 55, 0), result_page.start_datetime
     assert_equal "サラ系3歳上500万円以下", result_page.race_name
 
     result_page = result_pages[6]
     assert_equal "1809030807", result_page.result_id
     assert_equal 7, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 13, 25, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 13, 25, 0), result_page.start_datetime
     assert_equal "サラ系3歳上500万円以下", result_page.race_name
 
     result_page = result_pages[7]
     assert_equal "1809030808", result_page.result_id
     assert_equal 8, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 13, 55, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 13, 55, 0), result_page.start_datetime
     assert_equal "出石特別", result_page.race_name
 
     result_page = result_pages[8]
     assert_equal "1809030809", result_page.result_id
     assert_equal 9, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 14, 25, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 14, 25, 0), result_page.start_datetime
     assert_equal "皆生特別", result_page.race_name
 
     result_page = result_pages[9]
     assert_equal "1809030810", result_page.result_id
     assert_equal 10, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 15, 1, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 15, 1, 0), result_page.start_datetime
     assert_equal "花のみちステークス", result_page.race_name
 
     result_page = result_pages[10]
     assert_equal "1809030811", result_page.result_id
     assert_equal 11, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 15, 40, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 15, 40, 0), result_page.start_datetime
     assert_equal "第59回宝塚記念（GI）", result_page.race_name
 
     result_page = result_pages[11]
     assert_equal "1809030812", result_page.result_id
     assert_equal 12, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 16, 30, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 16, 30, 0), result_page.start_datetime
     assert_equal "リボン賞", result_page.race_name
 
     result_pages.each do |result_page|
@@ -219,7 +219,7 @@ RSpec.describe "result page spec" do
     # check
     assert_equal "1809030801", result_page.result_id
     assert_equal 1, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
     assert_equal "1809030801", result_page.entry_page.entry_id
     assert_equal "1809030801", result_page.odds_win_page.odds_id
@@ -237,7 +237,7 @@ RSpec.describe "result page spec" do
     # check
     assert_equal "8607010211", result_page.result_id
     assert_equal 11, result_page.race_number
-    assert_equal Time.zone.local(1986, 1, 26, 15, 35, 0), result_page.start_datetime
+    assert_equal Time.new(1986, 1, 26, 15, 35, 0), result_page.start_datetime
     assert_equal "中京スポーツ杯", result_page.race_name
     assert_nil result_page.entry_page
     assert_nil result_page.odds_win_page
@@ -271,7 +271,7 @@ RSpec.describe "result page spec" do
     # check
     assert_equal "1809030801", result_page.result_id
     assert_equal 1, result_page.race_number
-    assert_equal Time.zone.local(2018, 6, 24, 10, 5, 0), result_page.start_datetime
+    assert_equal Time.new(2018, 6, 24, 10, 5, 0), result_page.start_datetime
     assert_equal "サラ系3歳未勝利", result_page.race_name
     assert_equal "1809030801", result_page.entry_page.entry_id
     assert_equal "1809030801", result_page.odds_win_page.odds_id

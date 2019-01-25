@@ -308,7 +308,7 @@ RSpec.describe "race list page spec" do
 
     # check
     assert_equal "18090308", race_list_page.race_id
-    assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
+    assert_equal Time.new(2018, 6, 24), race_list_page.date
     assert_equal "阪神", race_list_page.course_name
     assert race_list_page.valid?
 
@@ -462,7 +462,7 @@ RSpec.describe "race list page spec" do
 
     # check
     assert_equal "18090308", race_list_page.race_id
-    assert_equal Time.zone.local(2018, 6, 24), race_list_page.date
+    assert_equal Time.new(2018, 6, 24), race_list_page.date
     assert_equal "阪神", race_list_page.course_name
     assert_equal 12, race_list_page.result_pages.length
     assert race_list_page.valid?

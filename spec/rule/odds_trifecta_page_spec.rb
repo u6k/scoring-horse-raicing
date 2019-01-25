@@ -7,8 +7,8 @@ RSpec.describe "odds trifecta page spec" do
 
   it "download" do
     # setup
-    odds_win_page_html = File.open("test/fixtures/files/odds_win.20180624.hanshin.1.html").read
-    odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page_html = File.open("spec/data/odds_win.20180624.hanshin.1.html").read
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
 
     # execute - new
     odds_trifecta_page = odds_win_page.odds_trifecta_page
@@ -40,7 +40,7 @@ RSpec.describe "odds trifecta page spec" do
     assert odds_trifecta_page.exists?
 
     # execute - re-new
-    odds_win_page = OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
     odds_trifecta_page_2 = odds_win_page.odds_trifecta_page
 
     # check
@@ -68,7 +68,7 @@ RSpec.describe "odds trifecta page spec" do
 
   it "download: invalid html" do
     # execute - new from invalid html
-    odds_trifecta_page = OddsTrifectaPage.new("0000000000", nil, "Invalid html")
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", nil, "Invalid html")
 
     # check
     assert_equal "0000000000", odds_trifecta_page.odds_id
@@ -95,10 +95,10 @@ RSpec.describe "odds trifecta page spec" do
 
   it "parse" do
     # setup
-    odds_trifecta_page_html = File.open("test/fixtures/files/odds_trifecta.20180624.hanshin.1.1.html").read
+    odds_trifecta_page_html = File.open("spec/data/odds_trifecta.20180624.hanshin.1.1.html").read
 
     # execute
-    odds_trifecta_page = OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html)
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html)
 
     # check
     assert_equal "1809030801", odds_trifecta_page.odds_id
@@ -123,7 +123,7 @@ RSpec.describe "odds trifecta page spec" do
 
   it "parse: invalid html" do
     # execute
-    odds_trifecta_page = OddsTrifectaPage.new("0000000000", nil, "Invalid html")
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", nil, "Invalid html")
 
     # check
     assert_equal "0000000000", odds_trifecta_page.odds_id
@@ -136,10 +136,10 @@ RSpec.describe "odds trifecta page spec" do
 
   it "save, and overwrite" do
     # setup
-    odds_trifecta_page_html = File.open("test/fixtures/files/odds_trifecta.20180624.hanshin.1.1.html").read
+    odds_trifecta_page_html = File.open("spec/data/odds_trifecta.20180624.hanshin.1.1.html").read
 
     # execute
-    odds_trifecta_page = OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html)
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html)
 
     # check
     assert_equal "1809030801", odds_trifecta_page.odds_id
@@ -173,7 +173,7 @@ RSpec.describe "odds trifecta page spec" do
 
   it "save: invalid" do
     # execute - new invalid html
-    odds_trifecta_page = OddsTrifectaPage.new("0000000000", "Invalid html")
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", "Invalid html")
 
     # check
     assert_not odds_trifecta_page.valid?

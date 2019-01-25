@@ -7,8 +7,8 @@ RSpec.describe "entry page spec" do
 
   it "download" do
     # setup
-    result_page_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
-    result_page = ResultPage.new("1809030801", result_page_html)
+    result_page_html = File.open("spec/data/result.20180624.hanshin.1.html").read
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_page_html)
 
     # execute - インスタンス化
     entry_page = result_page.entry_page
@@ -36,7 +36,7 @@ RSpec.describe "entry page spec" do
     assert entry_page.exists?
 
     # execute - 再インスタンス化
-    result_page = ResultPage.new("1809030801", result_page_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_page_html)
     entry_page_2 = result_page.entry_page
 
     # check
@@ -60,7 +60,7 @@ RSpec.describe "entry page spec" do
 
   it "download: case invalid html" do
     # execute - 不正なエントリーIDのページをインスタンス化
-    entry_page = EntryPage.new("0000000000")
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("0000000000")
 
     # check
     assert_equal "0000000000", entry_page.entry_id
@@ -89,10 +89,10 @@ RSpec.describe "entry page spec" do
 
   it "parse" do
     # setup
-    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
+    entry_page_html = File.open("spec/data/entry.20180624.hanshin.1.html").read
 
     # execute
-    entry_page = EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
 
     # check
     assert_equal "1809030801", entry_page.entry_id
@@ -215,7 +215,7 @@ RSpec.describe "entry page spec" do
 
   it "parse: invalid html" do
     # execute
-    entry_page = EntryPage.new("0000000000", "Invalid html")
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("0000000000", "Invalid html")
 
     # check
     assert_equal "0000000000", entry_page.entry_id
@@ -226,10 +226,10 @@ RSpec.describe "entry page spec" do
 
   it "save, and overwrite" do
     # setup
-    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
+    entry_page_html = File.open("spec/data/entry.20180624.hanshin.1.html").read
 
     # execute - インスタンス化 & パース
-    entry_page = EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
 
     # check
     assert_equal "1809030801", entry_page.entry_id
@@ -261,7 +261,7 @@ RSpec.describe "entry page spec" do
 
   it "save: invalid" do
     # execute - インスタンス化 && ダウンロード && パース -> 失敗
-    entry_page = EntryPage.new("0000000000", "Invalid html")
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("0000000000", "Invalid html")
 
     # check
     assert_equal "0000000000", entry_page.entry_id

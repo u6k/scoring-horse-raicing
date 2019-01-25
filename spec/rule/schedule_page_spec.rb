@@ -7,7 +7,7 @@ RSpec.describe "schedule page spec" do
 
   it "download" do
     # execute - 過去月をインスタンス化
-    schedule_page = SchedulePage.new(2018, 6)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6)
 
     # check
     assert_equal Time.zone.local(2018, 6, 1), schedule_page.date
@@ -32,7 +32,7 @@ RSpec.describe "schedule page spec" do
     assert schedule_page.valid?
 
     # execute - 再インスタンス化
-    schedule_page_2 = SchedulePage.new(2018, 6)
+    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6)
 
     # check
     assert_nil schedule_page_2.race_list_pages
@@ -58,7 +58,7 @@ RSpec.describe "schedule page spec" do
 
   it "download: 当月の場合" do
     # execute - 当月をインスタンス化
-    schedule_page = SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.zone.now.year, Time.zone.now.month)
 
     # check
     assert_not schedule_page.exists?
@@ -81,10 +81,10 @@ RSpec.describe "schedule page spec" do
 
   it "download: 来月(リンクが不完全)の場合" do
     # setup
-    html = File.open("test/fixtures/files/schedule.201808.html").read
+    html = File.open("spec/data/schedule.201808.html").read
 
     # execute - 当月をインスタンス化
-    schedule_page = SchedulePage.new(2018, 8, html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, html)
 
     # check
     assert_not schedule_page.exists?
@@ -100,7 +100,7 @@ RSpec.describe "schedule page spec" do
 
   it "download: ページが存在しない月の場合" do
     # execute - 存在しない月をインスタンス化
-    schedule_page = SchedulePage.new(1900, 1)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1)
 
     # check
     assert_not schedule_page.exists?
@@ -125,8 +125,8 @@ RSpec.describe "schedule page spec" do
 
   it "parse" do
     # setup
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page_html = File.open("spec/data/schedule.201806.html").read
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
 
     # execute - 2018/6のスケジュールをパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
@@ -323,8 +323,8 @@ RSpec.describe "schedule page spec" do
 
   it "parse: case line skip" do
     # setup
-    schedule_page_html = File.open("test/fixtures/files/schedule.201808.html").read
-    schedule_page = SchedulePage.new(2018, 8, schedule_page_html)
+    schedule_page_html = File.open("spec/data/schedule.201808.html").read
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html)
 
     # execute - 2018/8のスケジュール(一部のリンクが不完全)をパースして、レース一覧ページを取得する
     race_list_pages = schedule_page.race_list_pages
@@ -385,7 +385,7 @@ RSpec.describe "schedule page spec" do
 
   it "parse: case invalid html" do
     # setup - 不正なHTMLでインスタンス化
-    schedule_page = SchedulePage.new(1900, 1, "Invalid HTML")
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid HTML")
 
     # check
     assert_equal Time.zone.local(1900, 1, 1), schedule_page.date
@@ -395,8 +395,8 @@ RSpec.describe "schedule page spec" do
 
   it "save, and overwrite" do
     # execute - インスタンス化
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page_html = File.open("spec/data/schedule.201806.html").read
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
 
     # check
     assert_not schedule_page.exists?
@@ -426,7 +426,7 @@ RSpec.describe "schedule page spec" do
 
   it "can't save: invalid" do
     # execute - 不正なHTMLをインスタンス化
-    schedule_page = SchedulePage.new(1900, 1, "Invalid html")
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid html")
 
     # check
     assert_not schedule_page.exists?
@@ -444,16 +444,16 @@ RSpec.describe "schedule page spec" do
 
   it "same" do
     # setup - 比較するデータをインスタンス化
-    schedule_page_1 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_1 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read)
     schedule_page_1.save!
 
-    schedule_page_2 = SchedulePage.new(2018, 6, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read)
     schedule_page_2.save!
 
-    schedule_page_3 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201806.html").read)
+    schedule_page_3 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201806.html").read)
     schedule_page_3.save!
 
-    schedule_page_4 = SchedulePage.new(2018, 8, File.open("test/fixtures/files/schedule.201808.html").read)
+    schedule_page_4 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201808.html").read)
     schedule_page_4.save!
 
     # check

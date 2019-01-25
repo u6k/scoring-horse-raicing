@@ -7,11 +7,11 @@ RSpec.describe "result page spec" do
 
   it "download" do
     # setup
-    schedule_page_html = File.open("test/fixtures/files/schedule.201806.html").read
-    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page_html = File.open("spec/data/schedule.201806.html").read
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
 
-    race_list_page_html = File.open("test/fixtures/files/race_list.20180624.hanshin.html").read
-    race_list_page = RaceListPage.new("18090308", race_list_page_html)
+    race_list_page_html = File.open("spec/data/race_list.20180624.hanshin.html").read
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html)
 
     # execute - インスタンス化
     result_pages = race_list_page.result_pages
@@ -135,8 +135,8 @@ RSpec.describe "result page spec" do
     end
 
     # execute - 再インスタンス化
-    schedule_page = SchedulePage.new(2018, 6, schedule_page_html)
-    race_list_page = RaceListPage.new("18090308", race_list_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html)
     result_pages_2 = race_list_page.result_pages
 
     # check
@@ -183,7 +183,7 @@ RSpec.describe "result page spec" do
 
   it "download: case invalid html" do
     # execute - 不正なレースIDのページをインスタンス化
-    result_page = ResultPage.new("0000000000")
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("0000000000")
 
     # check
     assert_equal "0000000000", result_page.result_id
@@ -211,10 +211,10 @@ RSpec.describe "result page spec" do
 
   it "parse" do
     # setup
-    result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
+    result_html = File.open("spec/data/result.20180624.hanshin.1.html").read
 
     # execute
-    result_page = ResultPage.new("1809030801", result_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html)
 
     # check
     assert_equal "1809030801", result_page.result_id
@@ -229,10 +229,10 @@ RSpec.describe "result page spec" do
 
   it "parse: missing link" do
     # setup
-    result_html = File.open("test/fixtures/files/result.19860126.tyukyou.11.html").read
+    result_html = File.open("spec/data/result.19860126.tyukyou.11.html").read
 
     # execute
-    result_page = ResultPage.new("8607010211", result_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("8607010211", result_html)
 
     # check
     assert_equal "8607010211", result_page.result_id
@@ -247,7 +247,7 @@ RSpec.describe "result page spec" do
 
   it "parse: case invalid html" do
     # execute
-    result_page = ResultPage.new("0000000000")
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("0000000000")
     result_page.download_from_web!
 
     # check
@@ -263,10 +263,10 @@ RSpec.describe "result page spec" do
 
   it "save, and overwrite" do
     # setup
-    result_html = File.open("test/fixtures/files/result.20180624.hanshin.1.html").read
+    result_html = File.open("spec/data/result.20180624.hanshin.1.html").read
 
     # execute
-    result_page = ResultPage.new("1809030801", result_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html)
 
     # check
     assert_equal "1809030801", result_page.result_id
@@ -302,7 +302,7 @@ RSpec.describe "result page spec" do
 
   it "can't save: invalid" do
     # execute - 不正なHTMLをインスタンス化
-    result_page = ResultPage.new("0000000000", "Invalid html")
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("0000000000", "Invalid html")
 
     # check
     assert_not result_page.valid?

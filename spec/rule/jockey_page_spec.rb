@@ -7,8 +7,8 @@ RSpec.describe "jockey page spec" do
 
   it "download" do
     # setup
-    entry_page_html = File.open("test/fixtures/files/entry.20180624.hanshin.1.html").read
-    entry_page = EntryPage.new("1809030801", entry_page_html)
+    entry_page_html = File.open("spec/data/entry.20180624.hanshin.1.html").read
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
 
     # execute - new
     entries = entry_page.entries
@@ -224,7 +224,7 @@ RSpec.describe "jockey page spec" do
     end
 
     # execute - re-new
-    entry_page = EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
     entries_2 = entry_page.entries
 
     # check
@@ -434,7 +434,7 @@ RSpec.describe "jockey page spec" do
 
   it "download: invalid page" do
     # execute - new invalid page
-    jockey_page = JockeyPage.new("00000")
+    jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("00000")
 
     # check
     assert_equal "00000", jockey_page.jockey_id
@@ -465,10 +465,10 @@ RSpec.describe "jockey page spec" do
 
   it "parse" do
     # setup
-    jockey_page_html = File.open("test/fixtures/files/jockey.05339.html").read
+    jockey_page_html = File.open("spec/data/jockey.05339.html").read
 
     # execute - new and parse
-    jockey_page = JockeyPage.new("05339", jockey_page_html)
+    jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("05339", jockey_page_html)
 
     # check
     assert_equal "05339", jockey_page.jockey_id
@@ -479,7 +479,7 @@ RSpec.describe "jockey page spec" do
 
   it "parse: invalid html" do
     # execute - new invalid html
-    jockey_page = JockeyPage.new("00000", "Invalid html")
+    jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("00000", "Invalid html")
 
     # check
     assert_equal "00000", jockey_page.jockey_id
@@ -490,10 +490,10 @@ RSpec.describe "jockey page spec" do
 
   it "save, and overwrite" do
     # setup
-    jockey_page_html = File.open("test/fixtures/files/jockey.05339.html").read
+    jockey_page_html = File.open("spec/data/jockey.05339.html").read
 
     # execute - インスタンス化 & パース
-    jockey_page = JockeyPage.new("05339", jockey_page_html)
+    jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("05339", jockey_page_html)
 
     # check
     assert_equal "05339", jockey_page.jockey_id

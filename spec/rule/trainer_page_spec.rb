@@ -8,7 +8,7 @@ RSpec.describe "trainer page spec" do
   it "download" do
     # setup
     entry_page_html = File.open("spec/data/entry.20180624.hanshin.1.html").read
-    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html, @downloader, @repo)
 
     # execute - new
     entries = entry_page.entries
@@ -224,7 +224,7 @@ RSpec.describe "trainer page spec" do
     end
 
     # execute - 再インスタンス化する
-    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html, @downloader, @repo)
     entries_2 = entry_page.entries
 
     # check
@@ -434,7 +434,7 @@ RSpec.describe "trainer page spec" do
 
   it "download: invalid page" do
     # execute - new invalid page
-    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("99999")
+    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("99999", @downloader, @repo)
 
     # check
     assert_equal "99999", trainer_page.trainer_id
@@ -468,7 +468,7 @@ RSpec.describe "trainer page spec" do
     trainer_page_html = File.open("spec/data/trainer.01120.html").read
 
     # execute - new and parse
-    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("01120", trainer_page_html)
+    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("01120", trainer_page_html, @downloader, @repo)
 
     # check
     assert_equal "01120", trainer_page.trainer_id
@@ -479,7 +479,7 @@ RSpec.describe "trainer page spec" do
 
   it "parse: invalid html" do
     # execute - new invalid html
-    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("00000", "Invalid html")
+    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("00000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "00000", trainer_page.trainer_id
@@ -493,7 +493,7 @@ RSpec.describe "trainer page spec" do
     trainer_page_html = File.open("spec/data/trainer.01120.html").read
 
     # execute - インスタンス化 & パース
-    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("01120", trainer_page_html)
+    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("01120", trainer_page_html, @downloader, @repo)
 
     # check
     assert_equal "01120", trainer_page.trainer_id

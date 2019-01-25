@@ -8,7 +8,7 @@ RSpec.describe "horse page spec" do
   it "download" do
     # setup
     entry_page_html = File.open("spec/data/entry.20180624.hanshin.1.html").read
-    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html, @downloader, @repo)
 
     # execute - new
     entries = entry_page.entries
@@ -224,7 +224,7 @@ RSpec.describe "horse page spec" do
     end
 
     # execute - re-new
-    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html)
+    entry_page = ScoringHorseRacing::Rule::EntryPage.new("1809030801", entry_page_html, @downloader, @repo)
     entries_2 = entry_page.entries
 
     # check
@@ -434,7 +434,7 @@ RSpec.describe "horse page spec" do
 
   it "download: invalid page" do
     # execute - new invalid page
-    horse_page = ScoringHorseRacing::Rule::HorsePage.new("0000000000")
+    horse_page = ScoringHorseRacing::Rule::HorsePage.new("0000000000", nil, @downloader, @repo)
 
     # check
     assert_equal "0000000000", horse_page.horse_id
@@ -468,7 +468,7 @@ RSpec.describe "horse page spec" do
     horse_page_html = File.open("spec/data/horse.2015104308.html").read
 
     # execute - new and parse
-    horse_page = ScoringHorseRacing::Rule::HorsePage.new("2015104308", horse_page_html)
+    horse_page = ScoringHorseRacing::Rule::HorsePage.new("2015104308", horse_page_html, @downloader, @repo)
 
     # check
     assert_equal "2015104308", horse_page.horse_id
@@ -479,7 +479,7 @@ RSpec.describe "horse page spec" do
 
   it "parse: invalid html" do
     # execute - new invalid html
-    horse_page = ScoringHorseRacing::Rule::HorsePage.new("0000000000", "Invalid html")
+    horse_page = ScoringHorseRacing::Rule::HorsePage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "0000000000", horse_page.horse_id
@@ -493,7 +493,7 @@ RSpec.describe "horse page spec" do
     horse_page_html = File.open("spec/data/horse.2015104308.html").read
 
     # execute - new and parse
-    horse_page = ScoringHorseRacing::Rule::HorsePage.new("2015104308", horse_page_html)
+    horse_page = ScoringHorseRacing::Rule::HorsePage.new("2015104308", horse_page_html, @downloader, @repo)
 
     # check
     assert_equal "2015104308", horse_page.horse_id

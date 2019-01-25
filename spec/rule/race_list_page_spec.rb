@@ -8,7 +8,7 @@ RSpec.describe "race list page spec" do
   it "download" do
     # setup
     schedule_page_html = File.open("spec/data/schedule.201806.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
 
     # execute
     race_list_pages = schedule_page.race_list_pages
@@ -150,7 +150,7 @@ RSpec.describe "race list page spec" do
     end
 
     # execute - re-instance
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
     race_list_pages_2 = schedule_page.race_list_pages
 
     # check
@@ -183,7 +183,7 @@ RSpec.describe "race list page spec" do
   it "download: case link skip" do
     # precondition
     schedule_page_html = File.open("spec/data/schedule.201808.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html, @downloader, @repo)
 
     # execute
     race_list_pages = schedule_page.race_list_pages
@@ -240,7 +240,7 @@ RSpec.describe "race list page spec" do
     end
 
     # execute - re-instance
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html, @downloader, @repo)
     race_list_pages_2 = schedule_page.race_list_pages
 
     # check
@@ -272,7 +272,7 @@ RSpec.describe "race list page spec" do
 
   it "download: case invalid html" do
     # execute
-    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("00000000")
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("00000000", nil, @downloader, @repo)
 
     # check
     assert_equal "00000000", race_list_page.race_id
@@ -299,12 +299,12 @@ RSpec.describe "race list page spec" do
   it "parse" do
     # setup
     schedule_page_html = File.open("spec/data/schedule.201806.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
 
     race_list_page_html = File.open("spec/data/race_list.20180624.hanshin.html").read
 
     # execute
-    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html)
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html, @downloader, @repo)
 
     # check
     assert_equal "18090308", race_list_page.race_id
@@ -438,10 +438,10 @@ RSpec.describe "race list page spec" do
   it "parse: case invalid html" do
     # setup
     schedule_page_html = File.open("spec/data/schedule.201808.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, schedule_page_html, @downloader, @repo)
 
     # execute
-    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("aaaaaaaaaa", "Invalid html")
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("aaaaaaaaaa", "Invalid html", @downloader, @repo)
 
     # postcondition
     assert_equal "aaaaaaaaaa", race_list_page.race_id
@@ -453,12 +453,12 @@ RSpec.describe "race list page spec" do
   it "save, and overwrite" do
     # setup
     schedule_page_html = File.open("spec/data/schedule.201806.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
 
     race_list_page_html = File.open("spec/data/race_list.20180624.hanshin.html").read
 
     # execute - インスタンス化 & パース
-    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html)
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("18090308", race_list_page_html, @downloader, @repo)
 
     # check
     assert_equal "18090308", race_list_page.race_id
@@ -493,10 +493,10 @@ RSpec.describe "race list page spec" do
   it "can't save: invalid" do
     # setup
     schedule_page_html = File.open("spec/data/schedule.201806.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
 
     # execute - 不正なHTMLをインスタンス化
-    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("aaaaaaaa", "Invalid html")
+    race_list_page = ScoringHorseRacing::Rule::RaceListPage.new("aaaaaaaa", "Invalid html", @downloader, @repo)
 
     # check
     assert_not race_list_page.valid?

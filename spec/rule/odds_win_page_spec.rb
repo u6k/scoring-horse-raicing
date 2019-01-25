@@ -8,7 +8,7 @@ RSpec.describe "odds win page spec" do
   it "download" do
     # setup
     result_html = File.open("spec/data/result.20180624.hanshin.1.html").read
-    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html, @downloader, @repo)
 
     # execute - インスタンス化
     odds_win_page = result_page.odds_win_page
@@ -50,7 +50,7 @@ RSpec.describe "odds win page spec" do
     assert odds_win_page.exists?
 
     # execute - 再インスタンス化
-    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html)
+    result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html, @downloader, @repo)
     odds_win_page_2 = result_page.odds_win_page
 
     # check
@@ -88,7 +88,7 @@ RSpec.describe "odds win page spec" do
 
   it "download: case invalid html" do
     # execute - 不正なHTMLをインスタンス化
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html")
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "0000000000", odds_win_page.odds_id
@@ -119,7 +119,7 @@ RSpec.describe "odds win page spec" do
     odds_win_page_html = File.open("spec/data/odds_win.20180624.hanshin.1.html").read
 
     # execute
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
 
     # check
     assert_equal "1809030801", odds_win_page.odds_id
@@ -137,7 +137,7 @@ RSpec.describe "odds win page spec" do
 
   it "parse: invalid html" do
     # execute
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html")
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "0000000000", odds_win_page.odds_id
@@ -158,7 +158,7 @@ RSpec.describe "odds win page spec" do
     odds_win_page_html = File.open("spec/data/odds_win.20180624.hanshin.1.html").read
 
     # execute
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
 
     # check
     assert_equal "1809030801", odds_win_page.odds_id
@@ -197,7 +197,7 @@ RSpec.describe "odds win page spec" do
 
   it "save: invalid" do
     # execute - 不正なHTMLをインスタンス化
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html")
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_not odds_win_page.valid?

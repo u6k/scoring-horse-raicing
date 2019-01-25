@@ -15,6 +15,10 @@ RSpec.configure do |config|
 end
 
 module ScoringHorseRacing::SpecUtil
+  def self.build_downloader
+    Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing)")
+  end
+
   def self.build_resource_repository
     access_key = ENV["AWS_S3_ACCESS_KEY"]
     secret_key = ENV["AWS_S3_SECRET_KEY"]

@@ -3,7 +3,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :odds_id, :horse_number, :trifecta_results, :odds_trifecta_pages
 
-    def initialize(odds_id, horse_number, content = nil)
+    def initialize(odds_id, horse_number, content = nil, downloader, repo)
       @odds_id = odds_id
       if horse_number.nil?
         @horse_number = 1
@@ -11,16 +11,8 @@ module ScoringHorseRacing::Rule
         @horse_number = horse_number
       end
       @content = content
-
-      @downloader = Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing")
-
-      @repo = Crawline::ResourceRepository.new(
-        Rails.application.secrets.s3_access_key,
-        Rails.application.secrets.s3_secret_key,
-        Rails.application.secrets.s3_region,
-        Rails.application.secrets.s3_bucket,
-        Rails.application.secrets.s3_endpoint,
-        true)
+      @downloader = downloader
+      @repo = repo
 
       _parse
     end

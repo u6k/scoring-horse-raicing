@@ -3,19 +3,11 @@ module ScoringHorseRacing::Rule
 
     attr_reader :race_id, :date, :course_name, :result_pages
 
-    def initialize(race_id, content = nil)
+    def initialize(race_id, content = nil, downloader, repo)
       @race_id = race_id
       @content = content
-
-      @downloader = Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing")
-
-      @repo = Crawline::ResourceRepository.new(
-        Rails.application.secrets.s3_access_key,
-        Rails.application.secrets.s3_secret_key,
-        Rails.application.secrets.s3_region,
-        Rails.application.secrets.s3_bucket,
-        Rails.application.secrets.s3_endpoint,
-        true)
+      @downloader = downloader
+      @repo = repo
 
       _parse
     end

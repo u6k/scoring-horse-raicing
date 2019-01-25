@@ -8,7 +8,7 @@ RSpec.describe "odds quinella page spec" do
   it "download" do
     # setup
     odds_win_page_html = File.open("spec/data/odds_win.20180624.hanshin.1.html").read
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
 
     # execute - new
     odds_quinella_page = odds_win_page.odds_quinella_page
@@ -36,7 +36,7 @@ RSpec.describe "odds quinella page spec" do
     assert odds_quinella_page.exists?
 
     # execute - re-new
-    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html)
+    odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
     odds_quinella_page_2 = odds_win_page.odds_quinella_page
 
     # check
@@ -58,7 +58,7 @@ RSpec.describe "odds quinella page spec" do
 
   it "download: invalid html" do
     # execute - new from invalid html
-    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html")
+    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "0000000000", odds_quinella_page.odds_id
@@ -87,7 +87,7 @@ RSpec.describe "odds quinella page spec" do
     odds_quinella_page_html = File.open("spec/data/odds_quinella.20180624.hanshin.1.html").read
 
     # execute
-    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("1809030801", odds_quinella_page_html)
+    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("1809030801", odds_quinella_page_html, @downloader, @repo)
 
     # check
     assert_equal "1809030801", odds_quinella_page.odds_id
@@ -98,7 +98,7 @@ RSpec.describe "odds quinella page spec" do
 
   it "parse: invalid html" do
     # execute
-    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html")
+    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_equal "0000000000", odds_quinella_page.odds_id
@@ -112,7 +112,7 @@ RSpec.describe "odds quinella page spec" do
     odds_quinella_page_html = File.open("spec/data/odds_quinella.20180624.hanshin.1.html").read
 
     # execute
-    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("1809030801", odds_quinella_page_html)
+    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("1809030801", odds_quinella_page_html, @downloader, @repo)
 
     # check
     assert_equal "1809030801", odds_quinella_page.odds_id
@@ -144,7 +144,7 @@ RSpec.describe "odds quinella page spec" do
 
   it "save: invalid" do
     # execute - new invalid html
-    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html")
+    odds_quinella_page = ScoringHorseRacing::Rule::OddsQuinellaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
     assert_not odds_quinella_page.valid?

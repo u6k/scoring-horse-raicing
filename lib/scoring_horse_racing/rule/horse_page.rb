@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :horse_id, :horse_name
 
-    def initialize(horse_id, content = nil, downloader, repo)
+    def initialize(horse_id, content, downloader, repo)
       @horse_id = horse_id
       @content = content
       @downloader = downloader

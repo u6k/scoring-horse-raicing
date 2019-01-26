@@ -75,7 +75,7 @@ RSpec.describe "odds exacta page spec" do
     expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - save -> fail
-    expect(odds_exacta_page.save!).to raise_error "Invalid"
+    expect { odds_exacta_page.save! }.to raise_error "Invalid"
 
     # check
     expect(odds_exacta_page.valid?).to be_falsey
@@ -151,7 +151,7 @@ RSpec.describe "odds exacta page spec" do
     expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - raised exception when save
-    expect(odds_exacta_page.save!).to raise_error "Invalid"
+    expect { odds_exacta_page.save! }.to raise_error "Invalid"
 
     # check
     expect(odds_exacta_page.valid?).to be_falsey

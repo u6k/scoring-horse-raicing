@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :odds_id, :horse_number, :trifecta_results, :odds_trifecta_pages
 
-    def initialize(odds_id, horse_number, content = nil, downloader, repo)
+    def initialize(odds_id, horse_number, content, downloader, repo)
       @odds_id = odds_id
       if horse_number.nil?
         @horse_number = 1
@@ -90,7 +90,7 @@ module ScoringHorseRacing::Rule
 
       @odds_trifecta_pages = {}
       doc.xpath("//form[@id='odds3TN']/select[@name='umaBan']/option").each do |option|
-        @odds_trifecta_pages[option["value"].to_i] = OddsTrifectaPage.new(@odds_id, option["value"].to_i)
+        @odds_trifecta_pages[option["value"].to_i] = OddsTrifectaPage.new(@odds_id, option["value"].to_i, nil, @downloader, @repo)
       end
 
       @odds_trifecta_pages = nil if @odds_trifecta_pages.empty?

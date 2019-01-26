@@ -173,7 +173,7 @@ RSpec.describe "odds trifecta page spec" do
 
   it "save: invalid" do
     # execute - new invalid html
-    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", "Invalid html", @downloader, @repo)
+    odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", nil, "Invalid html", @downloader, @repo)
 
     # check
     expect(odds_trifecta_page.valid?).to be_falsey

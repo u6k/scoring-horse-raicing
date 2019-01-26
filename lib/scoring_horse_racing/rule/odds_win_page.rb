@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :odds_id, :win_results, :place_results, :bracket_quinella_results, :odds_quinella_page, :odds_quinella_place_page, :odds_exacta_page, :odds_trio_page, :odds_trifecta_page
 
-    def initialize(odds_id, content = nil, downloader, repo)
+    def initialize(odds_id, content, downloader, repo)
       @odds_id = odds_id
       @content = content
       @downloader = downloader
@@ -108,23 +108,23 @@ module ScoringHorseRacing::Rule
       doc.xpath("//ul[@id='oddsNavi']/li/a").each do |a|
         if a.text == "馬連"
           a["href"].match(/^\/odds\/ur\/([0-9]+)/) do |odds_id|
-            @odds_quinella_page = OddsQuinellaPage.new(odds_id[1])
+            @odds_quinella_page = OddsQuinellaPage.new(odds_id[1], nil, @downloader, @repo)
           end
         elsif a.text == "ワイド"
           a["href"].match(/^\/odds\/wide\/([0-9]+)/) do |odds_id|
-            @odds_quinella_place_page = OddsQuinellaPlacePage.new(odds_id[1])
+            @odds_quinella_place_page = OddsQuinellaPlacePage.new(odds_id[1], nil, @downloader, @repo)
           end
         elsif a.text == "馬単"
           a["href"].match(/^\/odds\/ut\/([0-9]+)/) do |odds_id|
-            @odds_exacta_page = OddsExactaPage.new(odds_id[1])
+            @odds_exacta_page = OddsExactaPage.new(odds_id[1], nil, @downloader, @repo)
           end
         elsif a.text == "3連複"
           a["href"].match(/^\/odds\/sf\/([0-9]+)/) do |odds_id|
-            @odds_trio_page = OddsTrioPage.new(odds_id[1])
+            @odds_trio_page = OddsTrioPage.new(odds_id[1], nil, @downloader, @repo)
           end
         elsif a.text == "3連単"
           a["href"].match(/^\/odds\/st\/([0-9]+)/) do |odds_id|
-            @odds_trifecta_page = OddsTrifectaPage.new(odds_id[1], nil)
+            @odds_trifecta_page = OddsTrifectaPage.new(odds_id[1], nil, nil, @downloader, @repo)
           end
         end
       end

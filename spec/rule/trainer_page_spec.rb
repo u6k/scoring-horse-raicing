@@ -436,7 +436,7 @@ RSpec.describe "trainer page spec" do
 
   it "download: invalid page" do
     # execute - new invalid page
-    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("99999", @downloader, @repo)
+    trainer_page = ScoringHorseRacing::Rule::TrainerPage.new("99999", nil, @downloader, @repo)
 
     # check
     expect(trainer_page.trainer_id).to eq "99999"

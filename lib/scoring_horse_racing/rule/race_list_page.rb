@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :race_id, :date, :course_name, :result_pages
 
-    def initialize(race_id, content = nil, downloader, repo)
+    def initialize(race_id, content, downloader, repo)
       @race_id = race_id
       @content = content
       @downloader = downloader
@@ -98,7 +98,7 @@ module ScoringHorseRacing::Rule
         a = tr.at_xpath("td[@class='wsLB']/a")
         if not a.nil?
           a.attribute("href").value.match(/^\/race\/result\/([0-9]+)\/$/) do |path|
-            ResultPage.new(path[1])
+            ResultPage.new(path[1], nil, @downloader, @repo)
           end
         end
       end

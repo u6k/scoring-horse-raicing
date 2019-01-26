@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :odds_id, :quinella_results
 
-    def initialize(odds_id, content = nil, downloader, repo)
+    def initialize(odds_id, content, downloader, repo)
       @odds_id = odds_id
       @content = content
       @downloader = downloader

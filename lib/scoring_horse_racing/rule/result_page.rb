@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :result_id, :race_number, :race_name, :start_datetime, :entry_page, :odds_win_page
 
-    def initialize(result_id, content = nil, downloader, repo)
+    def initialize(result_id, content, downloader, repo)
       @result_id = result_id
       @content = content
       @downloader = downloader
@@ -115,10 +115,10 @@ module ScoringHorseRacing::Rule
       doc.xpath("//div[@id='raceNavi']/ul/li/a").each do |a|
         if a.text == "出馬表"
           entry_id = a["href"].match(/\/race\/denma\/([0-9]+)\//)[1]
-          @entry_page = EntryPage.new(entry_id)
+          @entry_page = EntryPage.new(entry_id, nil, @downloader, @repo)
         elsif a.text == "オッズ"
           odds_win_id = a["href"].match(/\/odds\/tfw\/([0-9]+)\//)[1]
-          @odds_win_page = OddsWinPage.new(odds_win_id)
+          @odds_win_page = OddsWinPage.new(odds_win_id, nil, @downloader, @repo)
         end
       end
     end

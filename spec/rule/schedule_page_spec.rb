@@ -9,7 +9,7 @@ RSpec.describe "schedule page spec" do
 
   it "download" do
     # execute - 過去月をインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, @downloader, @repo)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, nil, @downloader, @repo)
 
     # check
     expect(schedule_page.date).to eq Time.new(2018, 6, 1)
@@ -34,7 +34,7 @@ RSpec.describe "schedule page spec" do
     expect(schedule_page.valid?).to be_truthy
 
     # execute - 再インスタンス化
-    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, @downloader, @repo)
+    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, nil, @downloader, @repo)
 
     # check
     expect(schedule_page_2.race_list_pages).to be nil
@@ -60,7 +60,7 @@ RSpec.describe "schedule page spec" do
 
   it "download: 当月の場合" do
     # execute - 当月をインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.now.year, Time.now.month, @downloader, @repo)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.now.year, Time.now.month, nil, @downloader, @repo)
 
     # check
     expect(schedule_page.exists?).to be_falsey
@@ -102,7 +102,7 @@ RSpec.describe "schedule page spec" do
 
   it "download: ページが存在しない月の場合" do
     # execute - 存在しない月をインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, @downloader, @repo)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, nil, @downloader, @repo)
 
     # check
     expect(schedule_page.exists?).to be_falsey
@@ -385,7 +385,7 @@ RSpec.describe "schedule page spec" do
 
   it "parse: case invalid html" do
     # setup - 不正なHTMLでインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid HTML")
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid HTML", @downloader, @repo)
 
     # check
     expect(schedule_page.date).to eq Time.new(1900, 1, 1)
@@ -396,7 +396,7 @@ RSpec.describe "schedule page spec" do
   it "save, and overwrite" do
     # execute - インスタンス化
     schedule_page_html = File.open("spec/data/schedule.201806.html").read
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html, @downloader, @repo)
 
     # check
     expect(schedule_page.exists?).to be_falsey
@@ -426,7 +426,7 @@ RSpec.describe "schedule page spec" do
 
   it "can't save: invalid" do
     # execute - 不正なHTMLをインスタンス化
-    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid html")
+    schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid html", @downloader, @repo)
 
     # check
     expect(schedule_page.exists?).to be_falsey
@@ -442,16 +442,16 @@ RSpec.describe "schedule page spec" do
 
   it "same" do
     # setup - 比較するデータをインスタンス化
-    schedule_page_1 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read)
+    schedule_page_1 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read, @downloader, @repo)
     schedule_page_1.save!
 
-    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read)
+    schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, File.open("spec/data/schedule.201806.html").read, @downloader, @repo)
     schedule_page_2.save!
 
-    schedule_page_3 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201806.html").read)
+    schedule_page_3 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201806.html").read, @downloader, @repo)
     schedule_page_3.save!
 
-    schedule_page_4 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201808.html").read)
+    schedule_page_4 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, File.open("spec/data/schedule.201808.html").read, @downloader, @repo)
     schedule_page_4.save!
 
     # check

@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :date, :race_list_pages
 
-    def initialize(year, month, content = nil, downloader, repo)
+    def initialize(year, month, content, downloader, repo)
       @date = Time.new(year, month, 1)
       @content = content
       @downloader = downloader
@@ -79,7 +79,7 @@ module ScoringHorseRacing::Rule
 
       @race_list_pages = doc.xpath("//table[contains(@class, 'scheLs')]/tbody/tr/td[position()=1 and @rowspan='2']/a").map do |a|
         a.attribute("href").value.match(/^\/race\/list\/([0-9]+)\/$/) do |path|
-          RaceListPage.new(path[1])
+          RaceListPage.new(path[1], nil, @downloader, @repo)
         end
       end
 

@@ -5,7 +5,7 @@ module ScoringHorseRacing::Rule
 
     attr_reader :entry_id, :entries
 
-    def initialize(entry_id, content = nil, downloader, repo)
+    def initialize(entry_id, content, downloader, repo)
       @entry_id = entry_id
       @content = content
       @downloader = downloader
@@ -87,17 +87,17 @@ module ScoringHorseRacing::Rule
 
         tr.xpath("td[@class='fntN']").each do |td|
           td.at_xpath("a")["href"].match(/^\/directory\/horse\/([0-9]+)\/$/) do |horse_id|
-            entry[:horse] = HorsePage.new(horse_id[1])
+            entry[:horse] = HorsePage.new(horse_id[1], nil, @downloader, @repo)
           end
 
           td.at_xpath("span[@class='fntSS']/a")["href"].match(/^\/directory\/trainer\/([0-9]+)\/$/) do |trainer_id|
-            entry[:trainer] = TrainerPage.new(trainer_id[1])
+            entry[:trainer] = TrainerPage.new(trainer_id[1], nil, @downloader, @repo)
           end
         end
 
         tr.xpath("td[@class='txC']/a").each do |a|
           a["href"].match(/^\/directory\/jocky\/([0-9]+)\/$/) do |jockey_id|
-            entry[:jockey] = JockeyPage.new(jockey_id[1])
+            entry[:jockey] = JockeyPage.new(jockey_id[1], nil, @downloader, @repo)
           end
         end
 

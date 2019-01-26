@@ -114,7 +114,7 @@ module ScoringHorseRacing::Rule
     end
 
     def _build_s3_path
-      Rails.application.secrets.s3_folder + "/race_list/race_list.#{@race_id}.html"
+      "race_list.#{@race_id}.html"
     end
 
   end

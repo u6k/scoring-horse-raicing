@@ -94,7 +94,7 @@ module ScoringHorseRacing::Rule
     end
 
     def _build_s3_path
-      Rails.application.secrets.s3_folder + "/schedule/schedule.#{@date.strftime('%Y%m')}.html"
+      "schedule.#{@date.strftime('%Y%m')}.html"
     end
 
   end

@@ -80,7 +80,7 @@ module ScoringHorseRacing::Rule
     end
 
     def _build_s3_path
-      Rails.application.secrets.s3_folder + "/horse/horse.#{horse_id}.html"
+      "horse.#{horse_id}.html"
     end
 
   end

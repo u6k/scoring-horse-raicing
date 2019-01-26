@@ -135,7 +135,7 @@ module ScoringHorseRacing::Rule
     end
 
     def _build_s3_path
-      Rails.application.secrets.s3_folder + "/odds_win/odds_win.#{@odds_id}.html"
+      "odds_win.#{@odds_id}.html"
     end
 
   end

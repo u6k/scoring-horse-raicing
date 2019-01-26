@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "scoring_horse_racing"
+
+ScoringHorseRacing::CLI.start(ARGV)

@@ -7,7 +7,7 @@ addons:
       - docker-ce
 
 script:
-  - docker-compose buid
+  - docker-compose build
   - docker-compose run app
 
 notifications:

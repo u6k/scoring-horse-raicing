@@ -14,53 +14,53 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = odds_win_page.odds_trifecta_page
 
     # check
-    assert_equal "1809030801", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_nil odds_trifecta_page.trifecta_results
-    assert_nil odds_trifecta_page.odds_trifecta_pages
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.trifecta_results).to be nil
+    expect(odds_trifecta_page.odds_trifecta_pages).to be nil
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - download
     odds_trifecta_page.download_from_web!
 
     # check
-    assert_equal "1809030801", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_not_nil odds_trifecta_page.trifecta_results # FIXME
-    assert_equal 16, odds_trifecta_page.odds_trifecta_pages.length
-    assert odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.trifecta_results).not_to be nil
+    expect(odds_trifecta_page.odds_trifecta_pages.length).to eq 16
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - save
     odds_trifecta_page.save!
 
     # check
-    assert odds_trifecta_page.valid?
-    assert odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_truthy
 
     # execute - re-new
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
     odds_trifecta_page_2 = odds_win_page.odds_trifecta_page
 
     # check
-    assert_equal "1809030801", odds_trifecta_page_2.odds_id
-    assert_equal 1, odds_trifecta_page_2.horse_number
-    assert_nil odds_trifecta_page_2.trifecta_results
-    assert_nil odds_trifecta_page_2.odds_trifecta_pages
-    assert_not odds_trifecta_page_2.valid?
-    assert odds_trifecta_page_2.exists?
+    expect(odds_trifecta_page_2.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page_2.horse_number).to eq 1
+    expect(odds_trifecta_page_2.trifecta_results).to be nil
+    expect(odds_trifecta_page_2.odds_trifecta_pages).to be nil
+    expect(odds_trifecta_page_2.valid?).to be_falsey
+    expect(odds_trifecta_page_2.exists?).to be_truthy
 
     # execute - download
     odds_trifecta_page_2.download_from_s3!
 
     # check
-    assert_equal "1809030801", odds_trifecta_page_2.odds_id
-    assert_equal 1, odds_trifecta_page_2.horse_number
-    assert_not_nil odds_trifecta_page_2.trifecta_results
-    assert_equal 16, odds_trifecta_page_2.odds_trifecta_pages.length
-    assert odds_trifecta_page_2.valid?
-    assert odds_trifecta_page_2.exists?
+    expect(odds_trifecta_page_2.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page_2.horse_number).to eq 1
+    expect(odds_trifecta_page_2.trifecta_results).not_to be nil
+    expect(odds_trifecta_page_2.odds_trifecta_pages.length).to eq 16
+    expect(odds_trifecta_page_2.valid?).to be_truthy
+    expect(odds_trifecta_page_2.exists?).to be_truthy
 
     # execute - overwrite
     odds_trifecta_page_2.save!
@@ -71,26 +71,24 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", nil, "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "0000000000"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - download -> fail
     odds_trifecta_page.download_from_web!
 
     # check
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - save -> fail
-    assert_raises "Invalid" do
-      odds_trifecta_page.save!
-    end
+    expect { odds_trifecta_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
   end
 
   it "parse" do
@@ -101,23 +99,23 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_not_nil odds_trifecta_page.trifecta_results # FIXME
-    assert odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.trifecta_results).not_to be nil
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_falsey
 
-    assert_equal 16, odds_trifecta_page.odds_trifecta_pages.length
+    expect(odds_trifecta_page.odds_trifecta_pages.length).to eq 16
 
     (1..16).each do |horse_number|
       odds_trifecta_sub_page = odds_trifecta_page.odds_trifecta_pages[horse_number]
 
-      assert_equal "1809030801", odds_trifecta_sub_page.odds_id
-      assert_equal horse_number, odds_trifecta_sub_page.horse_number
-      assert_nil odds_trifecta_sub_page.trifecta_results
-      assert_nil odds_trifecta_sub_page.odds_trifecta_pages
-      assert_not odds_trifecta_sub_page.valid?
-      assert_not odds_trifecta_sub_page.exists?
+      expect(odds_trifecta_sub_page.odds_id).to eq "1809030801"
+      expect(odds_trifecta_sub_page.horse_number).to eq horse_number
+      expect(odds_trifecta_sub_page.trifecta_results).to be nil
+      expect(odds_trifecta_sub_page.odds_trifecta_pages).to be nil
+      expect(odds_trifecta_sub_page.valid?).to be_falsey
+      expect(odds_trifecta_sub_page.exists?).to be_falsey
     end
   end
 
@@ -126,12 +124,12 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", nil, "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_nil odds_trifecta_page.trifecta_results
-    assert_nil odds_trifecta_page.odds_trifecta_pages
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "0000000000"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.trifecta_results).to be nil
+    expect(odds_trifecta_page.odds_trifecta_pages).to be nil
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
   end
 
   it "save, and overwrite" do
@@ -142,33 +140,33 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("1809030801", nil, odds_trifecta_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_trifecta_page.odds_id
-    assert_equal 1, odds_trifecta_page.horse_number
-    assert_not_nil odds_trifecta_page.trifecta_results # FIXME
-    assert_equal 16, odds_trifecta_page.odds_trifecta_pages.length
-    assert odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_trifecta_page.horse_number).to eq 1
+    expect(odds_trifecta_page.trifecta_results).not_to be nil
+    expect(odds_trifecta_page.odds_trifecta_pages.length).to eq 16
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - save
     odds_trifecta_page.save!
 
     # check
-    assert odds_trifecta_page.valid?
-    assert odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_truthy
 
     # execute - re-download
     odds_trifecta_page.download_from_web!
 
     # check
-    assert odds_trifecta_page.valid?
-    assert odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_truthy
 
     # execute - re-save
     odds_trifecta_page.save!
 
     # check
-    assert odds_trifecta_page.valid?
-    assert odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_truthy
+    expect(odds_trifecta_page.exists?).to be_truthy
   end
 
   it "save: invalid" do
@@ -176,17 +174,15 @@ RSpec.describe "odds trifecta page spec" do
     odds_trifecta_page = ScoringHorseRacing::Rule::OddsTrifectaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
 
     # execute - raised exception when save
-    assert_raises "Invalid" do
-      odds_trifecta_page.save!
-    end
+    expect { odds_trifecta_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_not odds_trifecta_page.valid?
-    assert_not odds_trifecta_page.exists?
+    expect(odds_trifecta_page.valid?).to be_falsey
+    expect(odds_trifecta_page.exists?).to be_falsey
   end
 
 end

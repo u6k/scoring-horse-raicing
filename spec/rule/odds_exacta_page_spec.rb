@@ -14,43 +14,43 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = odds_win_page.odds_exacta_page
 
     # check
-    assert_equal "1809030801", odds_exacta_page.odds_id
-    assert_nil odds_exacta_page.exacta_results
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_exacta_page.exacta_results).to be nil
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - download
     odds_exacta_page.download_from_web!
 
     # check
-    assert_equal "1809030801", odds_exacta_page.odds_id
-    assert_not_nil odds_exacta_page.exacta_results # FIXME
-    assert odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_exacta_page.exacta_results).not_to be nil
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - save
     odds_exacta_page.save!
 
     # check
-    assert odds_exacta_page.valid?
-    assert odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_truthy
 
     # execute - re-new
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
     odds_exacta_page_2 = odds_win_page.odds_exacta_page
 
     # check
-    assert_equal "1809030801", odds_exacta_page_2.odds_id
-    assert_nil odds_exacta_page_2.exacta_results
-    assert_not odds_exacta_page_2.valid?
-    assert odds_exacta_page_2.exists?
+    expect(odds_exacta_page_2.odds_id).to eq "1809030801"
+    expect(odds_exacta_page_2.exacta_results).to be nil
+    expect(odds_exacta_page_2.valid?).to be_falsey
+    expect(odds_exacta_page_2.exists?).to be_truthy
 
     # execute - download
     odds_exacta_page_2.download_from_s3!
 
     # check
-    assert odds_exacta_page_2.valid?
-    assert odds_exacta_page_2.exists?
+    expect(odds_exacta_page_2.valid?).to be_truthy
+    expect(odds_exacta_page_2.exists?).to be_truthy
 
     # execute - overwrite
     odds_exacta_page_2.save!
@@ -61,25 +61,23 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = ScoringHorseRacing::Rule::OddsExactaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_exacta_page.odds_id
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "0000000000"
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - download -> fail
     odds_exacta_page.download_from_web!
 
     # check
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - save -> fail
-    assert_raises "Invalid" do
-      odds_exacta_page.save!
-    end
+    expect(odds_exacta_page.save!).to raise_error "Invalid"
 
     # check
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
   end
 
   it "parse" do
@@ -90,10 +88,10 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = ScoringHorseRacing::Rule::OddsExactaPage.new("1809030801", odds_exacta_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_exacta_page.odds_id
-    assert_not_nil odds_exacta_page.exacta_results # FIXME
-    assert odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_exacta_page.exacta_results).not_to be nil
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_falsey
   end
 
   it "parse: invalid html" do
@@ -101,10 +99,10 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = ScoringHorseRacing::Rule::OddsExactaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_exacta_page.odds_id
-    assert_nil odds_exacta_page.exacta_results
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "0000000000"
+    expect(odds_exacta_page.exacta_results).to be nil
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
   end
 
   it "save, and overwrite" do
@@ -115,31 +113,31 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = ScoringHorseRacing::Rule::OddsExactaPage.new("1809030801", odds_exacta_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_exacta_page.odds_id
-    assert_not_nil odds_exacta_page.exacta_results # FIXME
-    assert odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_exacta_page.exacta_results).not_to be nil
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - save
     odds_exacta_page.save!
 
     # check
-    assert odds_exacta_page.valid?
-    assert odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_truthy
 
     # execute - re-download
     odds_exacta_page.download_from_web!
 
     # check
-    assert odds_exacta_page.valid?
-    assert odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_truthy
 
     # execute - re-save
     odds_exacta_page.save!
 
     # check
-    assert odds_exacta_page.valid?
-    assert odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_truthy
+    expect(odds_exacta_page.exists?).to be_truthy
   end
 
   it "save: invalid" do
@@ -147,17 +145,15 @@ RSpec.describe "odds exacta page spec" do
     odds_exacta_page = ScoringHorseRacing::Rule::OddsExactaPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
 
     # execute - raised exception when save
-    assert_raises "Invalid" do
-      odds_exacta_page.save!
-    end
+    expect(odds_exacta_page.save!).to raise_error "Invalid"
 
     # check
-    assert_not odds_exacta_page.valid?
-    assert_not odds_exacta_page.exists?
+    expect(odds_exacta_page.valid?).to be_falsey
+    expect(odds_exacta_page.exists?).to be_falsey
   end
 
 end

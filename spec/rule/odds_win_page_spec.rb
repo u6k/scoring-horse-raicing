@@ -14,73 +14,73 @@ RSpec.describe "odds win page spec" do
     odds_win_page = result_page.odds_win_page
 
     # check
-    assert_equal "1809030801", odds_win_page.odds_id
-    assert_nil odds_win_page.win_results
-    assert_nil odds_win_page.place_results
-    assert_nil odds_win_page.bracket_quinella_results
-    assert_nil odds_win_page.odds_quinella_page
-    assert_nil odds_win_page.odds_quinella_place_page
-    assert_nil odds_win_page.odds_exacta_page
-    assert_nil odds_win_page.odds_trio_page
-    assert_nil odds_win_page.odds_trifecta_page
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.win_results).to be nil
+    expect(odds_win_page.place_results).to be nil
+    expect(odds_win_page.bracket_quinella_results).to be nil
+    expect(odds_win_page.odds_quinella_page).to be nil
+    expect(odds_win_page.odds_quinella_place_page).to be nil
+    expect(odds_win_page.odds_exacta_page).to be nil
+    expect(odds_win_page.odds_trio_page).to be nil
+    expect(odds_win_page.odds_trifecta_page).to be nil
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - ダウンロード
     odds_win_page.download_from_web!
 
     # check
-    assert_equal "1809030801", odds_win_page.odds_id
-    assert_not_nil odds_win_page.win_results # FIXME
-    assert_not_nil odds_win_page.place_results # FIXME
-    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
-    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
-    assert odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.win_results).not_to be nil
+    expect(odds_win_page.place_results).not_to be nil
+    expect(odds_win_page.bracket_quinella_results).not_to be nil
+    expect(odds_win_page.odds_quinella_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_quinella_place_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trio_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - 保存
     odds_win_page.save!
 
     # check
-    assert odds_win_page.valid?
-    assert odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_truthy
 
     # execute - 再インスタンス化
     result_page = ScoringHorseRacing::Rule::ResultPage.new("1809030801", result_html, @downloader, @repo)
     odds_win_page_2 = result_page.odds_win_page
 
     # check
-    assert_equal "1809030801", odds_win_page_2.odds_id
-    assert_nil odds_win_page_2.win_results
-    assert_nil odds_win_page_2.place_results
-    assert_nil odds_win_page_2.bracket_quinella_results
-    assert_nil odds_win_page_2.odds_quinella_page
-    assert_nil odds_win_page_2.odds_quinella_place_page
-    assert_nil odds_win_page_2.odds_exacta_page
-    assert_nil odds_win_page_2.odds_trio_page
-    assert_nil odds_win_page_2.odds_trifecta_page
-    assert_not odds_win_page_2.valid?
-    assert odds_win_page_2.exists?
+    expect(odds_win_page_2.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.win_results).to be nil
+    expect(odds_win_page_2.place_results).to be nil
+    expect(odds_win_page_2.bracket_quinella_results).to be nil
+    expect(odds_win_page_2.odds_quinella_page).to be nil
+    expect(odds_win_page_2.odds_quinella_place_page).to be nil
+    expect(odds_win_page_2.odds_exacta_page).to be nil
+    expect(odds_win_page_2.odds_trio_page).to be nil
+    expect(odds_win_page_2.odds_trifecta_page).to be nil
+    expect(odds_win_page_2.valid?).to be_falsey
+    expect(odds_win_page_2.exists?).to be_truthy
 
     # execute - 再ダウンロード
     odds_win_page_2.download_from_s3!
 
     # check
-    assert_equal "1809030801", odds_win_page_2.odds_id
-    assert_not_nil odds_win_page_2.win_results
-    assert_not_nil odds_win_page_2.place_results
-    assert_not_nil odds_win_page_2.bracket_quinella_results
-    assert_equal "1809030801", odds_win_page_2.odds_quinella_page.odds_id
-    assert_equal "1809030801", odds_win_page_2.odds_quinella_place_page.odds_id
-    assert_equal "1809030801", odds_win_page_2.odds_exacta_page.odds_id
-    assert_equal "1809030801", odds_win_page_2.odds_trio_page.odds_id
-    assert_equal "1809030801", odds_win_page_2.odds_trifecta_page.odds_id
-    assert odds_win_page_2.valid?
-    assert odds_win_page_2.exists?
+    expect(odds_win_page_2.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.win_results).not_to be nil
+    expect(odds_win_page_2.place_results).not_to be nil
+    expect(odds_win_page_2.bracket_quinella_results).not_to be nil
+    expect(odds_win_page_2.odds_quinella_page.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.odds_quinella_place_page.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.odds_trio_page.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page_2.valid?).to be_truthy
+    expect(odds_win_page_2.exists?).to be_truthy
 
     # execute - 上書き保存
     odds_win_page_2.save!
@@ -91,27 +91,25 @@ RSpec.describe "odds win page spec" do
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_win_page.odds_id
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "0000000000"
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - ダウンロード -> 失敗
     odds_win_page.download_from_web!
 
     # check
-    assert_equal "0000000000", odds_win_page.odds_id
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "0000000000"
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - 保存 -> 失敗
-    assert_raises "Invalid" do
-      odds_win_page.save!
-    end
+    expect { odds_win_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_equal "0000000000", odds_win_page.odds_id
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "0000000000"
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
   end
 
   it "parse" do
@@ -122,17 +120,17 @@ RSpec.describe "odds win page spec" do
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_win_page.odds_id
-    assert_not_nil odds_win_page.win_results # FIXME
-    assert_not_nil odds_win_page.place_results # FIXME
-    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
-    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
-    assert odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.win_results).not_to be nil
+    expect(odds_win_page.place_results).not_to be nil
+    expect(odds_win_page.bracket_quinella_results).not_to be nil
+    expect(odds_win_page.odds_quinella_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_quinella_place_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trio_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_falsey
   end
 
   it "parse: invalid html" do
@@ -140,17 +138,17 @@ RSpec.describe "odds win page spec" do
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "0000000000", odds_win_page.odds_id
-    assert_nil odds_win_page.win_results
-    assert_nil odds_win_page.place_results
-    assert_nil odds_win_page.bracket_quinella_results
-    assert_nil odds_win_page.odds_quinella_page
-    assert_nil odds_win_page.odds_quinella_place_page
-    assert_nil odds_win_page.odds_exacta_page
-    assert_nil odds_win_page.odds_trio_page
-    assert_nil odds_win_page.odds_trifecta_page
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "0000000000"
+    expect(odds_win_page.win_results).to be nil
+    expect(odds_win_page.place_results).to be nil
+    expect(odds_win_page.bracket_quinella_results).to be nil
+    expect(odds_win_page.odds_quinella_page).to be nil
+    expect(odds_win_page.odds_quinella_place_page).to be nil
+    expect(odds_win_page.odds_exacta_page).to be nil
+    expect(odds_win_page.odds_trio_page).to be nil
+    expect(odds_win_page.odds_trifecta_page).to be nil
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
   end
 
   it "save, and overwrite" do
@@ -161,38 +159,38 @@ RSpec.describe "odds win page spec" do
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("1809030801", odds_win_page_html, @downloader, @repo)
 
     # check
-    assert_equal "1809030801", odds_win_page.odds_id
-    assert_not_nil odds_win_page.win_results # FIXME
-    assert_not_nil odds_win_page.place_results # FIXME
-    assert_not_nil odds_win_page.bracket_quinella_results # FIXME
-    assert_equal "1809030801", odds_win_page.odds_quinella_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_quinella_place_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_exacta_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trio_page.odds_id
-    assert_equal "1809030801", odds_win_page.odds_trifecta_page.odds_id
-    assert odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.win_results).not_to be nil
+    expect(odds_win_page.place_results).not_to be nil
+    expect(odds_win_page.bracket_quinella_results).not_to be nil
+    expect(odds_win_page.odds_quinella_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_quinella_place_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_exacta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trio_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.odds_trifecta_page.odds_id).to eq "1809030801"
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - 保存
     odds_win_page.save!
 
     # check
-    assert odds_win_page.valid?
-    assert odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_truthy
 
     # execute - 再ダウンロード
     odds_win_page.download_from_web!
 
     # check
-    assert odds_win_page.valid?
-    assert odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_truthy
 
     # execute - 再保存
     odds_win_page.save!
 
     # check
-    assert odds_win_page.valid?
-    assert odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_truthy
+    expect(odds_win_page.exists?).to be_truthy
   end
 
   it "save: invalid" do
@@ -200,17 +198,15 @@ RSpec.describe "odds win page spec" do
     odds_win_page = ScoringHorseRacing::Rule::OddsWinPage.new("0000000000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
 
     # execute - 保存しようとして例外がスローされる
-    assert_raises "Invalid" do
-      odds_win_page.save!
-    end
+    expect { odds_win_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_not odds_win_page.valid?
-    assert_not odds_win_page.exists?
+    expect(odds_win_page.valid?).to be_falsey
+    expect(odds_win_page.exists?).to be_falsey
   end
 
 end

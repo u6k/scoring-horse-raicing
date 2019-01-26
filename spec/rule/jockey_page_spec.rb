@@ -14,213 +14,213 @@ RSpec.describe "jockey page spec" do
     entries = entry_page.entries
 
     # check
-    assert_equal 16, entries.length
+    expect(entries.length).to eq 16
 
     jockey_page = entries[0][:jockey]
-    assert_equal "05339", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[1][:jockey]
-    assert_equal "01014", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01014"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[2][:jockey]
-    assert_equal "01088", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01088"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[3][:jockey]
-    assert_equal "01114", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01114"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[4][:jockey]
-    assert_equal "01165", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01165"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[5][:jockey]
-    assert_equal "00894", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00894"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[6][:jockey]
-    assert_equal "01034", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01034"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[7][:jockey]
-    assert_equal "05203", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05203"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[8][:jockey]
-    assert_equal "01126", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01126"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[9][:jockey]
-    assert_equal "01019", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01019"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[10][:jockey]
-    assert_equal "01166", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01166"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[11][:jockey]
-    assert_equal "01018", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01018"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[12][:jockey]
-    assert_equal "01130", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01130"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[13][:jockey]
-    assert_equal "05386", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05386"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[14][:jockey]
-    assert_equal "01116", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01116"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     jockey_page = entries[15][:jockey]
-    assert_equal "01154", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01154"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     # execute - download
     entries.each { |e| e[:jockey].download_from_web! }
 
     # check
-    assert_equal 16, entries.length
+    expect(entries.length).to eq 16
 
     jockey_page = entries[0][:jockey]
-    assert_equal "05339", jockey_page.jockey_id
-    assert_equal "C.ルメール", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to eq "C.ルメール"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[1][:jockey]
-    assert_equal "01014", jockey_page.jockey_id
-    assert_equal "福永 祐一", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01014"
+    expect(jockey_page.jockey_name).to eq "福永 祐一"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[2][:jockey]
-    assert_equal "01088", jockey_page.jockey_id
-    assert_equal "川田 将雅", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01088"
+    expect(jockey_page.jockey_name).to eq "川田 将雅"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[3][:jockey]
-    assert_equal "01114", jockey_page.jockey_id
-    assert_equal "田中 健", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01114"
+    expect(jockey_page.jockey_name).to eq "田中 健"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[4][:jockey]
-    assert_equal "01165", jockey_page.jockey_id
-    assert_equal "森 裕太朗", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01165"
+    expect(jockey_page.jockey_name).to eq "森 裕太朗"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[5][:jockey]
-    assert_equal "00894", jockey_page.jockey_id
-    assert_equal "小牧 太", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00894"
+    expect(jockey_page.jockey_name).to eq "小牧 太"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[6][:jockey]
-    assert_equal "01034", jockey_page.jockey_id
-    assert_equal "酒井 学", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01034"
+    expect(jockey_page.jockey_name).to eq "酒井 学"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[7][:jockey]
-    assert_equal "05203", jockey_page.jockey_id
-    assert_equal "岩田 康誠", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05203"
+    expect(jockey_page.jockey_name).to eq "岩田 康誠"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[8][:jockey]
-    assert_equal "01126", jockey_page.jockey_id
-    assert_equal "松山 弘平", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01126"
+    expect(jockey_page.jockey_name).to eq "松山 弘平"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[9][:jockey]
-    assert_equal "01019", jockey_page.jockey_id
-    assert_equal "秋山 真一郎", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01019"
+    expect(jockey_page.jockey_name).to eq "秋山 真一郎"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[10][:jockey]
-    assert_equal "01166", jockey_page.jockey_id
-    assert_equal "川又 賢治", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01166"
+    expect(jockey_page.jockey_name).to eq "川又 賢治"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[11][:jockey]
-    assert_equal "01018", jockey_page.jockey_id
-    assert_equal "和田 竜二", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01018"
+    expect(jockey_page.jockey_name).to eq "和田 竜二"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[12][:jockey]
-    assert_equal "01130", jockey_page.jockey_id
-    assert_equal "高倉 稜", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01130"
+    expect(jockey_page.jockey_name).to eq "高倉 稜"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[13][:jockey]
-    assert_equal "05386", jockey_page.jockey_id
-    assert_equal "戸崎 圭太", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05386"
+    expect(jockey_page.jockey_name).to eq "戸崎 圭太"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[14][:jockey]
-    assert_equal "01116", jockey_page.jockey_id
-    assert_equal "藤岡 康太", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01116"
+    expect(jockey_page.jockey_name).to eq "藤岡 康太"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
     
     jockey_page = entries[15][:jockey]
-    assert_equal "01154", jockey_page.jockey_id
-    assert_equal "松若 風馬", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "01154"
+    expect(jockey_page.jockey_name).to eq "松若 風馬"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
 
     # execute - save
     entries.each { |e| e[:jockey].save! }
 
     # check
     entries.each do |e|
-      assert e[:jockey].valid?
-      assert e[:jockey].exists?
+      expect(e[:jockey].valid?).to be_truthy
+      expect(e[:jockey].exists?).to be_truthy
     end
 
     # execute - re-new
@@ -228,205 +228,205 @@ RSpec.describe "jockey page spec" do
     entries_2 = entry_page.entries
 
     # check
-    assert_equal 16, entries_2.length
+    expect(entries_2.length).to eq 16
 
     jockey_page_2 = entries_2[0][:jockey]
-    assert_equal "05339", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05339"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[1][:jockey]
-    assert_equal "01014", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01014"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[2][:jockey]
-    assert_equal "01088", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01088"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[3][:jockey]
-    assert_equal "01114", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01114"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[4][:jockey]
-    assert_equal "01165", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01165"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[5][:jockey]
-    assert_equal "00894", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "00894"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[6][:jockey]
-    assert_equal "01034", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01034"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[7][:jockey]
-    assert_equal "05203", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05203"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[8][:jockey]
-    assert_equal "01126", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01126"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[9][:jockey]
-    assert_equal "01019", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01019"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[10][:jockey]
-    assert_equal "01166", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01166"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[11][:jockey]
-    assert_equal "01018", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01018"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[12][:jockey]
-    assert_equal "01130", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01130"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[13][:jockey]
-    assert_equal "05386", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05386"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[14][:jockey]
-    assert_equal "01116", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01116"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     jockey_page_2 = entries_2[15][:jockey]
-    assert_equal "01154", jockey_page_2.jockey_id
-    assert_nil jockey_page_2.jockey_name
-    assert_not jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01154"
+    expect(jockey_page_2.jockey_name).to be nil
+    expect(jockey_page_2.valid?).to be_falsey
+    expect(jockey_page_2.exists?).to be_truthy
 
     # execute - download from s3
     entries_2.each { |e| e[:jockey].download_from_s3! }
 
     # check
-    assert_equal 16, entries_2.length
+    expect(entries_2.length).to eq 16
 
     jockey_page_2 = entries_2[0][:jockey]
-    assert_equal "05339", jockey_page_2.jockey_id
-    assert_equal "C.ルメール", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05339"
+    expect(jockey_page_2.jockey_name).to eq "C.ルメール"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[1][:jockey]
-    assert_equal "01014", jockey_page_2.jockey_id
-    assert_equal "福永 祐一", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01014"
+    expect(jockey_page_2.jockey_name).to eq "福永 祐一"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[2][:jockey]
-    assert_equal "01088", jockey_page_2.jockey_id
-    assert_equal "川田 将雅", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01088"
+    expect(jockey_page_2.jockey_name).to eq "川田 将雅"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[3][:jockey]
-    assert_equal "01114", jockey_page_2.jockey_id
-    assert_equal "田中 健", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01114"
+    expect(jockey_page_2.jockey_name).to eq "田中 健"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[4][:jockey]
-    assert_equal "01165", jockey_page_2.jockey_id
-    assert_equal "森 裕太朗", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01165"
+    expect(jockey_page_2.jockey_name).to eq "森 裕太朗"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[5][:jockey]
-    assert_equal "00894", jockey_page_2.jockey_id
-    assert_equal "小牧 太", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "00894"
+    expect(jockey_page_2.jockey_name).to eq "小牧 太"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[6][:jockey]
-    assert_equal "01034", jockey_page_2.jockey_id
-    assert_equal "酒井 学", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01034"
+    expect(jockey_page_2.jockey_name).to eq "酒井 学"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[7][:jockey]
-    assert_equal "05203", jockey_page_2.jockey_id
-    assert_equal "岩田 康誠", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05203"
+    expect(jockey_page_2.jockey_name).to eq "岩田 康誠"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[8][:jockey]
-    assert_equal "01126", jockey_page_2.jockey_id
-    assert_equal "松山 弘平", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01126"
+    expect(jockey_page_2.jockey_name).to eq "松山 弘平"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[9][:jockey]
-    assert_equal "01019", jockey_page_2.jockey_id
-    assert_equal "秋山 真一郎", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01019"
+    expect(jockey_page_2.jockey_name).to eq "秋山 真一郎"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[10][:jockey]
-    assert_equal "01166", jockey_page_2.jockey_id
-    assert_equal "川又 賢治", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01166"
+    expect(jockey_page_2.jockey_name).to eq "川又 賢治"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[11][:jockey]
-    assert_equal "01018", jockey_page_2.jockey_id
-    assert_equal "和田 竜二", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01018"
+    expect(jockey_page_2.jockey_name).to eq "和田 竜二"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[12][:jockey]
-    assert_equal "01130", jockey_page_2.jockey_id
-    assert_equal "高倉 稜", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01130"
+    expect(jockey_page_2.jockey_name).to eq "高倉 稜"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[13][:jockey]
-    assert_equal "05386", jockey_page_2.jockey_id
-    assert_equal "戸崎 圭太", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "05386"
+    expect(jockey_page_2.jockey_name).to eq "戸崎 圭太"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[14][:jockey]
-    assert_equal "01116", jockey_page_2.jockey_id
-    assert_equal "藤岡 康太", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01116"
+    expect(jockey_page_2.jockey_name).to eq "藤岡 康太"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
     
     jockey_page_2 = entries_2[15][:jockey]
-    assert_equal "01154", jockey_page_2.jockey_id
-    assert_equal "松若 風馬", jockey_page_2.jockey_name
-    assert jockey_page_2.valid?
-    assert jockey_page_2.exists?
+    expect(jockey_page_2.jockey_id).to eq "01154"
+    expect(jockey_page_2.jockey_name).to eq "松若 風馬"
+    expect(jockey_page_2.valid?).to be_truthy
+    expect(jockey_page_2.exists?).to be_truthy
 
     # execute - overwrite
     entries_2.each { |e| e[:jockey].save! }
@@ -437,30 +437,28 @@ RSpec.describe "jockey page spec" do
     jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("00000", nil, @downloader, @repo)
 
     # check
-    assert_equal "00000", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00000"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     # execute - download
     jockey_page.download_from_web!
 
     # check
-    assert_equal "00000", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00000"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
 
     # execute - save -> fail
-    assert_raises "Invalid" do
-      jockey_page.save!
-    end
+    expect { jockey_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_equal "00000", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00000"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
   end
 
   it "parse" do
@@ -471,10 +469,10 @@ RSpec.describe "jockey page spec" do
     jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("05339", jockey_page_html, @downloader, @repo)
 
     # check
-    assert_equal "05339", jockey_page.jockey_id
-    assert_equal "C.ルメール", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to eq "C.ルメール"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
   end
 
   it "parse: invalid html" do
@@ -482,10 +480,10 @@ RSpec.describe "jockey page spec" do
     jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("00000", "Invalid html", @downloader, @repo)
 
     # check
-    assert_equal "00000", jockey_page.jockey_id
-    assert_nil jockey_page.jockey_name
-    assert_not jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "00000"
+    expect(jockey_page.jockey_name).to be nil
+    expect(jockey_page.valid?).to be_falsey
+    expect(jockey_page.exists?).to be_falsey
   end
 
   it "save, and overwrite" do
@@ -496,35 +494,35 @@ RSpec.describe "jockey page spec" do
     jockey_page = ScoringHorseRacing::Rule::JockeyPage.new("05339", jockey_page_html, @downloader, @repo)
 
     # check
-    assert_equal "05339", jockey_page.jockey_id
-    assert_equal "C.ルメール", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert_not jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to eq "C.ルメール"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_falsey
 
     # execute - 保存
     jockey_page.save!
 
     # check
-    assert jockey_page.valid?
-    assert jockey_page.exists?
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_truthy
 
     # execute - Webから再ダウンロードする
     jockey_page.download_from_web!
 
     # check
-    assert_equal "05339", jockey_page.jockey_id
-    assert_equal "C.ルメール", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to eq "C.ルメール"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_truthy
 
     # execute - 上書き保存
     jockey_page.save!
 
     # check
-    assert_equal "05339", jockey_page.jockey_id
-    assert_equal "C.ルメール", jockey_page.jockey_name
-    assert jockey_page.valid?
-    assert jockey_page.exists?
+    expect(jockey_page.jockey_id).to eq "05339"
+    expect(jockey_page.jockey_name).to eq "C.ルメール"
+    expect(jockey_page.valid?).to be_truthy
+    expect(jockey_page.exists?).to be_truthy
   end
 
 end

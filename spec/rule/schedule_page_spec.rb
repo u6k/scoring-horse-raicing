@@ -10,50 +10,50 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, @downloader, @repo)
 
     # check
-    assert_equal Time.new(2018, 6, 1), schedule_page.date
-    assert_nil schedule_page.race_list_pages
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.date).to eq Time.new(2018, 6, 1)
+    expect(schedule_page.race_list_pages).to be nil
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
 
     # execute - ダウンロード
     schedule_page.download_from_web!
 
     # check
-    assert_equal 23, schedule_page.race_list_pages.length
-    assert_not schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.race_list_pages.length).to eq 23
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 保存
     schedule_page.save!
 
     # check
-    assert_equal 23, schedule_page.race_list_pages.length
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.race_list_pages.length).to eq 23
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 再インスタンス化
     schedule_page_2 = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, @downloader, @repo)
 
     # check
-    assert_nil schedule_page_2.race_list_pages
-    assert schedule_page_2.exists?
-    assert_not schedule_page_2.valid?
+    expect(schedule_page_2.race_list_pages).to be nil
+    expect(schedule_page_2.exists?).to be_truthy
+    expect(schedule_page_2.valid?).to be_falsey
 
     # execute - 再ダウンロードも可能
     schedule_page_2.download_from_s3!
 
     # check
-    assert_equal 23, schedule_page_2.race_list_pages.length
-    assert schedule_page_2.exists?
-    assert schedule_page_2.valid?
+    expect(schedule_page_2.race_list_pages.length).to eq 23
+    expect(schedule_page_2.exists?).to be_truthy
+    expect(schedule_page_2.valid?).to be_truthy
 
     # execute - 再保存は上書き
     schedule_page_2.save!
 
     # check
-    assert_equal 23, schedule_page_2.race_list_pages.length
-    assert schedule_page_2.exists?
-    assert schedule_page_2.valid?
+    expect(schedule_page_2.race_list_pages.length).to eq 23
+    expect(schedule_page_2.exists?).to be_truthy
+    expect(schedule_page_2.valid?).to be_truthy
   end
 
   it "download: 当月の場合" do
@@ -61,22 +61,22 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(Time.now.year, Time.now.month, @downloader, @repo)
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
 
     # execute - ダウンロード
     schedule_page.download_from_web!
 
     # check
-    assert_not schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 保存
     schedule_page.save!
 
     # check
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
   end
 
   it "download: 来月(リンクが不完全)の場合" do
@@ -87,15 +87,15 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 8, html, @downloader, @repo)
 
     # check
-    assert_not schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 保存
     schedule_page.save!
 
     # check
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
   end
 
   it "download: ページが存在しない月の場合" do
@@ -103,24 +103,22 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, @downloader, @repo)
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
 
     # execute - ダウンロード
     schedule_page.download_from_web!
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
 
     # execute - 保存
-    assert_raises "Invalid" do
-      schedule_page.save!
-    end
+    expect { schedule_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
   end
 
   it "parse" do
@@ -132,193 +130,193 @@ RSpec.describe "schedule page spec" do
     race_list_pages = schedule_page.race_list_pages
 
     # check
-    assert schedule_page.valid?
+    expect(schedule_page.valid?).to be_truthy
 
-    assert_equal 23, race_list_pages.length
+    expect(race_list_pages.length).to eq 23
 
     race_list_page = race_list_pages[0]
-    assert_equal "18050301", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050301"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[1]
-    assert_equal "18090301", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090301"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[2]
-    assert_equal "18050302", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050302"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[3]
-    assert_equal "18090302", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090302"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[4]
-    assert_equal "18050303", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050303"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[5]
-    assert_equal "18090303", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090303"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[6]
-    assert_equal "18050304", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050304"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[7]
-    assert_equal "18090304", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090304"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[8]
-    assert_equal "18020101", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18020101"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[9]
-    assert_equal "18050305", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050305"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[10]
-    assert_equal "18090305", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090305"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[11]
-    assert_equal "18020102", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18020102"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[12]
-    assert_equal "18050306", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050306"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[13]
-    assert_equal "18090306", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090306"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[14]
-    assert_equal "18020103", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18020103"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[15]
-    assert_equal "18050307", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050307"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[16]
-    assert_equal "18090307", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090307"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[17]
-    assert_equal "18020104", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18020104"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[18]
-    assert_equal "18050308", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18050308"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[19]
-    assert_equal "18090308", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18090308"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[20]
-    assert_equal "18020105", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18020105"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[21]
-    assert_equal "18030201", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18030201"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[22]
-    assert_equal "18070301", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18070301"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
   end
 
   it "parse: case line skip" do
@@ -330,57 +328,57 @@ RSpec.describe "schedule page spec" do
     race_list_pages = schedule_page.race_list_pages
 
     # check
-    assert schedule_page.valid?
+    expect(schedule_page.valid?).to be_truthy
 
-    assert_equal 6, race_list_pages.length
+    expect(race_list_pages.length).to eq 6
  
     race_list_page = race_list_pages[0]
-    assert_equal "18010103", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18010103"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[1]
-    assert_equal "18040203", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18040203"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[2]
-    assert_equal "18100203", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18100203"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[3]
-    assert_equal "18010104", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18010104"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[4]
-    assert_equal "18040204", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18040204"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
 
     race_list_page = race_list_pages[5]
-    assert_equal "18100204", race_list_page.race_id
-    assert_nil race_list_page.date
-    assert_nil race_list_page.course_name
-    assert_nil race_list_page.result_pages
-    assert_not race_list_page.exists?
-    assert_not race_list_page.valid?
+    expect(race_list_page.race_id).to eq "18100204"
+    expect(race_list_page.date).to be nil
+    expect(race_list_page.course_name).to be nil
+    expect(race_list_page.result_pages).to be nil
+    expect(race_list_page.exists?).to be_falsey
+    expect(race_list_page.valid?).to be_falsey
   end
 
   it "parse: case invalid html" do
@@ -388,9 +386,9 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid HTML")
 
     # check
-    assert_equal Time.new(1900, 1, 1), schedule_page.date
-    assert_nil schedule_page.race_list_pages
-    assert_not schedule_page.valid?
+    expect(schedule_page.date).to eq Time.new(1900, 1, 1)
+    expect(schedule_page.race_list_pages).to be nil
+    expect(schedule_page.valid?).to be_falsey
   end
 
   it "save, and overwrite" do
@@ -399,29 +397,29 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(2018, 6, schedule_page_html)
 
     # check
-    assert_not schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 保存
     schedule_page.save!
 
     # check
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 再ダウンロード
     schedule_page.download_from_web!
 
     # check
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
 
     # execute - 再保存
     schedule_page.save!
 
     # check
-    assert schedule_page.exists?
-    assert schedule_page.valid?
+    expect(schedule_page.exists?).to be_truthy
+    expect(schedule_page.valid?).to be_truthy
   end
 
   it "can't save: invalid" do
@@ -429,17 +427,15 @@ RSpec.describe "schedule page spec" do
     schedule_page = ScoringHorseRacing::Rule::SchedulePage.new(1900, 1, "Invalid html")
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
 
     # execute - 保存しようとして例外がスローされる
-    assert_raises "Invalid" do
-      schedule_page.save!
-    end
+    expect { schedule_page.save! }.to raise_error "Invalid"
 
     # check
-    assert_not schedule_page.exists?
-    assert_not schedule_page.valid?
+    expect(schedule_page.exists?).to be_falsey
+    expect(schedule_page.valid?).to be_falsey
   end
 
   it "same" do
@@ -457,9 +453,9 @@ RSpec.describe "schedule page spec" do
     schedule_page_4.save!
 
     # check
-    assert schedule_page_1.same?(schedule_page_2)     # 同じデータはtrue
-    assert_not schedule_page_2.same?(schedule_page_3) # 日付が異なるのでfalse
-    assert_not schedule_page_3.same?(schedule_page_4) # コンテンツが異なるのでfalse
+    expect(schedule_page_1.same?(schedule_page_2)).to be_truthy
+    expect(schedule_page_2.same?(schedule_page_3)).to be_falsey
+    expect(schedule_page_3.same?(schedule_page_4)).to be_falsey
   end
 
 end

@@ -1,5 +1,7 @@
 require "scoring_horse_racing/version"
 
+require "scoring_horse_racing/cli"
+
 require "scoring_horse_racing/rule/entry_page"
 require "scoring_horse_racing/rule/horse_page"
 require "scoring_horse_racing/rule/jockey_page"

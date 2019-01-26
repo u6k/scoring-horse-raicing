@@ -1,8 +1,10 @@
 RSpec.describe "odds trio page spec" do
 
   before do
-    repo = ScoringHorseRacing::SpecUtil.build_resource_repository
-    repo.remove_s3_objects
+    @downloader = ScoringHorseRacing::SpecUtil.build_downloader
+
+    @repo = ScoringHorseRacing::SpecUtil.build_resource_repository
+    @repo.remove_s3_objects
   end
 
   it "download" do

@@ -1,3 +1,5 @@
+require "logger"
+
 require "scoring_horse_racing/version"
 
 require "scoring_horse_racing/cli"
@@ -15,3 +17,17 @@ require "scoring_horse_racing/rule/race_list_page"
 require "scoring_horse_racing/rule/result_page"
 require "scoring_horse_racing/rule/schedule_page"
 require "scoring_horse_racing/rule/trainer_page"
+
+module ScoringHorseRacing
+  class AppLogger
+    @@logger = nil
+
+    def self.get_logger
+      if @@logger.nil?
+        @@logger = Logger.new(STDOUT)
+      end
+
+      @@logger
+    end
+  end
+end

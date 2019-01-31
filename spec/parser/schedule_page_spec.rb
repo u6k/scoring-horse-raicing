@@ -1,5 +1,7 @@
 require "timecop"
 
+require "spec_helper"
+
 RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
   before do
     url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06"

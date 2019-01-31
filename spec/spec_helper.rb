@@ -16,7 +16,7 @@ end
 
 module ScoringHorseRacing::SpecUtil
   def self.build_downloader
-    Crawline::Downloader.new("scoring-horse-racing/0.0.0 (https://github.com/u6k/scoring-horse-racing)")
+    Crawline::Downloader.new("scoring-horse-racing/#{ScoringHorseRacing::VERSION} (https://github.com/u6k/scoring-horse-racing)")
   end
 
   def self.build_resource_repository

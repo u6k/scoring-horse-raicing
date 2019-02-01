@@ -41,10 +41,10 @@ module ScoringHorseRacing::Parser
       if not h3.nil?
         @logger.debug("SchedulePageParser#_parse: h3=#{h3}")
 
-        h3.text.match(/^([0-9]{4})年([0-9]{1,2})月$/) do |date_part|
-          @logger.debug("SchedulePageParser#_parse: date_part=#{date_part.inspect}")
+        h3.text.match(/^([0-9]{4})年([0-9]{1,2})月$/) do |date_parts|
+          @logger.debug("SchedulePageParser#_parse: date_part=#{date_parts.inspect}")
 
-          @date = Date.new(date_part[1].to_i, date_part[2].to_i, 1)
+          @date = Date.new(date_parts[1].to_i, date_parts[2].to_i, 1)
         end
       end
 
@@ -52,7 +52,7 @@ module ScoringHorseRacing::Parser
         @logger.debug("SchedulePageParser#_parse: a=#{a}")
 
         a.attribute("href").value.match(/^\/race\/list\/([0-9]+)\/$/) do |path|
-          @logger.debug("SchedulePageParser#_parse: path=#{path}")
+          @logger.debug("SchedulePageParser#_parse: path=#{path.inspect}")
 
           URI.join(@url, path[0]).to_s
         end
@@ -62,3 +62,4 @@ module ScoringHorseRacing::Parser
     end
   end
 end
+

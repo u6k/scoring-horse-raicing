@@ -13,13 +13,13 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
   describe "#redownload?" do
     it "redownload if newer than 2 months" do
       Timecop.freeze(Time.local(2018, 8, 31)) do
-        expect(@parser.redownload?).to be_truthy
+        expect(@parser).to be_redownload
       end
     end
 
     it "do not redownload if over 3 months old" do
       Timecop.freeze(Time.local(2018, 9, 1)) do
-        expect(@parser.redownload?).to be_falsey
+        expect(@parser).not_to be_redownload
       end
     end
   end
@@ -105,3 +105,4 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
     end
   end
 end
+

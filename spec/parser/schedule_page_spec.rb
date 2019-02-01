@@ -25,8 +25,23 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
   end
 
   describe "#valid?" do
-    it "is valid" do
-      expect(@parser.valid?).to be_truthy
+    context "2018-06 schedule page" do
+      it "is valid" do
+        expect(@parser).to be_valid
+      end
+    end
+
+    context "error page" do
+      before do
+        url = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
+        data = File.open("spec/data/schedule.190001.html").read
+
+        @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
+      end
+
+      it "is invalid" do
+        expect(@parser).not_to be_valid
+      end
     end
   end
 

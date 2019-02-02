@@ -15,6 +15,7 @@ module ScoringHorseRacing
     def self.get_logger
       if @@logger.nil?
         @@logger = Logger.new(STDOUT)
+        @@logger.level = "INFO"
       end
 
       @@logger

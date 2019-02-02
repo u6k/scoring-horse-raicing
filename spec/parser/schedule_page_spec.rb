@@ -4,22 +4,37 @@ require "spec_helper"
 
 RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
   before do
+    # 2018-06 schedule page parser
     url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06"
     data = File.open("spec/data/schedule.201806.html").read
 
     @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
+
+    # 2018-08 schedule page (case link is incomplete) parser
+    url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08"
+    data = File.open("spec/data/schedule.201808.html").read
+
+    @parser_201808 = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
+
+    # error page parser
+    url = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
+    data = File.open("spec/data/schedule.190001.html").read
+
+    @parser_error = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
   end
 
   describe "#redownload?" do
-    it "redownload if newer than 2 months" do
-      Timecop.freeze(Time.local(2018, 8, 31)) do
-        expect(@parser).to be_redownload
+    context "2018-06 schedule page" do
+      it "redownload if newer than 2 months" do
+        Timecop.freeze(Time.local(2018, 8, 29)) do
+          expect(@parser).to be_redownload
+        end
       end
-    end
 
-    it "do not redownload if over 3 months old" do
-      Timecop.freeze(Time.local(2018, 9, 1)) do
-        expect(@parser).not_to be_redownload
+      it "do not redownload if over 3 months old" do
+        Timecop.freeze(Time.local(2018, 8, 30)) do
+          expect(@parser).not_to be_redownload
+        end
       end
     end
   end
@@ -31,16 +46,15 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
       end
     end
 
-    context "error page" do
-      before do
-        url = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
-        data = File.open("spec/data/schedule.190001.html").read
-
-        @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
+    context "2018-08 schedule page" do
+      it "is valid" do
+        expect(@parser_201808).to be_valid
       end
+    end
 
+    context "error page" do
       it "is invalid" do
-        expect(@parser).not_to be_valid
+        expect(@parser_error).not_to be_valid
       end
     end
   end
@@ -76,15 +90,8 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
     end
 
     context "2018-08 schedule page (case link is incomplete)" do
-      before do
-        url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08"
-        data = File.open("spec/data/schedule.201808.html").read
-
-        @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
-      end
-
       it "is race list pages" do
-        expect(@parser.related_links).to contain_exactly(
+        expect(@parser_201808.related_links).to contain_exactly(
           "https://keiba.yahoo.co.jp/race/list/18010103/",
           "https://keiba.yahoo.co.jp/race/list/18040203/",
           "https://keiba.yahoo.co.jp/race/list/18100203/",
@@ -105,4 +112,3 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
     end
   end
 end
-

@@ -1,3 +1,25 @@
+require "nokogiri"
+require "crawline"
+
+module ScoringHorseRacing::Parser
+  class HorsePageParser < Crawline::BaseParser
+    # TODO
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # require "nokogiri"
 
 # module ScoringHorseRacing::Rule

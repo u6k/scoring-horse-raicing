@@ -67,7 +67,7 @@ RSpec.describe ScoringHorseRacing::Parser::ResultPageParser do
 
   describe "#related_links" do
     context "2018-06-24 hanshin no 1 race result page" do
-      it "is denma, odds, horse, jockey, trainer pages" do
+      it "is denma, odds, horse, jocky, trainer pages" do
         expect(@parser.related_links).to contain_exactly(
           "https://keiba.yahoo.co.jp/race/denma/1809030801/",
           "https://keiba.yahoo.co.jp/odds/tfw/1809030801/",
@@ -123,7 +123,7 @@ RSpec.describe ScoringHorseRacing::Parser::ResultPageParser do
     end
 
     context "1986-01-26 tyukyou no 11 race result page" do
-      it "is horse, jockey, trainer pages" do
+      it "is horse, jocky, trainer pages" do
         expect(@parser_19860126.related_links).to contain_exactly(
           "https://keiba.yahoo.co.jp/directory/horse/1981105030/",
           "https://keiba.yahoo.co.jp/directory/horse/1982101926/",

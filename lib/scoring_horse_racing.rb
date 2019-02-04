@@ -9,6 +9,7 @@ require "scoring_horse_racing/parser/race_list_page"
 require "scoring_horse_racing/parser/result_page"
 require "scoring_horse_racing/parser/entry_page"
 require "scoring_horse_racing/parser/horse_page"
+require "scoring_horse_racing/parser/jockey_page"
 
 module ScoringHorseRacing
   class AppLogger

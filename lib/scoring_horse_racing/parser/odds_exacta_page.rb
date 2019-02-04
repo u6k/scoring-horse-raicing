@@ -26,7 +26,7 @@ module ScoringHorseRacing::Parser
     end
 
     def related_links
-      []
+      @related_links
     end
 
     def parse(context)
@@ -68,6 +68,21 @@ module ScoringHorseRacing::Parser
           @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
           @logger.info("OddsExactaPageParser#_parse: @start_datetime=#{@start_datetime}")
         end
+      end
+
+      @related_links = doc.xpath("//div[@id='raceNavi2']/ul/li").map do |li|
+        if not li.children[0]["href"].nil?
+          li.children[0]["href"].match(/^(\/odds\/.+?\/[0-9]+\/).*$/) do |path|
+            @logger.debug("OddsExactaPageParser#_parse: path=#{path.inspect}")
+            URI.join(url, path[1]).to_s
+          end
+        end
+      end
+
+      @related_links.compact!
+
+      @related_links.each do |related_link|
+        @logger.info("OddsExactaPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

@@ -49,7 +49,7 @@ RSpec.describe ScoringHorseRacing::Parser::OddsExactaPageParser do
 
   describe "#related_links" do
     context "2018-06-24 hanshin 1R odds exacta page" do
-      it "is empty" do
+      it "is odds pages" do
         expect(@parser.related_links).to contain_exactly(
           "https://keiba.yahoo.co.jp/odds/tfw/1809030801/",
           "https://keiba.yahoo.co.jp/odds/ur/1809030801/",
@@ -62,7 +62,7 @@ RSpec.describe ScoringHorseRacing::Parser::OddsExactaPageParser do
 
   describe "#parse" do
     context "2018-06-24 hanshin 1R odds exacta page" do
-      it "is empty" do
+      it "is odds exacta info" do
         context = {}
 
         @parser.parse(context)

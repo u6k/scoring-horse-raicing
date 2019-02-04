@@ -13,6 +13,7 @@ require "scoring_horse_racing/parser/jockey_page"
 require "scoring_horse_racing/parser/trainer_page"
 require "scoring_horse_racing/parser/odds_exacta_page"
 require "scoring_horse_racing/parser/odds_quinella_page"
+require "scoring_horse_racing/parser/odds_quinella_place_page"
 
 module ScoringHorseRacing
   class AppLogger

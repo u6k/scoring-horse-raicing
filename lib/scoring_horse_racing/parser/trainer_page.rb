@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class TrainerPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.debug("TrainerPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.info("TrainerPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end

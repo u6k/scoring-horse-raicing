@@ -3,107 +3,106 @@ require "crawline"
 
 module ScoringHorseRacing::Parser
   class HorsePageParser < Crawline::BaseParser
-    # TODO
+    def initialize(url, data)
+      @logger = ScoringHorseRacing::AppLogger.get_logger
+      @logger.info("HorsePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+
+      _parse(url, data)
+    end
+
+    def redownload?
+      @logger.debug("HorsePageParser#redownload?: start")
+
+      # TODO: Redownload if one month or more when last download
+      false
+    end
+
+    def valid?
+      ((not @horse_id.nil?) &&
+        (not @gender.nil?) &&
+        (not @name.nil?) &&
+        (not @date_of_birth.nil?) &&
+        (not @coat_color.nil?) &&
+        (not @trainer_id.nil?) &&
+        (not @owner.nil?) &&
+        (not @breeder.nil?) &&
+        (not @breeding_center.nil?))
+    end
+
+    def related_links
+      @related_links
+    end
+
+    def parse(context)
+      # TODO: Parse all horse info
+      context["horses"] = {
+        @horse_id => {
+          "horse_id" => @horse_id,
+          "gender" => @gender,
+          "name" => @name,
+          "date_of_birth" => @date_of_birth,
+          "coat_color" => @coat_color,
+          "trainer_id" => @trainer_id,
+          "owner" => @owner,
+          "breeder" => @breeder,
+          "breeding_center" => @breeding_center
+        }
+      }
+    end
+
+    private
+
+    def _parse(url, data)
+      @logger.debug("HorsePageParser#_parse: start")
+
+      @horse_id = url.match(/^.+?\/directory\/horse\/([0-9]+)\/$/)[1]
+      @logger.debug("HorsePageParser#_parse: @horse_id=#{@horse_id}")
+
+      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+
+      doc.xpath("//div[@id='dirTitName']").each do |div|
+        div.xpath("p[@class='fntSS']").each do |p|
+          @gender = p.text.split("|")[0].strip
+          @logger.debug("HorsePageParser#_parse: @gender=#{@gender}")
+        end
+
+        div.xpath("h1[@class='fntB']").each do |h1|
+          @name = h1.text.strip
+          @logger.debug("HorsePageParser#_parse: @name=#{@name}")
+        end
+
+        div.xpath("ul/li").each do |li|
+          @logger.debug("HorsePageParser#_parse: li=#{li.inspect}")
+
+          case li.children[0].text
+          when /^生年月日/
+            @date_of_birth = li.children[1].text.strip.match(/([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日/) do |date_parts|
+              Time.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
+            end
+            @logger.debug("HorsePageParser#_parse: @date_of_birth=#{@date_of_birth}")
+          when /^毛色/
+            @coat_color = li.children[1].text.strip
+            @logger.debug("HorsePageParser#_parse: @coat_color=#{@coat_color}")
+          when /^調教師/
+            @trainer_id = li.children[1]["href"].match(/^\/directory\/trainer\/([0-9]+)\//) do |path|
+              path[1]
+            end
+            @logger.debug("HorsePageParser#_parse: @trainer_id=#{@trainer_id}")
+
+            @related_links = [URI.join(url, li.children[1]["href"]).to_s]
+            @logger.debug("HorsePageParser#_parse: @related_links=#{@related_links}")
+          when /^馬主/
+            @owner = li.children[1].text.strip
+            @logger.debug("HorsePageParser#_parse: @owner=#{@owner}")
+          when /^生産者/
+            @breeder = li.children[1].text.strip
+            @logger.debug("HorsePageParser#_parse: @breeder=#{@breeder}")
+          when /^産地/
+            @breeding_center = li.children[1].text.strip
+            @logger.debug("HorsePageParser#_parse: @breeding_center=#{@breeding_center}")
+          end
+        end
+      end
+    end
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# require "nokogiri"
-
-# module ScoringHorseRacing::Rule
-#   class HorsePage
-
-#     attr_reader :horse_id, :horse_name
-
-#     def initialize(horse_id, content, downloader, repo)
-#       @horse_id = horse_id
-#       @content = content
-#       @downloader = downloader
-#       @repo = repo
-
-#       _parse
-#     end
-
-#     def download_from_web!
-#       begin
-#         @content = @downloader.download_with_get(_build_url)
-#       rescue
-#         # TODO: Logging warning
-#         @content = nil
-#       end
-
-#       _parse
-#     end
-
-#     def download_from_s3!
-#       @content = @repo.get_s3_object(_build_s3_path)
-
-#       _parse
-#     end
-
-#     def valid?
-#       ((not @horse_id.nil?) \
-#         && (not @horse_name.nil?))
-#     end
-
-#     def exists?
-#       @repo.exists_s3_object?(_build_s3_path)
-#     end
-
-#     def save!
-#       if not valid?
-#         raise "Invalid"
-#       end
-
-#       @repo.put_s3_object(_build_s3_path, @content)
-#     end
-
-#     def same?(obj)
-#       if not obj.instance_of?(HorsePage)
-#         return false
-#       end
-
-#       if @horse_id != obj.horse_id \
-#         || @horse_name != obj.horse_name
-#         return false
-#       end
-
-#       true
-#     end
-
-#     private
-
-#     def _parse
-#       if @content.nil?
-#         return nil
-#       end
-
-#       doc = Nokogiri::HTML.parse(@content, nil, "UTF-8")
-
-#       doc.xpath("//div[@id='dirTitName']/h1").each do |h1|
-#         @horse_name = h1.text.strip
-#       end
-#     end
-
-#     def _build_url
-#       "https://keiba.yahoo.co.jp/directory/horse/#{@horse_id}/"
-#     end
-
-#     def _build_s3_path
-#       "horse.#{horse_id}.html"
-#     end
-
-#   end
-# end

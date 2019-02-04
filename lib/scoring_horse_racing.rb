@@ -11,6 +11,7 @@ require "scoring_horse_racing/parser/entry_page"
 require "scoring_horse_racing/parser/horse_page"
 require "scoring_horse_racing/parser/jockey_page"
 require "scoring_horse_racing/parser/trainer_page"
+require "scoring_horse_racing/parser/odds_exacta_page"
 
 module ScoringHorseRacing
   class AppLogger

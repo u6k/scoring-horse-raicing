@@ -16,6 +16,7 @@ require "scoring_horse_racing/parser/odds_quinella_page"
 require "scoring_horse_racing/parser/odds_quinella_place_page"
 require "scoring_horse_racing/parser/odds_trifecta_page"
 require "scoring_horse_racing/parser/odds_trio_page"
+require "scoring_horse_racing/parser/odds_win_page"
 
 module ScoringHorseRacing
   class AppLogger

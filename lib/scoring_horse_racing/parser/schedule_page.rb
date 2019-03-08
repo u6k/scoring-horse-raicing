@@ -51,7 +51,17 @@ module ScoringHorseRacing::Parser
         end
       end
 
-      @related_links = doc.xpath("//table[contains(@class, 'scheLs')]/tbody/tr/td[position()=1 and @rowspan='2']/a").map do |a|
+      @related_links = doc.xpath("//div[contains(@class, 'scheHeadNaviR')]/a").map do |a|
+        @logger.debug("SchedulePageParser#_parse: a=#{a.inspect}")
+
+        a.attribute("href").value.match(/^\/schedule\/list\/\d{4}\/\?month=\d{1,2}/) do |path|
+          @logger.debug("SchedulePageParser#_parse: path=#{path.inspect}")
+
+          URI.join(url, path[0]).to_s
+        end
+      end
+
+      @related_links += doc.xpath("//table[contains(@class, 'scheLs')]/tbody/tr/td[position()=1 and @rowspan='2']/a").map do |a|
         @logger.debug("SchedulePageParser#_parse: a=#{a.inspect}")
 
         a.attribute("href").value.match(/^\/race\/list\/([0-9]+)\/$/) do |path|

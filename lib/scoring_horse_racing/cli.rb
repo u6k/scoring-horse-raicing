@@ -23,6 +23,18 @@ module ScoringHorseRacing
       parsers = {
         /^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$/ => ScoringHorseRacing::Parser::SchedulePageParser,
         /^https:\/\/keiba\.yahoo\.co\.jp\/race\/list\/\d+\/$/ => ScoringHorseRacing::Parser::RaceListPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/race\/result\/\d+\/$/ => ScoringHorseRacing::Parser::ResultPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/race\/denma\/\d+\/$/ => ScoringHorseRacing::Parser::EntryPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/directory\/horse\/\d+\/$/ => ScoringHorseRacing::Parser::HorsePageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/directory\/jocky\/\d+\/$/ => ScoringHorseRacing::Parser::JockeyPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/directory\/trainer\/\d+\/$/ => ScoringHorseRacing::Parser::TrainerPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/tfw\/\d+\/$/ => ScoringHorseRacing::Parser::OddsWinPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/ur\/\d+\/$/ => ScoringHorseRacing::Parser::OddsQuinellaPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/wide\/\d+\/$/ => ScoringHorseRacing::Parser::OddsQuinellaPlacePageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/ut\/\d+\/$/ => ScoringHorseRacing::Parser::OddsExactaPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/sf\/\d+\/$/ => ScoringHorseRacing::Parser::OddsTrioPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/sf\/\d+\/$/ => ScoringHorseRacing::Parser::OddsTrioPageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/st\/\d+\/(\?umaBan=\d+)?$/ => ScoringHorseRacing::Parser::OddsTrifectaPageParser,
       }
 
       engine = Crawline::Engine.new(downloader, repo, parsers)

@@ -21,7 +21,8 @@ module ScoringHorseRacing
       repo = Crawline::ResourceRepository.new(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style)
 
       parsers = {
-        /^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$/ => ScoringHorseRacing::Parser::SchedulePageParser
+        /^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$/ => ScoringHorseRacing::Parser::SchedulePageParser,
+        /^https:\/\/keiba\.yahoo\.co\.jp\/race\/list\/\d+\/$/ => ScoringHorseRacing::Parser::RaceListPageParser,
       }
 
       engine = Crawline::Engine.new(downloader, repo, parsers)

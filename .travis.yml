@@ -10,6 +10,16 @@ script:
   - docker-compose build
   - docker-compose run app
 
+after_success:
+  - if [ -n "$TRAVIS_TAG" ]; then
+      docker build -t u6kapps/scoring-horse-racing -f Dockerfile.production .;
+      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+      docker tag u6kapps/scoring-horse-racing u6kapps/scoring-horse-racing:$TRAVIS_TAG;
+      docker push u6kapps/scoring-horse-racing;
+    else
+      echo skip docker push;
+    fi
+
 notifications:
   slack:
     secure: KGbJMIWcBpEa5I6/6Iv+uaBtBo4cjCa/QzOooFu/N/hckpJxwjPvshHe/Rh8KPBJqod6ImMrVWWF3DwjJ/AreKn/b57m8ta/5p/usLulg11lhUCJ6EVn/QzROXftmowuCySOIkvpmk+yjyqn2tEVvuSOERcvk+jCUW6rdIwSp4l8EnCdDet8K2YPx9jQAq+nihUHYd97MQQ+J18ve11yNze6kEJ+IxTWTOoFUFaPtTYnQboCrznFmhrZHL/m5Gx60EEEqZ4Od+uvOW0n8FxY6HhBI35WK4bnwxzteUP0lnyC4LVi7oozuNElXyaf+DXZ1jYpq4x7qRK/lFR2anG3aEUMiAUw/L++SpK5aZp1Ndi7b8VqciM6vM1ugxFG2nPI8cm8nIahHObMz0h0f/pA+N14OH1d0ayhwYpqgCP1m0iIACSKCBsFdk1ccRLEY3w+ICsK9APK/++MFg99toxOE59FqpeV3HzwGnmAfYeMMMKM+zPVNHHGxf60ObkPTqJf/jfhUtwiDZERqPjh8iUprhei3WOiq00jl3ci3xDAx59ga5g3+KbDeGEHqEo8/9wHsZpVtsmDIVflJ5EF7GBM3uigG3XItZO6F8owavlLfO6hAiZEW3miThHLclMV75YjSoicav17krBw1Neq+Hoe4qt3zJGn9yeGpNiUSKQb0n0=

@@ -7,14 +7,15 @@ module ScoringHorseRacing::Parser
       @logger = ScoringHorseRacing::AppLogger.get_logger
       @logger.debug("HorsePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
+      @data = data
+
       _parse(url, data)
     end
 
     def redownload?
-      @logger.debug("HorsePageParser#redownload?: start")
+      @logger.debug("HorsePageParser#redownload?: start: downloaded_timestamp=#{@data["downloaded_timestamp"]}")
 
-      # TODO: Redownload if one month or more when last download
-      false
+      (Time.now.utc - @data["downloaded_timestamp"]) > (30 * 24 * 60 * 60)
     end
 
     def valid?

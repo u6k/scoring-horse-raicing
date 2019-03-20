@@ -12,7 +12,7 @@ RSpec.describe ScoringHorseRacing::Parser::HorsePageParser do
       "request_headers" => {},
       "response_headers" => {},
       "response_body" => File.open("spec/data/horse.2015103590.html").read,
-      "downloaded_timestamp" => Time.now}
+      "downloaded_timestamp" => Time.utc(2019, 3, 21, 2, 6, 27)}
 
     @parser = ScoringHorseRacing::Parser::HorsePageParser.new(url, data)
 
@@ -32,7 +32,7 @@ RSpec.describe ScoringHorseRacing::Parser::HorsePageParser do
   describe "#redownload?" do
     context "within 1 month from last download" do
       it "do not redownload" do
-        Timecop.freeze(Time.local(2018, 7, 24)) do
+        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 27)) do
           expect(@parser).not_to be_redownload
         end
       end
@@ -40,9 +40,8 @@ RSpec.describe ScoringHorseRacing::Parser::HorsePageParser do
 
     context "1 month or more after the last download" do
       it "redownload" do
-        # TODO: #6761 temporarily implement so as not to redownload
-        Timecop.freeze(Time.local(2018, 7, 25)) do
-          expect(@parser).not_to be_redownload
+        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 28)) do
+          expect(@parser).to be_redownload
         end
       end
     end

@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::TrainerPageParser do
   before do
     # "haruki-sugiyama" trainer page parser
     url = "https://keiba.yahoo.co.jp/directory/trainer/01157/"
-    data = File.open("spec/data/trainer.01157.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/directory/trainer/01157/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/trainer.01157.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::TrainerPageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/directory/trainer/00000/"
-    data = File.open("spec/data/trainer.00000.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/directory/trainer/00000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/trainer.00000.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::TrainerPageParser.new(url, data)
   end

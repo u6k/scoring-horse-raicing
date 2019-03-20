@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::OddsWinPageParser do
   before do
     # 2018-06-24 hanshin 1R odds win page parser
     url = "https://keiba.yahoo.co.jp/odds/tfw/1809030801/"
-    data = File.open("spec/data/odds_win.20180624.hanshin.1.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/tfw/1809030801/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_win.20180624.hanshin.1.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::OddsWinPageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/odds/tfw/0000000000/"
-    data = File.open("spec/data/odds_win.00000000.error.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/tfw/0000000000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_win.00000000.error.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::OddsWinPageParser.new(url, data)
   end

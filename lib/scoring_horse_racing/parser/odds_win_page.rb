@@ -44,7 +44,7 @@ module ScoringHorseRacing::Parser
       @odds_win_id = url.match(/^.+?\/odds\/tfw\/([0-9]+)\/$/)[1]
       @logger.debug("OddsWinPageParser#_parse: @odds_win_id=#{@odds_win_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//li[@id='raceNavi2C']").each do |li|
         @logger.debug("OddsWinPageParser#_parse: li=#{li.inspect}")

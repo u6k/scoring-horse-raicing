@@ -49,7 +49,7 @@ module ScoringHorseRacing::Parser
       end
       @logger.debug("OddsTrifectaPageParser#_parse: @odds_trifecta_id=#{@odds_trifecta_id}, @uma_ban=#{@uma_ban}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//li[@id='raceNavi2C']").each do |li|
         @logger.debug("OddsTrifectaPageParser#_parse: li=#{li.inspect}")

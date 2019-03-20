@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class EntryPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("EntryPageParser#initialize: start: url=#{url}, data.size=#{data.size})")
+      @logger.debug("EntryPageParser#initialize: start: url=#{url}, data.size=#{data.size})")
 
       _parse(url, data)
     end
@@ -51,7 +51,7 @@ module ScoringHorseRacing::Parser
       @logger.debug("EntryPageParser#_parse: start")
 
       @entry_id = url.match(/^.+?\/race\/denma\/([0-9]+)\/$/)[1]
-      @logger.info("EntryPageParser#_parse: @entry_id=#{@entry_id}")
+      @logger.debug("EntryPageParser#_parse: @entry_id=#{@entry_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
@@ -60,7 +60,7 @@ module ScoringHorseRacing::Parser
 
         td.text.match(/^([0-9]+)R$/) do |race_number|
           @race_number = race_number[1].to_i
-          @logger.info("EntryPageParser#_parse: @race_number=#{@race_number}")
+          @logger.debug("EntryPageParser#_parse: @race_number=#{@race_number}")
         end
       end
 
@@ -77,7 +77,7 @@ module ScoringHorseRacing::Parser
 
         if (not date.nil?) && (not time.nil?)
           @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.info("EntryPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @logger.debug("EntryPageParser#_parse: @start_datetime=#{@start_datetime}")
         end
       end
 
@@ -85,7 +85,7 @@ module ScoringHorseRacing::Parser
         @logger.debug("EntryPageParser#_parse: h1")
 
         @race_name = h1.text.strip
-        @logger.info("EntryPageParser#_parse: @race_name=#{@race_name}")
+        @logger.debug("EntryPageParser#_parse: @race_name=#{@race_name}")
       end
 
       @related_links = []
@@ -106,7 +106,7 @@ module ScoringHorseRacing::Parser
       end
 
       @related_links.each do |related_link|
-        @logger.info("EntryPageParser#_parse: related_link=#{related_link}")
+        @logger.debug("EntryPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

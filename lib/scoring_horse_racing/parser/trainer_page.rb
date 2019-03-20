@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class TrainerPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("TrainerPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("TrainerPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -48,23 +48,23 @@ module ScoringHorseRacing::Parser
       @logger.debug("TrainerPageParser#_parse: start")
 
       @trainer_id = url.match(/^.+?\/directory\/trainer\/([0-9]+)\/$/)[1]
-      @logger.info("TrainerPageParser#_parse: @trainer_id=#{@trainer_id}")
+      @logger.debug("TrainerPageParser#_parse: @trainer_id=#{@trainer_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
       doc.xpath("//div[@id='dirTitName']").each do |div|
         div.xpath("p[@class='fntSS']").each do |p|
           @name_kana = p.text.split("|")[0].strip
-          @logger.info("TrainerPageParser#_parse: @name_kana=#{@name_kana}")
+          @logger.debug("TrainerPageParser#_parse: @name_kana=#{@name_kana}")
         end
 
         div.xpath("h1[@class='fntB']").each do |h1|
           @name = h1.text.strip
-          @logger.info("TrainerPageParser#_parse: @name=#{@name}")
+          @logger.debug("TrainerPageParser#_parse: @name=#{@name}")
         end
 
         div.xpath("ul/li").each do |li|
-          @logger.info("TrainerPageParser#_parse: li=#{li.inspect}")
+          @logger.debug("TrainerPageParser#_parse: li=#{li.inspect}")
 
           if li.children.size >= 2
             case li.children[0].text
@@ -72,10 +72,10 @@ module ScoringHorseRacing::Parser
               @date_of_birth = li.children[1].text.strip.match(/([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日/) do |date_parts|
                 Time.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
               end
-              @logger.info("TrainerPageParser#_parse: @date_of_birth=#{@date_of_birth}")
+              @logger.debug("TrainerPageParser#_parse: @date_of_birth=#{@date_of_birth}")
             when /^所属/
               @affiliation = li.children[1].text.strip
-              @logger.info("TrainerPageParser#_parse: @affiliation=#{@affiliation}")
+              @logger.debug("TrainerPageParser#_parse: @affiliation=#{@affiliation}")
             end
           end
         end

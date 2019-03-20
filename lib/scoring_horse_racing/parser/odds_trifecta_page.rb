@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class OddsTrifectaPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("OddsTrifectaPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("OddsTrifectaPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -47,7 +47,7 @@ module ScoringHorseRacing::Parser
         @odds_trifecta_id = parts[1]
         @uma_ban = parts[3] || "1"
       end
-      @logger.info("OddsTrifectaPageParser#_parse: @odds_trifecta_id=#{@odds_trifecta_id}, @uma_ban=#{@uma_ban}")
+      @logger.debug("OddsTrifectaPageParser#_parse: @odds_trifecta_id=#{@odds_trifecta_id}, @uma_ban=#{@uma_ban}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
@@ -55,7 +55,7 @@ module ScoringHorseRacing::Parser
         @logger.debug("OddsTrifectaPageParser#_parse: li=#{li.inspect}")
 
         @title = li.children[0].text.strip
-        @logger.info("OddsTrifectaPageParser#_parse: @title=#{@title}")
+        @logger.debug("OddsTrifectaPageParser#_parse: @title=#{@title}")
       end
 
       doc.xpath("//p[@id='raceTitDay']").each do |p|
@@ -71,7 +71,7 @@ module ScoringHorseRacing::Parser
 
         if (not date.nil?) && (not time.nil?)
           @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.info("OddsTrifectaPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @logger.debug("OddsTrifectaPageParser#_parse: @start_datetime=#{@start_datetime}")
         end
       end
 
@@ -91,7 +91,7 @@ module ScoringHorseRacing::Parser
       @related_links.compact!
 
       @related_links.each do |related_link|
-        @logger.info("OddsTrifectaPageParser#_parse: related_link=#{related_link}")
+        @logger.debug("OddsTrifectaPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

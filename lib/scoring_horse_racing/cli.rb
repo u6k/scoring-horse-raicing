@@ -15,10 +15,11 @@ module ScoringHorseRacing
     method_option :s3_bucket
     method_option :s3_endpoint
     method_option :s3_force_path_style
+    method_option :interval, default: 1.0
     def crawl
       downloader = Crawline::Downloader.new("scoring-horse-racing/#{ScoringHorseRacing::VERSION} (https://redmine.u6k.me/projects/scoring-horse-raicing)")
 
-      repo = Crawline::ResourceRepository.new(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style)
+      repo = Crawline::ResourceRepository.new(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, nil)
 
       parsers = {
         /^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$/ => ScoringHorseRacing::Parser::SchedulePageParser,
@@ -37,7 +38,7 @@ module ScoringHorseRacing
         /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/st\/\d+\/(\?umaBan=\d+)?$/ => ScoringHorseRacing::Parser::OddsTrifectaPageParser,
       }
 
-      engine = Crawline::Engine.new(downloader, repo, parsers)
+      engine = Crawline::Engine.new(downloader, repo, parsers, options.interval)
 
       engine.crawl("https://keiba.yahoo.co.jp/schedule/list/")
     end

@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::ResultPageParser do
   before do
     # 2018-06-24 hanshin no 1 race result page parser
     url = "https://keiba.yahoo.co.jp/race/result/1809030801/"
-    data = File.open("spec/data/result.20180624.hanshin.1.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/race/result/1809030801/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/result.20180624.hanshin.1.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::ResultPageParser.new(url, data)
 
     # 1986-01-26 tyukyou no 11 race result page parser
     url = "https://keiba.yahoo.co.jp/race/result/8607010211/"
-    data = File.open("spec/data/result.19860126.tyukyou.11.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/race/result/8607010211/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/result.19860126.tyukyou.11.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_19860126 = ScoringHorseRacing::Parser::ResultPageParser.new(url, data)
 

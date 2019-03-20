@@ -53,7 +53,7 @@ module ScoringHorseRacing::Parser
       @result_id = url.match(/^.+?\/result\/([0-9]+)\/$/)[1]
       @logger.debug("ResultPageParser#_parse: @result_id=#{@result_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//td[@id='raceNo']").each do |td|
         @logger.debug("ResultPageParser#_parse: td")

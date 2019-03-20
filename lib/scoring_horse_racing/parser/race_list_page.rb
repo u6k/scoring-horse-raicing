@@ -49,7 +49,7 @@ module ScoringHorseRacing::Parser
       @race_id = url.match(/^.+?\/race\/list\/([0-9]+)\/$/)[1]
       @logger.debug("RaceListPageParser#_parse: @race_id=#{@race_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       h4 = doc.at_xpath("//div[@id='cornerTit']/h4")
       if not h4.nil?

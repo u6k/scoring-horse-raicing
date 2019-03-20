@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::JockeyPageParser do
   before do
     # "keita-tosaki" jockey page parser
     url = "https://keiba.yahoo.co.jp/directory/jocky/05386/"
-    data = File.open("spec/data/jockey.05386.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/directory/jocky/05386/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/jockey.05386.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::JockeyPageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/directory/jocky/00000/"
-    data = File.open("spec/data/jockey.00000.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/directory/jocky/00000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/jockey.00000.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::JockeyPageParser.new(url, data)
   end

@@ -50,7 +50,7 @@ module ScoringHorseRacing::Parser
       @jockey_id = url.match(/^.+?\/directory\/jocky\/([0-9]+)\/$/)[1]
       @logger.debug("JockeyPageParser#_parse: @jockey_id=#{@jockey_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//div[@id='dirTitName']").each do |div|
         div.xpath("p[@class='fntSS']").each do |p|

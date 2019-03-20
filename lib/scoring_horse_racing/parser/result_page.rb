@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class ResultPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("ResultPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("ResultPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -51,7 +51,7 @@ module ScoringHorseRacing::Parser
       @logger.debug("ResultPageParser#_parse: start")
 
       @result_id = url.match(/^.+?\/result\/([0-9]+)\/$/)[1]
-      @logger.info("ResultPageParser#_parse: @result_id=#{@result_id}")
+      @logger.debug("ResultPageParser#_parse: @result_id=#{@result_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
@@ -62,7 +62,7 @@ module ScoringHorseRacing::Parser
           @logger.debug("ResultPageParser#_parse: race_number=#{race_number.inspect}")
 
           @race_number = race_number[1].to_i
-          @logger.info("ResultPageParser#_parse: @race_number=#{@race_number}")
+          @logger.debug("ResultPageParser#_parse: @race_number=#{@race_number}")
         end
       end
 
@@ -81,7 +81,7 @@ module ScoringHorseRacing::Parser
 
         if (not date.nil?) && (not time.nil?)
           @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.info("ResultPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @logger.debug("ResultPageParser#_parse: @start_datetime=#{@start_datetime}")
         end
       end
 
@@ -89,7 +89,7 @@ module ScoringHorseRacing::Parser
         @logger.debug("ResultPageParser#_parse: h1=#{h1.inspect}")
 
         @race_name = h1.text.strip
-        @logger.info("ResultPageParser#_parse: @race_name=#{@race_name}")
+        @logger.debug("ResultPageParser#_parse: @race_name=#{@race_name}")
       end
 
       @related_links = []
@@ -126,7 +126,7 @@ module ScoringHorseRacing::Parser
       end
 
       @related_links.each do |related_link|
-        @logger.info("ResultPageParser#_parse: related_link=#{related_link}")
+        @logger.debug("ResultPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class HorsePageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("HorsePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("HorsePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -56,19 +56,19 @@ module ScoringHorseRacing::Parser
       @logger.debug("HorsePageParser#_parse: start")
 
       @horse_id = url.match(/^.+?\/directory\/horse\/([0-9]+)\/$/)[1]
-      @logger.info("HorsePageParser#_parse: @horse_id=#{@horse_id}")
+      @logger.debug("HorsePageParser#_parse: @horse_id=#{@horse_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
       doc.xpath("//div[@id='dirTitName']").each do |div|
         div.xpath("p[@class='fntSS']").each do |p|
           @gender = p.text.split("|")[0].strip
-          @logger.info("HorsePageParser#_parse: @gender=#{@gender}")
+          @logger.debug("HorsePageParser#_parse: @gender=#{@gender}")
         end
 
         div.xpath("h1[@class='fntB']").each do |h1|
           @name = h1.text.strip
-          @logger.info("HorsePageParser#_parse: @name=#{@name}")
+          @logger.debug("HorsePageParser#_parse: @name=#{@name}")
         end
 
         div.xpath("ul/li").each do |li|
@@ -79,27 +79,27 @@ module ScoringHorseRacing::Parser
             @date_of_birth = li.children[1].text.strip.match(/([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日/) do |date_parts|
               Time.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
             end
-            @logger.info("HorsePageParser#_parse: @date_of_birth=#{@date_of_birth}")
+            @logger.debug("HorsePageParser#_parse: @date_of_birth=#{@date_of_birth}")
           when /^毛色/
             @coat_color = li.children[1].text.strip
-            @logger.info("HorsePageParser#_parse: @coat_color=#{@coat_color}")
+            @logger.debug("HorsePageParser#_parse: @coat_color=#{@coat_color}")
           when /^調教師/
             @trainer_id = li.children[1]["href"].match(/^\/directory\/trainer\/([0-9]+)\//) do |path|
               path[1]
             end
-            @logger.info("HorsePageParser#_parse: @trainer_id=#{@trainer_id}")
+            @logger.debug("HorsePageParser#_parse: @trainer_id=#{@trainer_id}")
 
             @related_links = [URI.join(url, li.children[1]["href"]).to_s]
-            @logger.info("HorsePageParser#_parse: @related_links=#{@related_links}")
+            @logger.debug("HorsePageParser#_parse: @related_links=#{@related_links}")
           when /^馬主/
             @owner = li.children[1].text.strip
-            @logger.info("HorsePageParser#_parse: @owner=#{@owner}")
+            @logger.debug("HorsePageParser#_parse: @owner=#{@owner}")
           when /^生産者/
             @breeder = li.children[1].text.strip
-            @logger.info("HorsePageParser#_parse: @breeder=#{@breeder}")
+            @logger.debug("HorsePageParser#_parse: @breeder=#{@breeder}")
           when /^産地/
             @breeding_center = li.children[1].text.strip
-            @logger.info("HorsePageParser#_parse: @breeding_center=#{@breeding_center}")
+            @logger.debug("HorsePageParser#_parse: @breeding_center=#{@breeding_center}")
           end
         end
       end

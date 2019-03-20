@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class RaceListPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("RaceListPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("RaceListPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -47,7 +47,7 @@ module ScoringHorseRacing::Parser
       @logger.debug("RaceListPageParser#_parse: start")
 
       @race_id = url.match(/^.+?\/race\/list\/([0-9]+)\/$/)[1]
-      @logger.info("RaceListPageParser#_parse: @race_id=#{@race_id}")
+      @logger.debug("RaceListPageParser#_parse: @race_id=#{@race_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
@@ -59,7 +59,7 @@ module ScoringHorseRacing::Parser
           @logger.debug("RaceListPageParser#_parse: date_parts=#{date_parts.inspect}")
 
           @date = Time.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
-          @logger.info("RaceListPageParser#_parse: @date=#{@date}")
+          @logger.debug("RaceListPageParser#_parse: @date=#{@date}")
         end
       end
 
@@ -68,7 +68,7 @@ module ScoringHorseRacing::Parser
         @logger.debug("RaceListPageParser#_parse: a=#{a.inspect}")
 
         @course_name = a.text
-        @logger.info("RaceListPageParser#_parse: @course_name=#{@course_name}")
+        @logger.debug("RaceListPageParser#_parse: @course_name=#{@course_name}")
       end
 
       @related_links = doc.xpath("//table[@class='scheLs']/tbody/tr").map do |tr|
@@ -89,7 +89,7 @@ module ScoringHorseRacing::Parser
       @related_links.compact!
 
       @related_links.each do |related_link|
-        @logger.info("RaceListPageParser#_parse: related_link=#{related_link}")
+        @logger.debug("RaceListPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class SchedulePageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("SchedulePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("SchedulePageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -47,7 +47,7 @@ module ScoringHorseRacing::Parser
           @logger.debug("SchedulePageParser#_parse: date_part=#{date_parts.inspect}")
 
           @date = Time.local(date_parts[1].to_i, date_parts[2].to_i, 1)
-          @logger.info("SchedulePageParser#_parse: @date=#{@date}")
+          @logger.debug("SchedulePageParser#_parse: @date=#{@date}")
         end
       end
 
@@ -72,7 +72,7 @@ module ScoringHorseRacing::Parser
       end
 
       @related_links.each do |related_link|
-        @logger.info("SchedulePageParser#_parse: related_link=#{related_link}")
+        @logger.debug("SchedulePageParser#_parse: related_link=#{related_link}")
       end
     end
   end

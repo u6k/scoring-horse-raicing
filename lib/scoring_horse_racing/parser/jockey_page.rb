@@ -5,7 +5,7 @@ module ScoringHorseRacing::Parser
   class JockeyPageParser < Crawline::BaseParser
     def initialize(url, data)
       @logger = ScoringHorseRacing::AppLogger.get_logger
-      @logger.info("JockeyPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
+      @logger.debug("JockeyPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
       _parse(url, data)
     end
@@ -48,19 +48,19 @@ module ScoringHorseRacing::Parser
       @logger.debug("JockeyPageParser#_parse: start")
 
       @jockey_id = url.match(/^.+?\/directory\/jocky\/([0-9]+)\/$/)[1]
-      @logger.info("JockeyPageParser#_parse: @jockey_id=#{@jockey_id}")
+      @logger.debug("JockeyPageParser#_parse: @jockey_id=#{@jockey_id}")
 
       doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
 
       doc.xpath("//div[@id='dirTitName']").each do |div|
         div.xpath("p[@class='fntSS']").each do |p|
           @name_kana = p.text.split("|")[0].strip
-          @logger.info("JockeyPageParser#_parse: @name_kana=#{@name_kana}")
+          @logger.debug("JockeyPageParser#_parse: @name_kana=#{@name_kana}")
         end
 
         div.xpath("h1[@class='fntB']").each do |h1|
           @name = h1.text.strip
-          @logger.info("JockeyPageParser#_parse: @name=#{@name}")
+          @logger.debug("JockeyPageParser#_parse: @name=#{@name}")
         end
 
         div.xpath("ul/li").each do |li|
@@ -69,10 +69,10 @@ module ScoringHorseRacing::Parser
             @date_of_birth = li.children[1].text.strip.match(/([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日/) do |date_parts|
               Time.local(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
             end
-            @logger.info("JockeyPageParser#_parse: @date_of_birth=#{@date_of_birth}")
+            @logger.debug("JockeyPageParser#_parse: @date_of_birth=#{@date_of_birth}")
           when /^所属/
             @affiliation = li.children[1].text.strip
-            @logger.info("JockeyPageParser#_parse: @affiliation=#{@affiliation}")
+            @logger.debug("JockeyPageParser#_parse: @affiliation=#{@affiliation}")
           end
         end
       end

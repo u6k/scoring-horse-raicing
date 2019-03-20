@@ -37,7 +37,7 @@ module ScoringHorseRacing::Parser
     def _parse(url, data)
       @logger.debug("SchedulePageParser#_parse: start")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       h3 = doc.at_xpath("//h3[@class='midashi3rd']")
       if not h3.nil?

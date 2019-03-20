@@ -44,7 +44,7 @@ module ScoringHorseRacing::Parser
       @odds_trio_id = url.match(/^.+?\/odds\/sf\/([0-9]+)\/$/)[1]
       @logger.debug("OddsTrioPageParser#_parse: @odds_trio_id=#{@odds_trio_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//li[@id='raceNavi2C']").each do |li|
         @logger.debug("OddsTrioPageParser#_parse: li=#{li.inspect}")

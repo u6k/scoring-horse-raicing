@@ -6,25 +6,49 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
   before do
     # 2018-06 schedule page parser
     url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06"
-    data = File.open("spec/data/schedule.201806.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/schedule.201806.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
     # 2018-08 schedule page (case link is incomplete) parser
     url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08"
-    data = File.open("spec/data/schedule.201808.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/schedule.201808.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_201808 = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
     # 1986-01 schedule page parser
     url = "https://keiba.yahoo.co.jp/schedule/list/1986/?month=01"
-    data = File.open("spec/data/schedule.198601.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/schedule/list/1986/?month=01",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/schedule.198601.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_198601 = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
-    data = File.open("spec/data/schedule.190001.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/schedule.190001.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
   end

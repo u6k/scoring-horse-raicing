@@ -6,19 +6,37 @@ RSpec.describe ScoringHorseRacing::Parser::OddsTrifectaPageParser do
   before do
     # 2018-06-24 hanshin 1R umaBan 1 odds trifecta page parser
     url = "https://keiba.yahoo.co.jp/odds/st/1809030801/"
-    data = File.open("spec/data/odds_trifecta.20180624.hanshin.1.1.html")
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/st/1809030801/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_trifecta.20180624.hanshin.1.1.html"),
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::OddsTrifectaPageParser.new(url, data)
 
     # 2018-06-24 hanshin 1R umaBan 16 odds trifecta page parser
     url = "https://keiba.yahoo.co.jp/odds/st/1809030801/?umaBan=16"
-    data = File.open("spec/data/odds_trifecta.20180624.hanshin.1.16.html")
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/st/1809030801/?umaBan=16",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_trifecta.20180624.hanshin.1.16.html"),
+      "downloaded_timestamp" => Time.now}
 
     @parser_16 = ScoringHorseRacing::Parser::OddsTrifectaPageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/odds/st/0000000000/"
-    data = File.open("spec/data/odds_trifecta.00000000.error.html")
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/st/0000000000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_trifecta.00000000.error.html"),
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::OddsTrifectaPageParser.new(url, data)
   end

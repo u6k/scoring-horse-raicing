@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::OddsQuinellaPlacePageParser do
   before do
     # 2018-06-24 hanshin 1R odds quinella place page parser
     url = "https://keiba.yahoo.co.jp/odds/wide/1809030801/"
-    data = File.open("spec/data/odds_quinella_place.20180624.hanshin.1.html")
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/wide/1809030801/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_quinella_place.20180624.hanshin.1.html"),
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::OddsQuinellaPlacePageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/odds/wide/0000000000/"
-    data = File.open("spec/data/odds_quinella_place.00000000.error.html")
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/odds/wide/0000000000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/odds_quinella_place.00000000.error.html"),
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::OddsQuinellaPlacePageParser.new(url, data)
   end

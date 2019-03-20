@@ -6,13 +6,25 @@ RSpec.describe ScoringHorseRacing::Parser::RaceListPageParser do
   before do
     # 2018-06-24 hanshin race list page parser
     url = "https://keiba.yahoo.co.jp/race/list/18090308/"
-    data = File.open("spec/data/race_list.20180624.hanshin.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/race/list/18090308/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/race_list.20180624.hanshin.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser = ScoringHorseRacing::Parser::RaceListPageParser.new(url, data)
 
     # error page parser
     url = "https://keiba.yahoo.co.jp/race/list/00000000/"
-    data = File.open("spec/data/race_list.00000000.error.html").read
+    data = {
+      "url" => "https://keiba.yahoo.co.jp/race/list/00000000/",
+      "request_method" => "GET",
+      "request_headers" => {},
+      "response_headers" => {},
+      "response_body" => File.open("spec/data/race_list.00000000.error.html").read,
+      "downloaded_timestamp" => Time.now}
 
     @parser_error = ScoringHorseRacing::Parser::RaceListPageParser.new(url, data)
   end

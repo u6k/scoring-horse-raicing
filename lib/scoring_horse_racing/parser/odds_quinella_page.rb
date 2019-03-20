@@ -44,7 +44,7 @@ module ScoringHorseRacing::Parser
       @odds_quinella_id = url.match(/^.+?\/odds\/ur\/([0-9]+)\/$/)[1]
       @logger.debug("OddsQuinellaPageParser#_parse: @odds_quinella_id=#{@odds_quinella_id}")
 
-      doc = Nokogiri::HTML.parse(data, nil, "UTF-8")
+      doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
       doc.xpath("//li[@id='raceNavi2C']").each do |li|
         @logger.debug("OddsQuinellaPageParser#_parse: li=#{li.inspect}")

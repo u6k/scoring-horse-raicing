@@ -12,7 +12,7 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
       "request_headers" => {},
       "response_headers" => {},
       "response_body" => File.open("spec/data/schedule.201806.html").read,
-      "downloaded_timestamp" => Time.now}
+      "downloaded_timestamp" => Time.utc(2018, 6, 1, 0, 0, 0)}
 
     @parser = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
@@ -24,7 +24,7 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
       "request_headers" => {},
       "response_headers" => {},
       "response_body" => File.open("spec/data/schedule.201808.html").read,
-      "downloaded_timestamp" => Time.now}
+      "downloaded_timestamp" => Time.utc(2018, 8, 1, 0, 0, 0)}
 
     @parser_201808 = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
@@ -36,7 +36,7 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
       "request_headers" => {},
       "response_headers" => {},
       "response_body" => File.open("spec/data/schedule.198601.html").read,
-      "downloaded_timestamp" => Time.now}
+      "downloaded_timestamp" => Time.utc(1986, 1, 1, 0, 0, 0)}
 
     @parser_198601 = ScoringHorseRacing::Parser::SchedulePageParser.new(url, data)
 
@@ -63,6 +63,18 @@ RSpec.describe ScoringHorseRacing::Parser::SchedulePageParser do
 
       it "do not redownload if over 3 months old" do
         Timecop.freeze(Time.local(2018, 8, 30)) do
+          expect(@parser).not_to be_redownload
+        end
+      end
+
+      it "redownload if 1 day has passed" do
+        Timecop.freeze(Time.utc(2018, 6, 2, 0, 0, 0)) do
+          expect(@parser).to be_redownload
+        end
+      end
+
+      it "do not redownload within 1 day" do
+        Timecop.freeze(Time.utc(2018, 6, 1, 23, 59, 59)) do
           expect(@parser).not_to be_redownload
         end
       end

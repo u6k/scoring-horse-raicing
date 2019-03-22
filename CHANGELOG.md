@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#6761: HorsePage、JockyPage、TrainerPageの再ダウンロードを、「前回ダウンロードから1ヶ月以降なら再ダウンロードする」とする](https://redmine.u6k.me/issues/6761)
+- [#6854: 全ページにおいて、前回ダウンロード時刻が1日以内の場合は再ダウンロードしない、とする](https://redmine.u6k.me/issues/6854)
 
 ## [0.5.1] - 2019-03-20
 

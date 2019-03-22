@@ -12,7 +12,7 @@ RSpec.describe ScoringHorseRacing::Parser::OddsQuinellaPageParser do
       "request_headers" => {},
       "response_headers" => {},
       "response_body" => File.open("spec/data/odds_quinella.20180624.hanshin.1.html"),
-      "downloaded_timestamp" => Time.now}
+      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
 
     @parser = ScoringHorseRacing::Parser::OddsQuinellaPageParser.new(url, data)
 
@@ -39,6 +39,18 @@ RSpec.describe ScoringHorseRacing::Parser::OddsQuinellaPageParser do
 
       it "do not redownload if over 3 months old" do
         Timecop.freeze(Time.local(2018, 9, 22)) do
+          expect(@parser).not_to be_redownload
+        end
+      end
+
+      it "redownload if 1 day has passed" do
+        Timecop.freeze(Time.utc(2018, 6, 25, 0, 0, 0)) do
+          expect(@parser).to be_redownload
+        end
+      end
+
+      it "do not redownload within 1 day" do
+        Timecop.freeze(Time.utc(2018, 6, 24, 23, 59, 59)) do
           expect(@parser).not_to be_redownload
         end
       end

@@ -7,18 +7,19 @@ module ScoringHorseRacing::Parser
       @logger = ScoringHorseRacing::AppLogger.get_logger
       @logger.debug("ResultPageParser#initialize: start: url=#{url}, data.size=#{data.size}")
 
+      @data = data
+
       _parse(url, data)
     end
 
     def redownload?
       @logger.debug("ResultPageParser#redownload?: start")
 
-      base_date = Time.now - 60 * 60 * 24 * 90
-      date = Time.local(@start_datetime.year, @start_datetime.month, @start_datetime.day)
+      return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
 
-      @logger.debug("ResultPageParser#redownload?: base_date=#{base_date}, date=#{date}")
+      start_date = Time.local(@start_datetime.year, @start_datetime.month, @start_datetime.day)
 
-      (base_date < date)
+      (Time.now - start_date) < (90 * 24 * 60 * 60)
     end
 
     def valid?

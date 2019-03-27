@@ -15,7 +15,8 @@ module ScoringHorseRacing
     method_option :s3_bucket
     method_option :s3_endpoint
     method_option :s3_force_path_style
-    method_option :interval, default: 1.0
+    method_option :interval, default: "1.0"
+    method_option :entrypoint_url, default: "https://keiba.yahoo.co.jp/schedule/list/"
     def crawl
       downloader = Crawline::Downloader.new("scoring-horse-racing/#{ScoringHorseRacing::VERSION} (https://redmine.u6k.me/projects/scoring-horse-raicing)")
 
@@ -38,9 +39,9 @@ module ScoringHorseRacing
         /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/st\/\d+\/(\?umaBan=\d+)?$/ => ScoringHorseRacing::Parser::OddsTrifectaPageParser,
       }
 
-      engine = Crawline::Engine.new(downloader, repo, parsers, options.interval)
+      engine = Crawline::Engine.new(downloader, repo, parsers, options.interval.to_f)
 
-      engine.crawl("https://keiba.yahoo.co.jp/schedule/list/")
+      engine.crawl(options.entrypoint_url)
     end
   end
 end

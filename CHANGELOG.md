@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#6840: コマンド引数にクロール開始URLを指定する](https://redmine.u6k.me/issues/6840)
+- [#6843: サブコマンドのオプションに、できるだけデフォルト値を設定する](https://redmine.u6k.me/issues/6843)
 
 ## [0.6.0] - 2019-03-22
 

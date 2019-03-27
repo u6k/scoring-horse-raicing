@@ -11,10 +11,10 @@ module ScoringHorseRacing
     desc "crawl", "Crawl"
     method_option :s3_access_key
     method_option :s3_secret_key
-    method_option :s3_region
+    method_option :s3_region, default: "us-east-1"
     method_option :s3_bucket
-    method_option :s3_endpoint
-    method_option :s3_force_path_style
+    method_option :s3_endpoint, default: "https://s3.amazonaws.com"
+    method_option :s3_force_path_style, default: false
     method_option :interval, default: "1.0"
     method_option :entrypoint_url, default: "https://keiba.yahoo.co.jp/schedule/list/"
     def crawl

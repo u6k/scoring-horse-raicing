@@ -7,11 +7,11 @@ services:
       - "AWS_S3_ACCESS_KEY=s3_access_key"
       - "AWS_S3_SECRET_KEY=s3_secret_key"
       - "AWS_S3_REGION=my_region"
-      - "AWS_S3_BUCKET=test.scoring-horse-racing"
+      - "AWS_S3_BUCKET=test.horse-racing"
       - "AWS_S3_ENDPOINT=http://s3:9000"
       - "AWS_S3_FORCE_PATH_STYLE=true"
       - "CRAWLINE_LOGGER_LEVEL=INFO"
-      - "SHR_LOGGER_LEVEL=INFO"
+      - "SHR_LOGGER_LEVEL=WARN"
     volumes:
       - ".:/var/myapp"
     depends_on:

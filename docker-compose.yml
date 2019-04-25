@@ -16,7 +16,7 @@ services:
       - ".:/var/myapp"
     depends_on:
       - "s3"
-    command: /bin/sh -c "bundle install && rake spec"
+    command: /bin/sh -c "bundle install && rake spec && rake build"
   s3:
     image: minio/minio
     environment:

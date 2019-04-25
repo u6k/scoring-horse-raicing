@@ -1,5 +1,5 @@
 module InvestmentHorseRacing
   module Crawler
-    VERSION = "0.8.0-develop"
+    VERSION = "1.0.0"
   end
 end

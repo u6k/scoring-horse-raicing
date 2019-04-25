@@ -9,13 +9,14 @@ addons:
 script:
   - docker-compose build
   - docker-compose run app
+  - docker build -f Dockerfile.production -t u6kapps/investment-horse-racing-crawler .
+  - docker run --rm u6kapps/investment-horse-racing-crawler version
 
 after_success:
   - if [ -n "$TRAVIS_TAG" ]; then
-      docker build -t u6kapps/scoring-horse-racing -f Dockerfile.production .;
-      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
-      docker tag u6kapps/scoring-horse-racing u6kapps/scoring-horse-racing:$TRAVIS_TAG;
-      docker push u6kapps/scoring-horse-racing;
+      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin;
+      docker tag u6kapps/investment-horse-racing-crawler u6kapps/investment-horse-racing-crawler:$TRAVIS_TAG;
+      docker push u6kapps/investment-horse-racing-crawler;
     else
       echo skip docker push;
     fi

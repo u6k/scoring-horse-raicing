@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -58,12 +58,12 @@
       </div>
 
       <div id="content"><div id='filecontents'>
-<h1 id="label-E7-AB-B6-E9-A6-AC-E3-82-B9-E3-82-B3-E3-82-A2-E3-83-AA-E3-83-B3-E3-82-B0+-28scoring-horse-racing-29">競馬スコアリング <em>(scoring-horse-racing)</em></h1>
+<h1 id="label-E7-AB-B6-E9-A6-AC-E6-83-85-E5-A0-B1-E3-82-AF-E3-83-AD-E3-83-BC-E3-83-A9-E3-83-BC+-28investment-horse-racing-crawler-29">競馬情報クローラー <em>(investment-horse-racing-crawler)</em></h1>
 
-<p><a href="https://travis-ci.org/u6k/scoring-horse-racing"><img src="https://img.shields.io/travis/u6k/scoring-horse-racing.svg"></a> <a href="https://github.com/u6k/scoring-horse-racing/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/scoring-horse-racing.svg"></a> <a href="https://github.com/u6k/scoring-horse-racing/releases"><img src="https://img.shields.io/github/release/u6k/scoring-horse-racing.svg"></a> <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square"></a> <a href="https://redmine.u6k.me/projects/scoring-horse-raicing"><img src="https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine"></a></p>
+<p><a href="https://travis-ci.org/u6k/investment-horse-racing-crawler"><img src="https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/releases"><img src="https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://redmine.u6k.me/projects/investment-horse-racing-crawler"><img src="https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine"></a> <a href="https://u6k.github.io/investment-horse-racing-crawler/"><img src="WebSite(https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=API reference)"></a> <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square"></a></p>
 
 <blockquote>
-<p>競馬をスコアリングする</p>
+<p>競馬投資に使用するデータを収集する</p>
 </blockquote>
 
 <p><strong>Table of Contents</strong></p>
@@ -85,39 +85,50 @@
 
 <h2 id="label-Install">Install</h2>
 
-<p>Rubyを使用します。</p>
+<p>Dockerを使用します。</p>
 
-<pre class="code ruby"><code class="ruby">$ ruby --version
-ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-linux]
+<pre class="code ruby"><code class="ruby">$ docker version
+Client:
+ Version:           18.09.5
+ API version:       1.39
+ Go version:        go1.10.8
+ Git commit:        e8ff056dbc
+ Built:             Thu Apr 11 04:44:28 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.5
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.8
+  Git commit:       e8ff056
+  Built:            Thu Apr 11 04:10:53 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false
 </code></pre>
 
-<p><code>Gemfile</code>に次を追加して、<code>bundle install</code>でインストールします。</p>
+<p><code>docker pull</code>します。</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>crawline</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:git</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://github.com/u6k/crawline.git</span><span class='tstring_end'>&#39;</span></span>
-<span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>scoring_horse_racing</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:git</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://github.com/u6k/scoring-horse-racing.git</span><span class='tstring_end'>&#39;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_docker'>docker</span> <span class='id identifier rubyid_pull'>pull</span> <span class='id identifier rubyid_u6kapps'>u6kapps</span><span class='op'>/</span><span class='id identifier rubyid_investment'>investment</span><span class='op'>-</span><span class='id identifier rubyid_horse'>horse</span><span class='op'>-</span><span class='id identifier rubyid_racing'>racing</span><span class='op'>-</span><span class='id identifier rubyid_crawler'>crawler</span>
 </code></pre>
 
 <h2 id="label-Usage">Usage</h2>
 
-<pre class="code ruby"><code class="ruby">$ scoring-horse-racing help
+<pre class="code ruby"><code class="ruby">$ docker run u6kapps/investment-horse-racing-crawler help
 Commands:
-  scoring-horse-racing crawl           # Crawl
-  scoring-horse-racing help [COMMAND]  # Describe available commands or one specific command
-  scoring-horse-racing version         # Display version
+  investment-horse-racing-crawler crawl           # Crawl
+  investment-horse-racing-crawler help [COMMAND]  # Describe available comman...
+  investment-horse-racing-crawler version         # Display version
 </code></pre>
 
 <h2 id="label-Other">Other</h2>
 
-<p>最新の情報は、 <a href="https://redmine.u6k.me/projects/scoring-horse-raicing/wiki">Wiki - scoring-horse-racing - u6k.Redmine</a> を参照してください。</p>
-<ul><li>
-<p><a href="https://redmine.u6k.me/projects/scoring-horse-raicing/wiki/%E3%83%93%E3%83%AB%E3%83%89%E6%89%8B%E9%A0%86">ビルド手順</a></p>
-</li><li>
-<p><a href="https://redmine.u6k.me/projects/scoring-horse-raicing/wiki/%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E6%89%8B%E9%A0%86">リリース手順</a></p>
-</li></ul>
+<p>最新の情報は、<a href="https://redmine.u6k.me/projects/investment-horse-racing-crawler/wiki/Wiki">Wiki - investment-horse-racing-crawler - u6k.Redmine</a>を参照してください。</p>
 
 <h2 id="label-API">API</h2>
 
-<p><a href="https://u6k.github.io/scoring-horse-racing/">APIリファレンス</a> を参照してください。</p>
+<p><a href="https://u6k.github.io/investment-horse-racing-crawler/">APIリファレンス</a> を参照してください。</p>
 
 <h2 id="label-Maintainer">Maintainer</h2>
 <ul><li>
@@ -133,19 +144,19 @@ Commands:
 
 <h2 id="label-Contributing">Contributing</h2>
 
-<p>当プロジェクトに興味を持っていただき、ありがとうございます。<a href="https://redmine.u6k.me/projects/scoring-horse-raicing/issues/new">新しいチケットを起票</a>していただくか、プルリクエストをサブミットしていただけると幸いです。</p>
+<p>当プロジェクトに興味を持っていただき、ありがとうございます。<a href="https://redmine.u6k.me/projects/investment-horse-racing-crawler//issues/">既存のチケット</a>をご覧ください。</p>
 
 <p>当プロジェクトは、<a href="https://www.contributor-covenant.org/version/1/4/code-of-conduct">Contributor Covenant</a>に準拠します。</p>
 
 <h2 id="label-License">License</h2>
 
-<p><a href="https://github.com/u6k/scoring-horse-racing/blob/master/LICENSE">MIT License</a></p>
+<p><a href="https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE">MIT License</a></p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Mar 27 08:23:04 2019 by
+  Generated on Thu Apr 25 04:23:54 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.6.2).
+  0.9.19 (ruby-2.6.3).
 </div>
 
     </div>

@@ -1,8 +1,8 @@
-# 競馬スコアリング _(scoring-horse-racing)_
+# 競馬情報クローラー _(investment-horse-racing-crawler)_
 
-[![Travis](https://img.shields.io/travis/u6k/scoring-horse-racing.svg)](https://travis-ci.org/u6k/scoring-horse-racing) [![license](https://img.shields.io/github/license/u6k/scoring-horse-racing.svg)](https://github.com/u6k/scoring-horse-racing/blob/master/LICENSE) [![GitHub release](https://img.shields.io/github/release/u6k/scoring-horse-racing.svg)](https://github.com/u6k/scoring-horse-racing/releases) [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine)](https://redmine.u6k.me/projects/scoring-horse-raicing)
+[![Build Status](https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master)](https://travis-ci.org/u6k/investment-horse-racing-crawler) [![license](https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE) [![GitHub release](https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/releases) [![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine)](https://redmine.u6k.me/projects/investment-horse-racing-crawler) [![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=API reference)](https://u6k.github.io/investment-horse-racing-crawler/) [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-> 競馬をスコアリングする
+> 競馬投資に使用するデータを収集する
 
 __Table of Contents__
 
@@ -16,40 +16,53 @@ __Table of Contents__
 
 ## Install
 
-Rubyを使用します。
+Dockerを使用します。
 
 ```
-$ ruby --version
-ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-linux]
+$ docker version
+Client:
+ Version:           18.09.5
+ API version:       1.39
+ Go version:        go1.10.8
+ Git commit:        e8ff056dbc
+ Built:             Thu Apr 11 04:44:28 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.5
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.8
+  Git commit:       e8ff056
+  Built:            Thu Apr 11 04:10:53 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false
 ```
 
-`Gemfile`に次を追加して、`bundle install`でインストールします。
+`docker pull`します。
 
 ```
-gem 'crawline', :git => 'https://github.com/u6k/crawline.git'
-gem 'scoring_horse_racing', :git => 'https://github.com/u6k/scoring-horse-racing.git'
+docker pull u6kapps/investment-horse-racing-crawler
 ```
 
 ## Usage
 
 ```
-$ scoring-horse-racing help
+$ docker run u6kapps/investment-horse-racing-crawler help
 Commands:
-  scoring-horse-racing crawl           # Crawl
-  scoring-horse-racing help [COMMAND]  # Describe available commands or one specific command
-  scoring-horse-racing version         # Display version
+  investment-horse-racing-crawler crawl           # Crawl
+  investment-horse-racing-crawler help [COMMAND]  # Describe available comman...
+  investment-horse-racing-crawler version         # Display version
 ```
 
 ## Other
 
-最新の情報は、 [Wiki - scoring-horse-racing - u6k.Redmine](https://redmine.u6k.me/projects/scoring-horse-raicing/wiki) を参照してください。
-
-- [ビルド手順](https://redmine.u6k.me/projects/scoring-horse-raicing/wiki/%E3%83%93%E3%83%AB%E3%83%89%E6%89%8B%E9%A0%86)
-- [リリース手順](https://redmine.u6k.me/projects/scoring-horse-raicing/wiki/%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E6%89%8B%E9%A0%86)
+最新の情報は、[Wiki - investment-horse-racing-crawler - u6k.Redmine](https://redmine.u6k.me/projects/investment-horse-racing-crawler/wiki/Wiki)を参照してください。
 
 ## API
 
-[APIリファレンス](https://u6k.github.io/scoring-horse-racing/) を参照してください。
+[APIリファレンス](https://u6k.github.io/investment-horse-racing-crawler/) を参照してください。
 
 ## Maintainer
 
@@ -60,10 +73,11 @@ Commands:
 
 ## Contributing
 
-当プロジェクトに興味を持っていただき、ありがとうございます。[新しいチケットを起票](https://redmine.u6k.me/projects/scoring-horse-raicing/issues/new)していただくか、プルリクエストをサブミットしていただけると幸いです。
+当プロジェクトに興味を持っていただき、ありがとうございます。[既存のチケット](https://redmine.u6k.me/projects/investment-horse-racing-crawler//issues/)をご覧ください。
 
 当プロジェクトは、[Contributor Covenant](https://www.contributor-covenant.org/version/1/4/code-of-conduct)に準拠します。
 
 ## License
 
-[MIT License](https://github.com/u6k/scoring-horse-racing/blob/master/LICENSE)
+[MIT License](https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE)
+

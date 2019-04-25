@@ -9,16 +9,8 @@ addons:
 script:
   - docker-compose build
   - docker-compose run app
-
-after_success:
-  - if [ -n "$TRAVIS_TAG" ]; then
-      docker build -t u6kapps/scoring-horse-racing -f Dockerfile.production .;
-      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
-      docker tag u6kapps/scoring-horse-racing u6kapps/scoring-horse-racing:$TRAVIS_TAG;
-      docker push u6kapps/scoring-horse-racing;
-    else
-      echo skip docker push;
-    fi
+  - docker build -f Dockerfile.production -t u6kapps/investment-horse-racing-crawler .
+  - docker run --rm u6kapps/investment-horse-racing-crawler version
 
 notifications:
   slack:

@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "scoring_horse_racing"
+require "investment_horse_racing/crawler"
 require "crawline"
 
 RSpec.configure do |config|
@@ -28,9 +28,9 @@ RSpec.configure do |config|
   end
 end
 
-module ScoringHorseRacing::SpecUtil
+module InvestmentHorseRacing::Crawler::SpecUtil
   def self.build_downloader
-    Crawline::Downloader.new("scoring-horse-racing/#{ScoringHorseRacing::VERSION} (https://github.com/u6k/scoring-horse-racing)")
+    Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION} (https://github.com/u6k/investment-horse-racing-crawler)")
   end
 
   def self.build_resource_repository

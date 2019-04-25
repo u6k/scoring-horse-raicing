@@ -1,11 +1,14 @@
 FROM ruby:2.6
 LABEL maintainer="u6k.apps@gmail.com"
 
+WORKDIR /var/myapp/
+COPY pkg/ pkg/
+
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get clean && \
     gem install specific_install && \
-    gem specific_install -l "https://github.com/u6k/crawline.git" && \
-    gem specific_install -l "https://github.com/u6k/scoring-horse-racing.git"
+    gem specific_install https://github.com/u6k/crawline.git && \
+    gem install pkg/*
 
-ENTRYPOINT ["scoring-horse-racing"]
+ENTRYPOINT ["investment-horse-racing-crawler"]

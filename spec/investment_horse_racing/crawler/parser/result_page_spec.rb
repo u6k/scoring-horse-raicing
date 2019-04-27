@@ -215,7 +215,8 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "result_id" => "1809030801",
               "race_number" => 1,
               "start_datetime" => Time.new(2018, 6, 24, 10, 5, 0),
-              "race_name" => "サラ系3歳未勝利"
+              "race_name" => "サラ系3歳未勝利",
+              "cource_name" => "阪神"
             }
           })
       end
@@ -234,7 +235,8 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "result_id" => "8607010211",
               "race_number" => 11,
               "start_datetime" => Time.new(1986, 1, 26, 15, 35, 0),
-              "race_name" => "中京スポーツ杯"
+              "race_name" => "中京スポーツ杯",
+              "cource_name" => "中京"
             }
           })
       end

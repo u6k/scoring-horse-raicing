@@ -32,13 +32,6 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      context["races"] = {
-        @race_id => {
-          "race_id" => @race_id,
-          "date" => @date,
-          "course_name" => @course_name
-        }
-      }
     end
 
     private

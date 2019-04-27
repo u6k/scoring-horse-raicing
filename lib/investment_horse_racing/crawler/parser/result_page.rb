@@ -41,7 +41,8 @@ module InvestmentHorseRacing::Crawler::Parser
           "result_id" => @result_id,
           "race_number" => @race_number,
           "start_datetime" => @start_datetime,
-          "race_name" => @race_name
+          "race_name" => @race_name,
+          "cource_name" => @cource_name
         }
       }
     end
@@ -65,6 +66,12 @@ module InvestmentHorseRacing::Crawler::Parser
           @race_number = race_number[1].to_i
           @logger.debug("ResultPageParser#_parse: @race_number=#{@race_number}")
         end
+      end
+
+      doc.xpath("//li[@id='racePlaceNaviC']/a").each do |a|
+        @logger.debug("ResultPageParser#_parse: a")
+
+        @cource_name = a.text.strip
       end
 
       doc.xpath("//p[@id='raceTitDay']").each do |p|

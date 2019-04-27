@@ -98,14 +98,7 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::RaceListPageParser do
 
         @parser.parse(context)
 
-        expect(context).to match(
-          "races" => {
-            "18090308" => {
-              "race_id" => "18090308",
-              "date" => Time.local(2018, 6, 24),
-              "course_name" => "阪神"
-            }
-          })
+        expect(context).to be_empty
       end
     end
   end

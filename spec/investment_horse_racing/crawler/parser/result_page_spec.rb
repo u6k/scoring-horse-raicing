@@ -221,6 +221,20 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "cource_condition" => "重",
               "race_class" => "サラ系3歳",
               "prize_class" => "未勝利 牝 [指定] 馬齢",
+              "refunds" => [
+                { "type" => "win", "horse_number" => [14], "money" => 290 },
+                { "type" => "place", "horse_number" => [14], "money" => 130 },
+                { "type" => "place", "horse_number" => [1], "money" => 190 },
+                { "type" => "place", "horse_number" => [15], "money" => 310 },
+                { "type" => "bracket_quinella", "horse_number" => [1, 7], "money" => 700 },
+                { "type" => "quinella", "horse_number" => [1, 14], "money" => 1190 },
+                { "type" => "quinella_place", "horse_number" => [1, 14], "money" => 400 },
+                { "type" => "quinella_place", "horse_number" => [1, 15], "money" => 1730 },
+                { "type" => "quinella_place", "horse_number" => [14, 15], "money" => 790 },
+                { "type" => "exacta", "horse_number" => [14, 1], "money" => 2030 },
+                { "type" => "trio", "horse_number" => [1, 14, 15], "money" => 4270 },
+                { "type" => "tierce", "horse_number" => [14, 1, 15], "money" => 17660 },
+              ],
             }
           })
       end
@@ -245,6 +259,13 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "cource_condition" => "良",
               "race_class" => "サラ系5歳以上",
               "prize_class" => "900万下 （混合） 馬齢",
+              "refunds" => [
+                { "type" => "win", "horse_number" => [9], "money" => 720 },
+                { "type" => "place", "horse_number" => [9], "money" => 180 },
+                { "type" => "place", "horse_number" => [8], "money" => 370 },
+                { "type" => "place", "horse_number" => [12], "money" => 240 },
+                { "type" => "bracket_quinella", "horse_number" => [4, 5], "money" => 2980 },
+              ],
             }
           })
       end

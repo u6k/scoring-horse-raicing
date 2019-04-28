@@ -48,6 +48,7 @@ module InvestmentHorseRacing::Crawler::Parser
           "cource_condition" => @cource_condition,
           "race_class" => @race_class,
           "prize_class" => @prize_class,
+          "refunds" => @refunds,
         }
       }
     end
@@ -113,6 +114,39 @@ module InvestmentHorseRacing::Crawler::Parser
         @cource_condition = p.at_xpath("img[2]")["alt"].strip
         @race_class = raceMetas[3].strip
         @prize_class = raceMetas[4].strip
+      end
+
+      @refunds = []
+
+      doc.xpath("//table[contains(@class,'resultYen')]/tr").each do |tr|
+        @logger.debug("ResultPageParser#_parse: resultYen=#{tr}")
+
+        refund = {}
+        refund["type"] = case tr.at_xpath("th")
+                         when nil then @refunds[-1]["type"]
+                         else case tr.at_xpath("th").text.strip
+                           when "単勝" then "win"
+                           when "複勝" then "place"
+                           when "枠連" then "bracket_quinella"
+                           when "馬連" then "quinella"
+                           when "ワイド" then "quinella_place"
+                           when "馬単" then "exacta"
+                           when "3連複" then "trio"
+                           when "3連単" then "tierce"
+                           when nil then @refunds[-1]["type"]
+                           else raise "Unknown refund type"
+                           end
+                         end
+        
+        refund["horse_number"] = tr.at_xpath("td[contains(@class,'resultNo')]").text.strip.split("－").map do |str|
+          str.to_i
+        end
+
+        refund["money"] = tr.at_xpath("td[2]").text.gsub(/,/,"").gsub(/円/,"").strip.to_i
+
+        @logger.info("refund=#{refund}")
+
+        @refunds << refund if refund["money"] != 0
       end
 
       @related_links = []

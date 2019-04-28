@@ -49,6 +49,7 @@ module InvestmentHorseRacing::Crawler::Parser
           "race_class" => @race_class,
           "prize_class" => @prize_class,
           "refunds" => @refunds,
+          "scores" => @scores,
         }
       }
     end
@@ -144,9 +145,28 @@ module InvestmentHorseRacing::Crawler::Parser
 
         refund["money"] = tr.at_xpath("td[2]").text.gsub(/,/,"").gsub(/円/,"").strip.to_i
 
-        @logger.info("refund=#{refund}")
-
         @refunds << refund if refund["money"] != 0
+      end
+
+      @scores = doc.xpath("//table[@id='raceScore']/tbody/tr").map do |tr|
+        @logger.debug("ResultPageParser#_parse: raceScore=#{tr}")
+
+        score = {
+          "rank" => (tr.at_xpath("td[1]").text.strip =~ /\d+/ ? tr.at_xpath("td[1]").text.strip.to_i : nil),
+          "bracket_number" => tr.at_xpath("td[2]").text.strip.to_i,
+          "horse_number" => tr.at_xpath("td[3]").text.strip.to_i
+        }
+
+        if tr.at_xpath("td[5]/text()").text.strip.empty?
+          score["time"] = nil
+        else
+          parts = tr.at_xpath("td[5]/text()").text.strip.split(".")
+          score["time"] = parts[0].to_i * 60 + parts[1].to_i + "0.#{parts[2]}".to_f
+        end
+
+        @logger.debug("score=#{score}")
+
+        score
       end
 
       @related_links = []

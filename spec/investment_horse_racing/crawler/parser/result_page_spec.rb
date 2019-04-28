@@ -208,7 +208,6 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
 
         @parser.parse(context)
 
-        # TODO: Parse all result info
         expect(context).to match(
           "results" => {
             "1809030801" => {
@@ -216,7 +215,12 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "race_number" => 1,
               "start_datetime" => Time.new(2018, 6, 24, 10, 5, 0),
               "race_name" => "サラ系3歳未勝利",
-              "cource_name" => "阪神"
+              "cource_name" => "阪神",
+              "cource_length" => "ダート・右 1400m",
+              "weather" => "晴",
+              "cource_condition" => "重",
+              "race_class" => "サラ系3歳",
+              "prize_class" => "未勝利 牝 [指定] 馬齢",
             }
           })
       end
@@ -228,7 +232,6 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
 
         @parser_19860126.parse(context)
 
-        # TODO: Parse all result info
         expect(context).to match(
           "results" => {
             "8607010211" => {
@@ -236,7 +239,12 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
               "race_number" => 11,
               "start_datetime" => Time.new(1986, 1, 26, 15, 35, 0),
               "race_name" => "中京スポーツ杯",
-              "cource_name" => "中京"
+              "cource_name" => "中京",
+              "cource_length" => "芝・左 1800m",
+              "weather" => "曇",
+              "cource_condition" => "良",
+              "race_class" => "サラ系5歳以上",
+              "prize_class" => "900万下 （混合） 馬齢",
             }
           })
       end

@@ -42,7 +42,12 @@ module InvestmentHorseRacing::Crawler::Parser
           "race_number" => @race_number,
           "start_datetime" => @start_datetime,
           "race_name" => @race_name,
-          "cource_name" => @cource_name
+          "cource_name" => @cource_name,
+          "cource_length" => @cource_length,
+          "weather" => @weather,
+          "cource_condition" => @cource_condition,
+          "race_class" => @race_class,
+          "prize_class" => @prize_class,
         }
       }
     end
@@ -98,6 +103,16 @@ module InvestmentHorseRacing::Crawler::Parser
 
         @race_name = h1.text.strip
         @logger.debug("ResultPageParser#_parse: @race_name=#{@race_name}")
+      end
+
+      doc.xpath("//p[@id='raceTitMeta']").each do |p|
+        @logger.debug("ResultPageParser#_parse: p.raceTitMeta=#{p.inspect}")
+        raceMetas = p.text.split("|")
+        @cource_length = raceMetas[0].strip
+        @weather = p.at_xpath("img[1]")["alt"].strip
+        @cource_condition = p.at_xpath("img[2]")["alt"].strip
+        @race_class = raceMetas[3].strip
+        @prize_class = raceMetas[4].strip
       end
 
       @related_links = []

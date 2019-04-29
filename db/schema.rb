@@ -26,21 +26,31 @@ ActiveRecord::Schema.define(version: 2019_04_29_125413) do
     t.string "course_condition"
     t.string "race_class"
     t.string "prize_class"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "race_refunds", force: :cascade do |t|
-    t.string "race_id"
+    t.bigint "race_meta_id"
     t.string "type"
     t.string "horse_numbers"
     t.integer "money"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_race_refunds_on_race_meta_id"
   end
 
   create_table "race_scores", force: :cascade do |t|
-    t.string "race_id"
+    t.bigint "race_meta_id"
     t.integer "rank"
     t.integer "bracket_number"
     t.integer "horse_number"
     t.float "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_race_scores_on_race_meta_id"
   end
 
+  add_foreign_key "race_refunds", "race_meta", column: "race_meta_id"
+  add_foreign_key "race_scores", "race_meta", column: "race_meta_id"
 end

@@ -5,6 +5,8 @@ class RaceRefunds < ActiveRecord::Migration[5.2]
       t.string :type
       t.string :horse_numbers
       t.integer :money
+
+      t.timestamps
     end
   end
 end

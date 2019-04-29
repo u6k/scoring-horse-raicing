@@ -11,6 +11,8 @@ class RaceMeta < ActiveRecord::Migration[5.2]
       t.string :course_condition
       t.string :race_class
       t.string :prize_class
+
+      t.timestamps
     end
   end
 end

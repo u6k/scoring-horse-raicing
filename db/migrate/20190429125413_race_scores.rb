@@ -6,6 +6,8 @@ class RaceScores < ActiveRecord::Migration[5.2]
       t.integer :bracket_number
       t.integer :horse_number
       t.float :time
+
+      t.timestamps
     end
   end
 end

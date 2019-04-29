@@ -18,17 +18,16 @@ module InvestmentHorseRacing::Crawler::Parser
 
       return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
 
-      start_date = Time.local(@start_datetime.year, @start_datetime.month, @start_datetime.day)
+      start_date = Time.local(@race_meta.start_datetime.year, @race_meta.start_datetime.month, @race_meta.start_datetime.day)
 
       (Time.now - start_date) < (90 * 24 * 60 * 60)
     end
 
     def valid?
       ((not @related_links.empty?) &&
-        (not @result_id.nil?) &&
-        (not @race_number.nil?) &&
-        (not @start_datetime.nil?) &&
-        (not @race_name.nil?))
+        (not @race_meta.nil?) &&
+        (not @refunds.empty?) &&
+        (not @scores.empty?))
     end
 
     def related_links
@@ -36,23 +35,13 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      # TODO: Parse all result info
-      context["results"] = {
-        @result_id => {
-          "result_id" => @result_id,
-          "race_number" => @race_number,
-          "start_datetime" => @start_datetime,
-          "race_name" => @race_name,
-          "course_name" => @cource_name,
-          "course_length" => @cource_length,
-          "weather" => @weather,
-          "course_condition" => @cource_condition,
-          "race_class" => @race_class,
-          "prize_class" => @prize_class,
-          "refunds" => @refunds,
-          "scores" => @scores,
-        }
-      }
+      InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
+
+      @race_meta.save!
+
+      @refunds.each { |r| r.save! }
+
+      @scores.each { |r| r.save! }
     end
 
     private
@@ -60,8 +49,9 @@ module InvestmentHorseRacing::Crawler::Parser
     def _parse(url, data)
       @logger.debug("ResultPageParser#_parse: start")
 
-      @result_id = url.match(/^.+?\/result\/([0-9]+)\/$/)[1]
-      @logger.debug("ResultPageParser#_parse: @result_id=#{@result_id}")
+      @race_meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.new
+      @race_meta.race_id = url.match(/^.+?\/result\/([0-9]+)\/$/)[1]
+      @logger.debug("ResultPageParser#_parse: race_id=#{@race_meta.race_id}")
 
       doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
@@ -71,15 +61,14 @@ module InvestmentHorseRacing::Crawler::Parser
         td.text.match(/^([0-9]+)R$/) do |race_number|
           @logger.debug("ResultPageParser#_parse: race_number=#{race_number.inspect}")
 
-          @race_number = race_number[1].to_i
-          @logger.debug("ResultPageParser#_parse: @race_number=#{@race_number}")
+          @race_meta.race_number = race_number[1].to_i
         end
       end
 
       doc.xpath("//li[@id='racePlaceNaviC']/a").each do |a|
         @logger.debug("ResultPageParser#_parse: a")
 
-        @cource_name = a.text.strip
+        @race_meta.course_name = a.text.strip
       end
 
       doc.xpath("//p[@id='raceTitDay']").each do |p|
@@ -96,26 +85,25 @@ module InvestmentHorseRacing::Crawler::Parser
         end
 
         if (not date.nil?) && (not time.nil?)
-          @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.debug("ResultPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @race_meta.start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
+          @logger.debug("ResultPageParser#_parse: start_datetime=#{@race_meta.start_datetime}")
         end
       end
 
       doc.xpath("//h1[@class='fntB']").map do |h1|
         @logger.debug("ResultPageParser#_parse: h1=#{h1.inspect}")
 
-        @race_name = h1.text.strip
-        @logger.debug("ResultPageParser#_parse: @race_name=#{@race_name}")
+        @race_meta.race_name = h1.text.strip
       end
 
       doc.xpath("//p[@id='raceTitMeta']").each do |p|
         @logger.debug("ResultPageParser#_parse: p.raceTitMeta=#{p.inspect}")
         raceMetas = p.text.split("|")
-        @cource_length = raceMetas[0].strip
-        @weather = p.at_xpath("img[1]")["alt"].strip
-        @cource_condition = p.at_xpath("img[2]")["alt"].strip
-        @race_class = raceMetas[3].strip
-        @prize_class = raceMetas[4].strip
+        @race_meta.course_length = raceMetas[0].strip
+        @race_meta.weather = p.at_xpath("img[1]")["alt"].strip
+        @race_meta.course_condition = p.at_xpath("img[2]")["alt"].strip
+        @race_meta.race_class = raceMetas[3].strip
+        @race_meta.prize_class = raceMetas[4].strip
       end
 
       @refunds = []
@@ -123,46 +111,45 @@ module InvestmentHorseRacing::Crawler::Parser
       doc.xpath("//table[contains(@class,'resultYen')]/tr").each do |tr|
         @logger.debug("ResultPageParser#_parse: resultYen=#{tr}")
 
-        refund = {}
-        refund["type"] = case tr.at_xpath("th")
-                         when nil then @refunds[-1]["type"]
-                         else case tr.at_xpath("th").text.strip
-                           when "単勝" then "win"
-                           when "複勝" then "place"
-                           when "枠連" then "bracket_quinella"
-                           when "馬連" then "quinella"
-                           when "ワイド" then "quinella_place"
-                           when "馬単" then "exacta"
-                           when "3連複" then "trio"
-                           when "3連単" then "tierce"
-                           when nil then @refunds[-1]["type"]
-                           else raise "Unknown refund type"
-                           end
-                         end
+        refund = InvestmentHorseRacing::Crawler::Model::RaceRefund.new(race_meta: @race_meta)
+        refund.refund_type = case tr.at_xpath("th")
+                             when nil then @refunds[-1].refund_type
+                      else case tr.at_xpath("th").text.strip
+                        when "単勝" then "win"
+                        when "複勝" then "place"
+                        when "枠連" then "bracket_quinella"
+                        when "馬連" then "quinella"
+                        when "ワイド" then "quinella_place"
+                        when "馬単" then "exacta"
+                        when "3連複" then "trio"
+                        when "3連単" then "tierce"
+                        when nil then @refunds[-1].refund_type
+                        else raise "Unknown refund type"
+                        end
+                      end
         
-        refund["horse_number"] = tr.at_xpath("td[contains(@class,'resultNo')]").text.strip.split("－").map do |str|
-          str.to_i
-        end
+        refund.horse_numbers = tr.at_xpath("td[contains(@class,'resultNo')]").text.strip.gsub(/－/, "-")
 
-        refund["money"] = tr.at_xpath("td[2]").text.gsub(/,/,"").gsub(/円/,"").strip.to_i
+        refund.money = tr.at_xpath("td[2]").text.gsub(/,/,"").gsub(/円/,"").strip.to_i
 
-        @refunds << refund if refund["money"] != 0
+        @refunds << refund if refund.money != 0
       end
 
       @scores = doc.xpath("//table[@id='raceScore']/tbody/tr").map do |tr|
         @logger.debug("ResultPageParser#_parse: raceScore=#{tr}")
 
-        score = {
-          "rank" => (tr.at_xpath("td[1]").text.strip =~ /\d+/ ? tr.at_xpath("td[1]").text.strip.to_i : nil),
-          "bracket_number" => tr.at_xpath("td[2]").text.strip.to_i,
-          "horse_number" => tr.at_xpath("td[3]").text.strip.to_i
-        }
+        score = InvestmentHorseRacing::Crawler::Model::RaceScore.new(
+          race_meta: @race_meta,
+          rank: (tr.at_xpath("td[1]").text.strip =~ /\d+/ ? tr.at_xpath("td[1]").text.strip.to_i : nil),
+          bracket_number: tr.at_xpath("td[2]").text.strip.to_i,
+          horse_number: tr.at_xpath("td[3]").text.strip.to_i
+        )
 
         if tr.at_xpath("td[5]/text()").text.strip.empty?
-          score["time"] = nil
+          score.time = nil
         else
           parts = tr.at_xpath("td[5]/text()").text.strip.split(".")
-          score["time"] = parts[0].to_i * 60 + parts[1].to_i + "0.#{parts[2]}".to_f
+          score.time = parts[0].to_i * 60 + parts[1].to_i + "0.#{parts[2]}".to_f
         end
 
         @logger.debug("score=#{score}")

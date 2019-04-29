@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_125413) do
 
   create_table "race_refunds", force: :cascade do |t|
     t.bigint "race_meta_id"
-    t.string "type"
+    t.string "refund_type"
     t.string "horse_numbers"
     t.integer "money"
     t.datetime "created_at", null: false

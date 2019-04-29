@@ -1,5 +1,6 @@
 require "nokogiri"
 require "crawline"
+require "active_record"
 
 module InvestmentHorseRacing::Crawler::Parser
   class ResultPageParser < Crawline::BaseParser
@@ -206,5 +207,24 @@ module InvestmentHorseRacing::Crawler::Parser
         @logger.debug("ResultPageParser#_parse: related_link=#{related_link}")
       end
     end
+  end
+end
+
+module InvestmentHorseRacing::Crawler::Model
+  class RaceMeta < ActiveRecord::Base
+    has_many :race_refunds, dependent: :destroy
+    has_many :race_scores, dependent: :destroy
+  end
+
+  class RaceRefund < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
+  end
+
+  class RaceScore < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
   end
 end

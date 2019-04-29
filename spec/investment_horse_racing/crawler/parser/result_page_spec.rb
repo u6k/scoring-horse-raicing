@@ -306,5 +306,35 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
           })
       end
     end
+
+    context "active_record" do # TODO
+      before do
+        InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
+        InvestmentHorseRacing::Crawler::Model::RaceRefund.destroy_all
+        InvestmentHorseRacing::Crawler::Model::RaceScore.destroy_all
+      end
+
+      it "is success" do
+        meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.new(race_id: "11111")
+        meta.save!
+
+        refund = InvestmentHorseRacing::Crawler::Model::RaceRefund.new(race_meta: meta, money: 111)
+        refund.save!
+
+        refund = InvestmentHorseRacing::Crawler::Model::RaceRefund.new(race_meta: meta, money: 222)
+        refund.save!
+
+        refund = InvestmentHorseRacing::Crawler::Model::RaceRefund.new(race_meta: meta, money: 333)
+        refund.save!
+
+        score = InvestmentHorseRacing::Crawler::Model::RaceScore.new(race_meta: meta, rank: 1)
+        score.save!
+
+        score = InvestmentHorseRacing::Crawler::Model::RaceScore.new(race_meta: meta, rank: 2)
+        score.save!
+
+        meta.destroy!
+      end
+    end
   end
 end

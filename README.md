@@ -51,9 +51,11 @@ docker pull u6kapps/investment-horse-racing-crawler
 ```
 $ docker run u6kapps/investment-horse-racing-crawler help
 Commands:
-  investment-horse-racing-crawler crawl           # Crawl
-  investment-horse-racing-crawler help [COMMAND]  # Describe available comman...
-  investment-horse-racing-crawler version         # Display version
+  investment-horse-racing-crawler crawl             # Crawl horse racing
+  investment-horse-racing-crawler help [COMMAND]    # Describe available commands or one specific command
+  investment-horse-racing-crawler list_cache_state  # Listing cache state
+  investment-horse-racing-crawler parse             # Parse horse racing
+  investment-horse-racing-crawler version           # Display version
 ```
 
 ## Other
@@ -80,4 +82,3 @@ Commands:
 ## License
 
 [MIT License](https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE)
-

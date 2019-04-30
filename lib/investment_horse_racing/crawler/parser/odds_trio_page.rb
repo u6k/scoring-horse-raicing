@@ -55,7 +55,7 @@ module InvestmentHorseRacing::Crawler::Parser
       end
 
       doc.xpath("//p[@id='raceTitDay']").each do |p|
-        @logger.debug("OddsTrioPageParser#_parse: p")
+        @logger.debug("OddsTrioPageParser#_parse: p=#{p.inspect}")
 
         date = p.children[0].text.strip.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
           Time.new(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)

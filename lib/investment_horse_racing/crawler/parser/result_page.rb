@@ -35,6 +35,8 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
+      @logger.debug("ResultPageParser#parse: start")
+
       InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
 
       @race_meta.save!
@@ -201,6 +203,7 @@ module InvestmentHorseRacing::Crawler::Model
   class RaceMeta < ActiveRecord::Base
     has_many :race_refunds, dependent: :destroy
     has_many :race_scores, dependent: :destroy
+    has_many :race_entries, dependent: :destroy
   end
 
   class RaceRefund < ActiveRecord::Base

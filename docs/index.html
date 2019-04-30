@@ -60,7 +60,7 @@
       <div id="content"><div id='filecontents'>
 <h1 id="label-E7-AB-B6-E9-A6-AC-E6-83-85-E5-A0-B1-E3-82-AF-E3-83-AD-E3-83-BC-E3-83-A9-E3-83-BC+-28investment-horse-racing-crawler-29">競馬情報クローラー <em>(investment-horse-racing-crawler)</em></h1>
 
-<p><a href="https://travis-ci.org/u6k/investment-horse-racing-crawler"><img src="https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/releases"><img src="https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://redmine.u6k.me/projects/investment-horse-racing-crawler"><img src="https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine"></a> <a href="https://u6k.github.io/investment-horse-racing-crawler/"><img src="WebSite(https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=API reference)"></a> <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square"></a></p>
+<p><a href="https://travis-ci.org/u6k/investment-horse-racing-crawler"><img src="https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://github.com/u6k/investment-horse-racing-crawler/releases"><img src="https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg"></a> <a href="https://redmine.u6k.me/projects/investment-horse-racing-crawler"><img src="https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine"></a> <a href="https://u6k.github.io/investment-horse-racing-crawler/"><img src="https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=API%20reference"></a> <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square"></a></p>
 
 <blockquote>
 <p>競馬投資に使用するデータを収集する</p>
@@ -117,9 +117,11 @@ Server: Docker Engine - Community
 
 <pre class="code ruby"><code class="ruby">$ docker run u6kapps/investment-horse-racing-crawler help
 Commands:
-  investment-horse-racing-crawler crawl           # Crawl
-  investment-horse-racing-crawler help [COMMAND]  # Describe available comman...
-  investment-horse-racing-crawler version         # Display version
+  investment-horse-racing-crawler crawl             # Crawl horse racing
+  investment-horse-racing-crawler help [COMMAND]    # Describe available commands or one specific command
+  investment-horse-racing-crawler list_cache_state  # Listing cache state
+  investment-horse-racing-crawler parse             # Parse horse racing
+  investment-horse-racing-crawler version           # Display version
 </code></pre>
 
 <h2 id="label-Other">Other</h2>
@@ -154,7 +156,7 @@ Commands:
 </div></div>
 
       <div id="footer">
-  Generated on Thu Apr 25 04:23:53 2019 by
+  Generated on Tue Apr 30 14:31:32 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

@@ -32,4 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "crawline"
   spec.add_dependency 'nokogiri', '~> 1.6', '>= 1.6.8'
   spec.add_dependency 'thor', '~> 0.20.3'
+  spec.add_dependency 'pg'
+  spec.add_dependency 'activerecord'
+  spec.add_dependency 'standalone_migrations'
 end

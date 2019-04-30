@@ -24,7 +24,7 @@ module InvestmentHorseRacing::Crawler
       puts InvestmentHorseRacing::Crawler::VERSION
     end
 
-    desc "crawl", "Crawl"
+    desc "crawl", "Crawl horse racing"
     method_option :s3_access_key
     method_option :s3_secret_key
     method_option :s3_region, default: "us-east-1"
@@ -32,12 +32,77 @@ module InvestmentHorseRacing::Crawler
     method_option :s3_endpoint, default: "https://s3.amazonaws.com"
     method_option :s3_force_path_style, default: false
     method_option :s3_object_name_prefix, default: nil
+    method_option :db_database
+    method_option :db_host, default: "localhost"
+    method_option :db_port, default: "5432"
+    method_option :db_username
+    method_option :db_password
+    method_option :db_sslmode, default: nil
     method_option :interval, default: "1.0"
     method_option :entrypoint_url, default: "https://keiba.yahoo.co.jp/schedule/list/"
     def crawl
+      setup_db_connection(options.db_database, options.db_host, options.db_port, options.db_username, options.db_password, options.db_sslmode)
+
+      engine = setup_crawline_engine(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, options.s3_object_name_prefix, options.interval.to_f)
+
+      engine.crawl(options.entrypoint_url)
+    end
+
+    desc "parse", "Parse horse racing"
+    method_option :s3_access_key
+    method_option :s3_secret_key
+    method_option :s3_region, default: "us-east-1"
+    method_option :s3_bucket
+    method_option :s3_endpoint, default: "https://s3.amazonaws.com"
+    method_option :s3_force_path_style, default: false
+    method_option :s3_object_name_prefix, default: nil
+    method_option :db_database
+    method_option :db_host, default: "localhost"
+    method_option :db_port, default: "5432"
+    method_option :db_username
+    method_option :db_password
+    method_option :db_sslmode, default: nil
+    method_option :entrypoint_url, default: "https://keiba.yahoo.co.jp/schedule/list/"
+    def parse
+      setup_db_connection(options.db_database, options.db_host, options.db_port, options.db_username, options.db_password, options.db_sslmode)
+
+      engine = setup_crawline_engine(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, options.s3_object_name_prefix, 1.0)
+
+      engine.parse(options.entrypoint_url)
+    end
+
+    desc "list_cache_state", "Listing cache state"
+    method_option :s3_access_key
+    method_option :s3_secret_key
+    method_option :s3_region, default: "us-east-1"
+    method_option :s3_bucket
+    method_option :s3_endpoint, default: "https://s3.amazonaws.com"
+    method_option :s3_force_path_style, default: false
+    method_option :s3_object_name_prefix, default: nil
+    method_option :db_database
+    method_option :db_host, default: "localhost"
+    method_option :db_port, default: "5432"
+    method_option :db_username
+    method_option :db_password
+    method_option :db_sslmode, default: nil
+    method_option :entrypoint_url, default: "https://keiba.yahoo.co.jp/schedule/list/"
+    def list_cache_state
+      setup_db_connection(options.db_database, options.db_host, options.db_port, options.db_username, options.db_password, options.db_sslmode)
+
+      engine = setup_crawline_engine(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, options.s3_object_name_prefix, 1.0)
+
+      engine.list_cache_state(options.entrypoint_url) do |url, data, parser|
+        state = {"url" => url, "state" => (data.nil? ? "not found" : "found"), "timestamp" => (data.nil? ? nil : data["downloaded_timestamp"])}
+        puts state.to_json
+      end
+    end
+
+    private
+   
+    def setup_crawline_engine(s3_access_key, s3_secret_key, s3_region, s3_bucket, s3_endpoint, s3_force_path_style, s3_object_name_prefix, interval)
       downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION} (https://redmine.u6k.me/projects/investment-horse-racing-crawler)")
 
-      repo = Crawline::ResourceRepository.new(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, options.s3_object_name_prefix)
+      @repo = Crawline::ResourceRepository.new(options.s3_access_key, options.s3_secret_key, options.s3_region, options.s3_bucket, options.s3_endpoint, options.s3_force_path_style, options.s3_object_name_prefix)
 
       parsers = {
         /^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$/ => InvestmentHorseRacing::Crawler::Parser::SchedulePageParser,
@@ -56,9 +121,21 @@ module InvestmentHorseRacing::Crawler
         /^https:\/\/keiba\.yahoo\.co\.jp\/odds\/st\/\d+\/(\?umaBan=\d+)?$/ => InvestmentHorseRacing::Crawler::Parser::OddsTrifectaPageParser,
       }
 
-      engine = Crawline::Engine.new(downloader, repo, parsers, options.interval.to_f)
+      engine = Crawline::Engine.new(downloader, @repo, parsers, interval.to_f)
+    end
 
-      engine.crawl(options.entrypoint_url)
+    def setup_db_connection(db_database, db_host, db_port, db_username, db_password, db_sslmode)
+      db_config = {
+        adapter: "postgresql",
+        database: db_database,
+        host: db_host,
+        port: db_port,
+        username: db_username,
+        password: db_password,
+        sslmode: db_sslmode
+      }
+
+      ActiveRecord::Base.establish_connection db_config
     end
   end
 

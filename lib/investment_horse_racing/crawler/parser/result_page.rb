@@ -38,12 +38,20 @@ module InvestmentHorseRacing::Crawler::Parser
       @logger.debug("ResultPageParser#parse: start")
 
       InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
+      @logger.debug("ResultPageParser#parse: RaceMeta(race_id: #{@race_meta.race_id}) destroy all")
 
       @race_meta.save!
+      @logger.debug("ResultPageParser#parse: RaceMeta(id: #{@race_meta.id}) saved")
 
-      @refunds.each { |r| r.save! }
+      @refunds.each do |r|
+        r.save!
+        @logger.debug("ResultPageParser#parse: RaceRefund(id: #{r.id}) saved")
+      end
 
-      @scores.each { |r| r.save! }
+      @scores.each do |s|
+        s.save!
+        @logger.debug("ResultPageParser#parse: RaceScore(id: #{s.id}) saved")
+      end
     end
 
     private

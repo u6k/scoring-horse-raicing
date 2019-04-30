@@ -35,8 +35,12 @@ module InvestmentHorseRacing::Crawler::Parser
       @logger.debug("EntryPageParser#parse: start")
 
       @race_meta.race_entries.destroy_all
+      @logger.debug("EntryPageParser#parse: RaceEntry(race_meta_id: #{@race_meta.id}) destroy all")
 
-      @entries.each { |e| e.save! }
+      @entries.each do |e|
+        e.save!
+        @logger.debug("EntryPageParser#parse: RaceEntry(id: #{e.id}) saved")
+      end
     end
 
     private

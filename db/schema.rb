@@ -10,10 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_29_125413) do
+ActiveRecord::Schema.define(version: 2019_04_29_194732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "race_entries", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "bracket_number"
+    t.integer "horse_number"
+    t.string "horse_id"
+    t.string "horse_name"
+    t.string "gender"
+    t.integer "age"
+    t.string "coat_color"
+    t.string "trainer_id"
+    t.string "trainer_name"
+    t.integer "horse_weight"
+    t.string "jockey_id"
+    t.string "jockey_name"
+    t.float "jockey_weight"
+    t.string "father_horse_name"
+    t.string "mother_horse_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_race_entries_on_race_meta_id"
+  end
 
   create_table "race_meta", force: :cascade do |t|
     t.string "race_id"
@@ -51,6 +73,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_125413) do
     t.index ["race_meta_id"], name: "index_race_scores_on_race_meta_id"
   end
 
+  add_foreign_key "race_entries", "race_meta", column: "race_meta_id"
   add_foreign_key "race_refunds", "race_meta", column: "race_meta_id"
   add_foreign_key "race_scores", "race_meta", column: "race_meta_id"
 end

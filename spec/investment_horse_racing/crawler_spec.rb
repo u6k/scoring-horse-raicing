@@ -8,6 +8,7 @@ end
 
 RSpec.describe InvestmentHorseRacing::Crawler::CLI do
   before do
+    # Setup webmock
     WebMock.enable!
 
     WebMock.stub_request(:get, /https:\/\/keiba\.yahoo\.co\.jp\/.*/).to_return(
@@ -258,31 +259,177 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
       body: File.open("spec/data/odds_trifecta.20180624.hanshin.1.1.html").read)
 
     WebMock.disable_net_connect!(allow: "s3")
+
+    # Setup data
+    InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
+
+    # Setup resource repository
+    @repo = Crawline::ResourceRepository.new(ENV["AWS_S3_ACCESS_KEY"], ENV["AWS_S3_SECRET_KEY"], ENV["AWS_S3_REGION"], ENV["AWS_S3_BUCKET"], ENV["AWS_S3_ENDPOINT"], ENV["AWS_S3_FORCE_PATH_STYLE"], nil)
+    @repo.remove_s3_objects
   end
 
   after do
     WebMock.disable!
   end
 
-  it "help is success" do
-    result = capture(:stdout) {
-      InvestmentHorseRacing::Crawler::CLI.new.invoke("help")
-    }
+  it "is version" do
+    stdout = capture(:stdout) { InvestmentHorseRacing::Crawler::CLI.new.invoke("version") }
 
-    expect(result).to eq <<~EOS
-      Commands:
-        rspec crawl           # Crawl
-        rspec help [COMMAND]  # Describe available commands or one specific command
-        rspec version         # Display version
-
-    EOS
+    expect(stdout).to eq "#{InvestmentHorseRacing::Crawler::VERSION}\n"
   end
 
   it "crawl is success" do
-    InvestmentHorseRacing::Crawler::CLI.new.invoke("crawl", [], s3_access_key: ENV["AWS_S3_ACCESS_KEY"], s3_secret_key: ENV["AWS_S3_SECRET_KEY"], s3_region: ENV["AWS_S3_REGION"], s3_bucket: ENV["AWS_S3_BUCKET"], s3_endpoint: ENV["AWS_S3_ENDPOINT"], s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"], interval: 0.001)
+    expect(count_s3_objects).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "crawl", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      interval: 0.001,
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"])
+
+    expect(count_s3_objects).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
   end
 
   it "crawl (specify entrypoint_url) is success" do
-    InvestmentHorseRacing::Crawler::CLI.new.invoke("crawl", [], s3_access_key: ENV["AWS_S3_ACCESS_KEY"], s3_secret_key: ENV["AWS_S3_SECRET_KEY"], s3_region: ENV["AWS_S3_REGION"], s3_bucket: ENV["AWS_S3_BUCKET"], s3_endpoint: ENV["AWS_S3_ENDPOINT"], s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"], interval: 0.001, entrypoint_url: "https://keiba.yahoo.co.jp/directory/trainer/01140/")
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "crawl", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      interval: 0.001,
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"],
+      entrypoint_url: "https://keiba.yahoo.co.jp/directory/trainer/01140/")
+
+    expect(count_s3_objects).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+  end
+
+  it "parse is success" do
+    expect(count_s3_objects).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "crawl", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      interval: 0.001,
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"])
+
+    expect(count_s3_objects).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
+
+    InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
+
+    expect(count_s3_objects).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "parse", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"])
+
+    expect(count_s3_objects).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
+  end
+
+  it "list cache state" do
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "crawl", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      interval: 0.001,
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"])
+
+    InvestmentHorseRacing::Crawler::CLI.new.invoke(
+      "list_cache_state", [],
+      s3_access_key: ENV["AWS_S3_ACCESS_KEY"],
+      s3_secret_key: ENV["AWS_S3_SECRET_KEY"],
+      s3_region: ENV["AWS_S3_REGION"],
+      s3_bucket: ENV["AWS_S3_BUCKET"],
+      s3_endpoint: ENV["AWS_S3_ENDPOINT"],
+      s3_force_path_style: ENV["AWS_S3_FORCE_PATH_STYLE"],
+      db_database: ENV["DB_DATABASE"],
+      db_host: ENV["DB_HOST"],
+      db_port: ENV["DB_PORT"],
+      db_username: ENV["DB_USERNAME"],
+      db_password: ENV["DB_PASSWORD"],
+      db_sslmode: ENV["DB_SSLMODE"])
+  end
+
+  def count_s3_objects
+    count = 0
+
+    @repo.list_s3_objects { count += 1 }
+
+    count
   end
 end

@@ -141,6 +141,50 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#list_cache_state-instance_method" title="#list_cache_state (instance method)">#<strong>list_cache_state</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse-instance_method" title="#parse (instance method)">#<strong>parse</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#version-instance_method" title="#version (instance method)">#<strong>version</strong>  &#x21d2; Object </a>
     
 
@@ -185,61 +229,105 @@
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
 43
 44
 45
 46
 47
 48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62</pre>
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler.rb', line 43</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_crawl'>crawl</span>
-  <span class='id identifier rubyid_downloader'>downloader</span> <span class='op'>=</span> <span class='const'>Crawline</span><span class='op'>::</span><span class='const'>Downloader</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>investment-horse-racing-crawler/</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html#VERSION-constant" title="InvestmentHorseRacing::Crawler::VERSION (constant)">VERSION</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'> (https://redmine.u6k.me/projects/investment-horse-racing-crawler)</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_setup_db_connection'>setup_db_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_database'>db_database</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_host'>db_host</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_port'>db_port</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_username'>db_username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_password'>db_password</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_sslmode'>db_sslmode</span><span class='rparen'>)</span>
 
-  <span class='id identifier rubyid_repo'>repo</span> <span class='op'>=</span> <span class='const'>Crawline</span><span class='op'>::</span><span class='const'>ResourceRepository</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_access_key'>s3_access_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_secret_key'>s3_secret_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_region'>s3_region</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_bucket'>s3_bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_endpoint'>s3_endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_force_path_style'>s3_force_path_style</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_object_name_prefix'>s3_object_name_prefix</span><span class='rparen'>)</span>
-
-  <span class='id identifier rubyid_parsers'>parsers</span> <span class='op'>=</span> <span class='lbrace'>{</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/schedule\/list\/(\d{4}\/\?month=\d{1,2})?$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/SchedulePageParser.html" title="InvestmentHorseRacing::Crawler::Parser::SchedulePageParser (class)">SchedulePageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/race\/list\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/RaceListPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::RaceListPageParser (class)">RaceListPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/race\/result\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/ResultPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::ResultPageParser (class)">ResultPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/race\/denma\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/EntryPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::EntryPageParser (class)">EntryPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/directory\/horse\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/HorsePageParser.html" title="InvestmentHorseRacing::Crawler::Parser::HorsePageParser (class)">HorsePageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/directory\/jocky\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/JockeyPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::JockeyPageParser (class)">JockeyPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/directory\/trainer\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/TrainerPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::TrainerPageParser (class)">TrainerPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/tfw\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsWinPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsWinPageParser (class)">OddsWinPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/ur\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsQuinellaPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser (class)">OddsQuinellaPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/wide\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsQuinellaPlacePageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPlacePageParser (class)">OddsQuinellaPlacePageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/ut\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsExactaPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsExactaPageParser (class)">OddsExactaPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/sf\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsTrioPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsTrioPageParser (class)">OddsTrioPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/sf\/\d+\/$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsTrioPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsTrioPageParser (class)">OddsTrioPageParser</a></span></span><span class='comma'>,</span>
-    <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^https:\/\/keiba\.yahoo\.co\.jp\/odds\/st\/\d+\/(\?umaBan=\d+)?$</span><span class='regexp_end'>/</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser.html" title="InvestmentHorseRacing::Crawler::Parser (module)">Parser</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Parser/OddsTrifectaPageParser.html" title="InvestmentHorseRacing::Crawler::Parser::OddsTrifectaPageParser (class)">OddsTrifectaPageParser</a></span></span><span class='comma'>,</span>
-  <span class='rbrace'>}</span>
-
-  <span class='id identifier rubyid_engine'>engine</span> <span class='op'>=</span> <span class='const'>Crawline</span><span class='op'>::</span><span class='const'>Engine</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_downloader'>downloader</span><span class='comma'>,</span> <span class='id identifier rubyid_repo'>repo</span><span class='comma'>,</span> <span class='id identifier rubyid_parsers'>parsers</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_interval'>interval</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_engine'>engine</span> <span class='op'>=</span> <span class='id identifier rubyid_setup_crawline_engine'>setup_crawline_engine</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_access_key'>s3_access_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_secret_key'>s3_secret_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_region'>s3_region</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_bucket'>s3_bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_endpoint'>s3_endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_force_path_style'>s3_force_path_style</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_object_name_prefix'>s3_object_name_prefix</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_interval'>interval</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_engine'>engine</span><span class='period'>.</span><span class='id identifier rubyid_crawl'>crawl</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_entrypoint_url'>entrypoint_url</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list_cache_state-instance_method">
+  
+    #<strong>list_cache_state</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list_cache_state'>list_cache_state</span>
+  <span class='id identifier rubyid_setup_db_connection'>setup_db_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_database'>db_database</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_host'>db_host</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_port'>db_port</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_username'>db_username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_password'>db_password</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_sslmode'>db_sslmode</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_engine'>engine</span> <span class='op'>=</span> <span class='id identifier rubyid_setup_crawline_engine'>setup_crawline_engine</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_access_key'>s3_access_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_secret_key'>s3_secret_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_region'>s3_region</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_bucket'>s3_bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_endpoint'>s3_endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_force_path_style'>s3_force_path_style</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_object_name_prefix'>s3_object_name_prefix</span><span class='comma'>,</span> <span class='float'>1.0</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_engine'>engine</span><span class='period'>.</span><span class='id identifier rubyid_list_cache_state'>list_cache_state</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_entrypoint_url'>entrypoint_url</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_url'>url</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_parser'>parser</span><span class='op'>|</span>
+    <span class='id identifier rubyid_state'>state</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>url</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_url'>url</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>state</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>not found</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>found</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>timestamp</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>downloaded_timestamp</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rbrace'>}</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_state'>state</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse-instance_method">
+  
+    #<strong>parse</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+66
+67
+68
+69
+70
+71
+72</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler.rb', line 66</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse'>parse</span>
+  <span class='id identifier rubyid_setup_db_connection'>setup_db_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_database'>db_database</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_host'>db_host</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_port'>db_port</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_username'>db_username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_password'>db_password</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_db_sslmode'>db_sslmode</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_engine'>engine</span> <span class='op'>=</span> <span class='id identifier rubyid_setup_crawline_engine'>setup_crawline_engine</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_access_key'>s3_access_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_secret_key'>s3_secret_key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_region'>s3_region</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_bucket'>s3_bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_endpoint'>s3_endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_force_path_style'>s3_force_path_style</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_s3_object_name_prefix'>s3_object_name_prefix</span><span class='comma'>,</span> <span class='float'>1.0</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_engine'>engine</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_entrypoint_url'>entrypoint_url</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -281,7 +369,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Apr 25 04:23:57 2019 by
+  Generated on Tue Apr 30 14:31:35 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

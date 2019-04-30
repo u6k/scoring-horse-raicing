@@ -15,8 +15,8 @@ services:
       - "DB_PASSWORD=db_pass"
       - "DB_HOST=db"
       - "DB_PORT=5432"
-      - "CRAWLINE_LOGGER_LEVEL=INFO"
-      - "SHR_LOGGER_LEVEL=WARN"
+      - "CRAWLINE_LOGGER_LEVEL=FATAL"
+      - "SHR_LOGGER_LEVEL=FATAL"
     volumes:
       - ".:/var/myapp"
     depends_on:

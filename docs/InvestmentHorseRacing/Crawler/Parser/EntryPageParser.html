@@ -208,28 +208,6 @@
 </li>
 
       
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#valid%3F-instance_method" title="#valid? (instance method)">#<strong>valid?</strong>  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
     </ul>
   
 
@@ -263,17 +241,17 @@
       <pre class="lines">
 
 
-6
-7
 8
 9
 10
 11
 12
-13</pre>
+13
+14
+15</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 6</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 8</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='ivar'>@logger</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../AppLogger.html" title="InvestmentHorseRacing::Crawler::AppLogger (class)">AppLogger</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_logger'><span class='object_link'><a href="../AppLogger.html#get_logger-class_method" title="InvestmentHorseRacing::Crawler::AppLogger.get_logger (method)">get_logger</a></span></span>
@@ -310,30 +288,30 @@
       <pre class="lines">
 
 
+26
+27
+28
+29
+30
+31
+32
+33
 34
 35
-36
-37
-38
-39
-40
-41
-42
-43
-44</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#parse: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
-  <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_race_entries'>race_entries</span><span class='period'>.</span><span class='id identifier rubyid_destroy_all'>destroy_all</span>
-  <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#parse: RaceEntry(race_meta_id: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>) destroy all</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>ActiveRecord</span><span class='op'>::</span><span class='const'>Base</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span> <span class='kw'>do</span>
+    <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_race_entries'>race_entries</span><span class='period'>.</span><span class='id identifier rubyid_destroy_all'>destroy_all</span>
+    <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#parse: RaceEntry(race_meta_id: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>) destroy all</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
-  <span class='ivar'>@entries</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
-    <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
-    <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#parse: RaceEntry(id: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>) saved</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="../../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Model.html" title="InvestmentHorseRacing::Crawler::Model (module)">Model</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Model/RaceEntry.html" title="InvestmentHorseRacing::Crawler::Model::RaceEntry (class)">RaceEntry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_import'>import</span><span class='lparen'>(</span><span class='ivar'>@entries</span><span class='rparen'>)</span>
+    <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#parse: RaceEntries(count: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@entries</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='embexpr_end'>}</span><span class='tstring_content'>) saved</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -378,27 +356,19 @@
       <pre class="lines">
 
 
-15
-16
 17
 18
 19
 20
-21
-22
-23</pre>
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 17</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redownload?'>redownload?</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EntryPageParser#redownload?: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span> <span class='op'>-</span> <span class='ivar'>@data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>downloaded_timestamp</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
-
-  <span class='id identifier rubyid_start_date'>start_date</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_local'>local</span><span class='lparen'>(</span><span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='period'>.</span><span class='id identifier rubyid_year'>year</span><span class='comma'>,</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='period'>.</span><span class='id identifier rubyid_month'>month</span><span class='comma'>,</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='period'>.</span><span class='id identifier rubyid_day'>day</span><span class='rparen'>)</span>
-
-  <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='id identifier rubyid_start_date'>start_date</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>90</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
+  <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>30</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -420,69 +390,13 @@
       <pre class="lines">
 
 
-30
-31
-32</pre>
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_related_links'>related_links</span>
-  <span class='ivar'>@related_links</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="valid?-instance_method">
-  
-    #<strong>valid?</strong>  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-25
-26
-27
-28</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/entry_page.rb', line 25</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
-  <span class='lparen'>(</span><span class='lparen'>(</span><span class='kw'>not</span> <span class='ivar'>@related_links</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
-    <span class='lparen'>(</span><span class='kw'>not</span> <span class='ivar'>@entries</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span><span class='rparen'>)</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -494,7 +408,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 15:54:50 2019 by
+  Generated on Wed May  1 16:29:50 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

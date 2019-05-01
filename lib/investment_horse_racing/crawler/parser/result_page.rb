@@ -19,13 +19,6 @@ module InvestmentHorseRacing::Crawler::Parser
       (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
-    def valid?
-      ((not @related_links.empty?) &&
-        (not @race_meta.nil?) &&
-        (not @refunds.empty?) &&
-        (not @scores.empty?))
-    end
-
     def related_links
       @related_links
     end
@@ -179,21 +172,6 @@ module InvestmentHorseRacing::Crawler::Parser
             @related_links << URI.join(url, path[0]).to_s
           end
         end
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/horse/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/jocky/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/trainer/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
       end
 
       @related_links.each do |related_link|

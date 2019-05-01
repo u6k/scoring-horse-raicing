@@ -18,13 +18,7 @@ module InvestmentHorseRacing::Crawler::Parser
       (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
-    def valid?
-      ((not @related_links.empty?) &&
-        (not @entries.empty?))
-    end
-
     def related_links
-      @related_links
     end
 
     def parse(context)
@@ -71,27 +65,6 @@ module InvestmentHorseRacing::Crawler::Parser
           jockey_weight: tr.at_xpath("td[5]/text()").text.strip.to_f,
           father_horse_name: tr.at_xpath("td[6]/text()[1]").text.strip,
           mother_horse_name: tr.at_xpath("td[6]/text()[2]").text.strip)
-      end
-
-      @related_links = []
-
-      doc.xpath("//a[starts-with(@href, '/directory/horse/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/jocky/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/trainer/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      @related_links.each do |related_link|
-        @logger.debug("EntryPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

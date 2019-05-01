@@ -31,26 +31,14 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser do
 
   describe "#redownload?" do
     context "2018-06-24 hanshin 1R odds quinella page" do
-      it "redownload if newer than 2 months" do
-        Timecop.freeze(Time.local(2018, 9, 21)) do
+      it "redownload if newer than 30 days" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 4, 0)) do
           expect(@parser).to be_redownload
         end
       end
 
-      it "do not redownload if over 3 months old" do
-        Timecop.freeze(Time.local(2018, 9, 22)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-
-      it "redownload if 1 day has passed" do
-        Timecop.freeze(Time.utc(2018, 6, 25, 0, 0, 0)) do
-          expect(@parser).to be_redownload
-        end
-      end
-
-      it "do not redownload within 1 day" do
-        Timecop.freeze(Time.utc(2018, 6, 24, 23, 59, 59)) do
+      it "do not redownload if over 30 days old" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 5, 0)) do
           expect(@parser).not_to be_redownload
         end
       end

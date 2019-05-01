@@ -55,26 +55,14 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::SchedulePageParser do
 
   describe "#redownload?" do
     context "2018-06 schedule page" do
-      it "redownload if newer than 2 months" do
-        Timecop.freeze(Time.local(2018, 8, 29)) do
+      it "redownload if newer than 90 days" do
+        Timecop.freeze(Time.local(2018, 8, 29, 23, 59, 59)) do
           expect(@parser).to be_redownload
         end
       end
 
-      it "do not redownload if over 3 months old" do
-        Timecop.freeze(Time.local(2018, 8, 30)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-
-      it "redownload if 1 day has passed" do
-        Timecop.freeze(Time.utc(2018, 6, 2, 0, 0, 0)) do
-          expect(@parser).to be_redownload
-        end
-      end
-
-      it "do not redownload within 1 day" do
-        Timecop.freeze(Time.utc(2018, 6, 1, 23, 59, 59)) do
+      it "do not redownload if over 90 days old" do
+        Timecop.freeze(Time.local(2018, 8, 30, 0, 0, 0)) do
           expect(@parser).not_to be_redownload
         end
       end

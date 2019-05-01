@@ -1,38 +1,39 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
   before do
-    # 2018-06-24 hanshin no 1 race result page parser
-    url = "https://keiba.yahoo.co.jp/race/result/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.20180624.hanshin.1.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # 2018-06-24 hanshin no 1 race result page parser
+    @url = "https://keiba.yahoo.co.jp/race/result/1809030801/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20180624.hanshin.1.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url, @downloader.download_with_get(@url))
 
     # 1986-01-26 tyukyou no 11 race result page parser
-    url = "https://keiba.yahoo.co.jp/race/result/8607010211/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/8607010211/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.19860126.tyukyou.11.html").read,
-      "downloaded_timestamp" => Time.now}
+    @url_19860126 = "https://keiba.yahoo.co.jp/race/result/8607010211/"
+    WebMock.stub_request(:get, @url_19860126).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.19860126.tyukyou.11.html").read)
 
-    @parser_19860126 = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    @parser_19860126 = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url_19860126, @downloader.download_with_get(@url_19860126))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/race/result/0000000000/"
-    data = File.open("spec/data/result.0000000000.error.html").read
+    @url_error = "https://keiba.yahoo.co.jp/race/result/0000000000/"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.0000000000.error.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
@@ -289,6 +290,21 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
           have_attributes(race_meta_id: meta.id, rank: 15, bracket_number: 5, horse_number: 10, time: 112.0),
           have_attributes(race_meta_id: meta.id, rank: nil, bracket_number: 8, horse_number: 15, time: nil),
         ])
+      end
+    end
+
+    context "valid page on web" do
+      it "is result info" do
+        parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
+
+        expect(context).to be_empty
+
+        expect(InvestmentHorseRacing::Crawler::Model::RaceMeta.count).to eq 1
+        expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 1
+        expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 1
       end
     end
   end

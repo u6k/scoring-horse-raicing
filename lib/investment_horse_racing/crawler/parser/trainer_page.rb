@@ -13,9 +13,7 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def redownload?
-      @logger.debug("TrainerPageParser#redownload?: start: downloaded_timestamp=#{@data["downloaded_timestamp"]}")
-
-      (Time.now.utc - @data["downloaded_timestamp"]) > (30 * 24 * 60 * 60)
+      false
     end
 
     def valid?

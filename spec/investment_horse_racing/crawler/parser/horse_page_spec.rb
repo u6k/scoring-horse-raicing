@@ -30,20 +30,8 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::HorsePageParser do
   end
 
   describe "#redownload?" do
-    context "within 1 month from last download" do
-      it "do not redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 27)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-    end
-
-    context "1 month or more after the last download" do
-      it "redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 28)) do
-          expect(@parser).to be_redownload
-        end
-      end
+    it "do not redownload always" do
+      expect(@parser).not_to be_redownload
     end
   end
 

@@ -15,11 +15,7 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("EntryPageParser#redownload?: start")
 
-      return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
-
-      start_date = Time.local(@race_meta.start_datetime.year, @race_meta.start_datetime.month, @race_meta.start_datetime.day)
-
-      (Time.now - start_date) < (90 * 24 * 60 * 60)
+      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
     def valid?

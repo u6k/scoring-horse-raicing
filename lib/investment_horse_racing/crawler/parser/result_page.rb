@@ -1,6 +1,7 @@
 require "nokogiri"
 require "crawline"
 require "active_record"
+require "activerecord-import"
 
 module InvestmentHorseRacing::Crawler::Parser
   class ResultPageParser < Crawline::BaseParser
@@ -26,20 +27,18 @@ module InvestmentHorseRacing::Crawler::Parser
     def parse(context)
       @logger.debug("ResultPageParser#parse: start")
 
-      InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
-      @logger.debug("ResultPageParser#parse: RaceMeta(race_id: #{@race_meta.race_id}) destroy all")
+      ActiveRecord::Base.transaction do
+        InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
+        @logger.debug("ResultPageParser#parse: RaceMeta(race_id: #{@race_meta.race_id}) destroy all")
 
-      @race_meta.save!
-      @logger.debug("ResultPageParser#parse: RaceMeta(id: #{@race_meta.id}) saved")
+        @race_meta.save!
+        @logger.debug("ResultPageParser#parse: RaceMeta(id: #{@race_meta.id}) saved")
 
-      @refunds.each do |r|
-        r.save!
-        @logger.debug("ResultPageParser#parse: RaceRefund(id: #{r.id}) saved")
-      end
+        InvestmentHorseRacing::Crawler::Model::RaceRefund.import(@refunds)
+        @logger.debug("ResultPageParser#parse: RaceRefunds(count: #{@refunds.count}) saved")
 
-      @scores.each do |s|
-        s.save!
-        @logger.debug("ResultPageParser#parse: RaceScore(id: #{s.id}) saved")
+        InvestmentHorseRacing::Crawler::Model::RaceScore.import(@scores)
+        @logger.debug("ResultPageParser#parse: RaceScores(count: #{@scores.count}) saved")
       end
     end
 

@@ -1,5 +1,7 @@
 require "nokogiri"
 require "crawline"
+require "active_record"
+require "activerecord-import"
 
 module InvestmentHorseRacing::Crawler::Parser
   class EntryPageParser < Crawline::BaseParser
@@ -24,12 +26,12 @@ module InvestmentHorseRacing::Crawler::Parser
     def parse(context)
       @logger.debug("EntryPageParser#parse: start")
 
-      @race_meta.race_entries.destroy_all
-      @logger.debug("EntryPageParser#parse: RaceEntry(race_meta_id: #{@race_meta.id}) destroy all")
+      ActiveRecord::Base.transaction do
+        @race_meta.race_entries.destroy_all
+        @logger.debug("EntryPageParser#parse: RaceEntry(race_meta_id: #{@race_meta.id}) destroy all")
 
-      @entries.each do |e|
-        e.save!
-        @logger.debug("EntryPageParser#parse: RaceEntry(id: #{e.id}) saved")
+        InvestmentHorseRacing::Crawler::Model::RaceEntry.import(@entries)
+        @logger.debug("EntryPageParser#parse: RaceEntries(count: #{@entries.count}) saved")
       end
     end
 

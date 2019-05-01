@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7021: 再ダウンロード判定から、最近ダウンロードしたから再ダウンロードしない、という条件を除去する](https://redmine.u6k.me/issues/7021)
 - [#7036: horse、trainer、jockeyページをダウンロードしない](https://redmine.u6k.me/issues/7036)
 - [#7033: パーサー・テストの前提条件設定で、WebMockで初期化する](https://redmine.u6k.me/issues/7033)
+- [#7039: データ保存をバルク・インサートで行う](https://redmine.u6k.me/issues/7039)
 
 ## [1.2.0] - 2019-05-01
 

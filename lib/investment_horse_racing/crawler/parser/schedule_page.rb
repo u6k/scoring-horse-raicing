@@ -15,8 +15,6 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("SchedulePageParser#redownload?: start")
 
-      return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
-
       (Time.now - @date) < (90 * 24 * 60 * 60)
     end
 

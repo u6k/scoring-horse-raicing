@@ -16,7 +16,7 @@ services:
       - "DB_HOST=db"
       - "DB_PORT=5432"
       - "CRAWLINE_LOGGER_LEVEL=FATAL"
-      - "SHR_LOGGER_LEVEL=FATAL"
+      - "APP_LOGGER_LEVEL=FATAL"
     volumes:
       - ".:/var/myapp"
     depends_on:

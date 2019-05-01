@@ -1,56 +1,43 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser do
   before do
-    # 2018-06-24 hanshin 1R odds quinella page parser
-    url = "https://keiba.yahoo.co.jp/odds/ur/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/odds/ur/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/odds_quinella.20180624.hanshin.1.html"),
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # 2018-06-24 hanshin 1R odds quinella page parser
+    @url = "https://keiba.yahoo.co.jp/odds/ur/1809030801/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/odds_quinella.20180624.hanshin.1.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser.new(@url, @downloader.download_with_get(@url))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/odds/ur/0000000000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/odds/ur/0000000000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/odds_quinella.00000000.error.html"),
-      "downloaded_timestamp" => Time.now}
+    @url_error = "https://keiba.yahoo.co.jp/odds/ur/0000000000/"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/odds_quinella.00000000.error.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
     context "2018-06-24 hanshin 1R odds quinella page" do
-      it "redownload if newer than 2 months" do
-        Timecop.freeze(Time.local(2018, 9, 21)) do
+      it "redownload if newer than 30 days" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 4, 0)) do
           expect(@parser).to be_redownload
         end
       end
 
-      it "do not redownload if over 3 months old" do
-        Timecop.freeze(Time.local(2018, 9, 22)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-
-      it "redownload if 1 day has passed" do
-        Timecop.freeze(Time.utc(2018, 6, 25, 0, 0, 0)) do
-          expect(@parser).to be_redownload
-        end
-      end
-
-      it "do not redownload within 1 day" do
-        Timecop.freeze(Time.utc(2018, 6, 24, 23, 59, 59)) do
+      it "do not redownload if over 30 days old" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 5, 0)) do
           expect(@parser).not_to be_redownload
         end
       end
@@ -92,6 +79,21 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser do
         @parser.parse(context)
 
         # TODO: Parse all odds exacta info
+        expect(context).to match(
+          "odds_quinella" => {
+            "1809030801" => {}
+          }
+        )
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::OddsQuinellaPageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
+
         expect(context).to match(
           "odds_quinella" => {
             "1809030801" => {}

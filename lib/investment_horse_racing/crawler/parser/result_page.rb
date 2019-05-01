@@ -1,6 +1,7 @@
 require "nokogiri"
 require "crawline"
 require "active_record"
+require "activerecord-import"
 
 module InvestmentHorseRacing::Crawler::Parser
   class ResultPageParser < Crawline::BaseParser
@@ -16,18 +17,7 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("ResultPageParser#redownload?: start")
 
-      return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
-
-      start_date = Time.local(@race_meta.start_datetime.year, @race_meta.start_datetime.month, @race_meta.start_datetime.day)
-
-      (Time.now - start_date) < (90 * 24 * 60 * 60)
-    end
-
-    def valid?
-      ((not @related_links.empty?) &&
-        (not @race_meta.nil?) &&
-        (not @refunds.empty?) &&
-        (not @scores.empty?))
+      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
     def related_links
@@ -37,20 +27,18 @@ module InvestmentHorseRacing::Crawler::Parser
     def parse(context)
       @logger.debug("ResultPageParser#parse: start")
 
-      InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
-      @logger.debug("ResultPageParser#parse: RaceMeta(race_id: #{@race_meta.race_id}) destroy all")
+      ActiveRecord::Base.transaction do
+        InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all
+        @logger.debug("ResultPageParser#parse: RaceMeta(race_id: #{@race_meta.race_id}) destroy all")
 
-      @race_meta.save!
-      @logger.debug("ResultPageParser#parse: RaceMeta(id: #{@race_meta.id}) saved")
+        @race_meta.save!
+        @logger.debug("ResultPageParser#parse: RaceMeta(id: #{@race_meta.id}) saved")
 
-      @refunds.each do |r|
-        r.save!
-        @logger.debug("ResultPageParser#parse: RaceRefund(id: #{r.id}) saved")
-      end
+        InvestmentHorseRacing::Crawler::Model::RaceRefund.import(@refunds)
+        @logger.debug("ResultPageParser#parse: RaceRefunds(count: #{@refunds.count}) saved")
 
-      @scores.each do |s|
-        s.save!
-        @logger.debug("ResultPageParser#parse: RaceScore(id: #{s.id}) saved")
+        InvestmentHorseRacing::Crawler::Model::RaceScore.import(@scores)
+        @logger.debug("ResultPageParser#parse: RaceScores(count: #{@scores.count}) saved")
       end
     end
 
@@ -183,21 +171,6 @@ module InvestmentHorseRacing::Crawler::Parser
             @related_links << URI.join(url, path[0]).to_s
           end
         end
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/horse/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/jocky/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/trainer/')]").each do |a|
-        @logger.debug("ResultPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
       end
 
       @related_links.each do |related_link|

@@ -1,5 +1,7 @@
 require "nokogiri"
 require "crawline"
+require "active_record"
+require "activerecord-import"
 
 module InvestmentHorseRacing::Crawler::Parser
   class EntryPageParser < Crawline::BaseParser
@@ -15,31 +17,21 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("EntryPageParser#redownload?: start")
 
-      return false if (Time.now.utc - @data["downloaded_timestamp"]) < (24 * 60 * 60)
-
-      start_date = Time.local(@race_meta.start_datetime.year, @race_meta.start_datetime.month, @race_meta.start_datetime.day)
-
-      (Time.now - start_date) < (90 * 24 * 60 * 60)
-    end
-
-    def valid?
-      ((not @related_links.empty?) &&
-        (not @entries.empty?))
+      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
     def related_links
-      @related_links
     end
 
     def parse(context)
       @logger.debug("EntryPageParser#parse: start")
 
-      @race_meta.race_entries.destroy_all
-      @logger.debug("EntryPageParser#parse: RaceEntry(race_meta_id: #{@race_meta.id}) destroy all")
+      ActiveRecord::Base.transaction do
+        @race_meta.race_entries.destroy_all
+        @logger.debug("EntryPageParser#parse: RaceEntry(race_meta_id: #{@race_meta.id}) destroy all")
 
-      @entries.each do |e|
-        e.save!
-        @logger.debug("EntryPageParser#parse: RaceEntry(id: #{e.id}) saved")
+        InvestmentHorseRacing::Crawler::Model::RaceEntry.import(@entries)
+        @logger.debug("EntryPageParser#parse: RaceEntries(count: #{@entries.count}) saved")
       end
     end
 
@@ -75,27 +67,6 @@ module InvestmentHorseRacing::Crawler::Parser
           jockey_weight: tr.at_xpath("td[5]/text()").text.strip.to_f,
           father_horse_name: tr.at_xpath("td[6]/text()[1]").text.strip,
           mother_horse_name: tr.at_xpath("td[6]/text()[2]").text.strip)
-      end
-
-      @related_links = []
-
-      doc.xpath("//a[starts-with(@href, '/directory/horse/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/jocky/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      doc.xpath("//a[starts-with(@href, '/directory/trainer/')]").each do |a|
-        @logger.debug("EntryPageParser#_parse: a=#{a.inspect}")
-        @related_links << URI.join(url, a["href"]).to_s
-      end
-
-      @related_links.each do |related_link|
-        @logger.debug("EntryPageParser#_parse: related_link=#{related_link}")
       end
     end
   end

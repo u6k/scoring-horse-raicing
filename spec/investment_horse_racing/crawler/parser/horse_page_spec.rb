@@ -1,49 +1,36 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::HorsePageParser do
   before do
-    # "monte-ruth" horse page parser
-    url = "https://keiba.yahoo.co.jp/directory/horse/2015103590/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/directory/horse/2015103590/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/horse.2015103590.html").read,
-      "downloaded_timestamp" => Time.utc(2019, 3, 21, 2, 6, 27)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::HorsePageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # "monte-ruth" horse page parser
+    @url = "https://keiba.yahoo.co.jp/directory/horse/2015103590/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/horse.2015103590.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::HorsePageParser.new(@url, @downloader.download_with_get(@url))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/directory/horse/0000000000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/directory/horse/0000000000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/horse.0000000000.html").read,
-      "downloaded_timestamp" => Time.now}
+    @url_error = "https://keiba.yahoo.co.jp/directory/horse/0000000000/"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/horse.0000000000.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::HorsePageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::HorsePageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
-    context "within 1 month from last download" do
-      it "do not redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 27)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-    end
-
-    context "1 month or more after the last download" do
-      it "redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 6, 28)) do
-          expect(@parser).to be_redownload
-        end
-      end
+    it "do not redownload always" do
+      expect(@parser).not_to be_redownload
     end
   end
 
@@ -69,27 +56,54 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::HorsePageParser do
   end
 
   describe "#parse" do
-    it "is horse info" do
-      context = {}
+    context "local data" do
+      it "is horse info" do
+        context = {}
 
-      @parser.parse(context)
+        @parser.parse(context)
 
-      # TODO: Parse all horse info
-      expect(context).to match(
-        "horses" => {
-          "2015103590" => {
-            "horse_id" => "2015103590",
-            "gender" => "牝",
-            "name" => "モンテルース",
-            "date_of_birth" => Time.local(2015, 3, 12),
-            "coat_color" => "黒鹿毛",
-            "trainer_id" => "01157",
-            "owner" => "有限会社 高昭牧場",
-            "breeder" => "高昭牧場",
-            "breeding_center" => "浦河町"
+        # TODO: Parse all horse info
+        expect(context).to match(
+          "horses" => {
+            "2015103590" => {
+              "horse_id" => "2015103590",
+              "gender" => "牝",
+              "name" => "モンテルース",
+              "date_of_birth" => Time.local(2015, 3, 12),
+              "coat_color" => "黒鹿毛",
+              "trainer_id" => "01157",
+              "owner" => "有限会社 高昭牧場",
+              "breeder" => "高昭牧場",
+              "breeding_center" => "浦河町"
+            }
           }
-        }
-      )
+        )
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::HorsePageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
+
+        expect(context).to match(
+          "horses" => {
+            "2015103590" => {
+              "horse_id" => "2015103590",
+              "gender" => "牝",
+              "name" => "モンテルース",
+              "date_of_birth" => Time.local(2015, 3, 12),
+              "coat_color" => "黒鹿毛",
+              "trainer_id" => "01157",
+              "owner" => "有限会社 高昭牧場",
+              "breeder" => "高昭牧場",
+              "breeding_center" => "浦河町"
+            }
+          }
+        )
+      end
     end
   end
 end

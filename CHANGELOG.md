@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2019-05-02
+
+### Changed
+
+- [#7031: ロガーの名前をAPP_LOGGER_xxxに変更する](https://redmine.u6k.me/issues/7031)
+- [#7021: 再ダウンロード判定から、最近ダウンロードしたから再ダウンロードしない、という条件を除去する](https://redmine.u6k.me/issues/7021)
+- [#7036: horse、trainer、jockeyページをダウンロードしない](https://redmine.u6k.me/issues/7036)
+- [#7033: パーサー・テストの前提条件設定で、WebMockで初期化する](https://redmine.u6k.me/issues/7033)
+- [#7039: データ保存をバルク・インサートで行う](https://redmine.u6k.me/issues/7039)
+
 ## [1.2.0] - 2019-05-01
 
 ### Added

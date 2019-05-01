@@ -1,49 +1,36 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::JockeyPageParser do
   before do
-    # "keita-tosaki" jockey page parser
-    url = "https://keiba.yahoo.co.jp/directory/jocky/05386/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/directory/jocky/05386/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/jockey.05386.html").read,
-      "downloaded_timestamp" => Time.utc(2019, 3, 21, 2, 31, 13)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::JockeyPageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # "keita-tosaki" jockey page parser
+    @url = "https://keiba.yahoo.co.jp/directory/jocky/05386/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/jockey.05386.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::JockeyPageParser.new(@url, @downloader.download_with_get(@url))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/directory/jocky/00000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/directory/jocky/00000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/jockey.00000.html").read,
-      "downloaded_timestamp" => Time.now}
+    @url_error = "https://keiba.yahoo.co.jp/directory/jocky/00000/"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/jockey.00000.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::JockeyPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::JockeyPageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
-    context "within 1 month from last download" do
-      it "do not redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 31, 13)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-    end
-
-    context "1 month or more after last download" do
-      it "redownload" do
-        Timecop.freeze(Time.utc(2019, 4, 20, 2, 31, 14)) do
-          expect(@parser).to be_redownload
-        end
-      end
+    it "do not redownload always" do
+      expect(@parser).not_to be_redownload
     end
   end
 
@@ -68,22 +55,44 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::JockeyPageParser do
   end
 
   describe "#parse" do
-    it "is jockey info" do
-      context = {}
+    context "local data" do
+      it "is jockey info" do
+        context = {}
 
-      @parser.parse(context)
+        @parser.parse(context)
 
-      # TODO: Parse all jockey info
-      expect(context).to match(
-        "jockeys" => {
-          "05386" => {
-            "jockey_id" => "05386",
-            "name" => "戸崎 圭太",
-            "name_kana" => "トサキ ケイタ",
-            "date_of_birth" => Time.local(1980, 7, 8),
-            "affiliation" => "美浦(田島 俊明)"
-          }
-        })
+        # TODO: Parse all jockey info
+        expect(context).to match(
+          "jockeys" => {
+            "05386" => {
+              "jockey_id" => "05386",
+              "name" => "戸崎 圭太",
+              "name_kana" => "トサキ ケイタ",
+              "date_of_birth" => Time.local(1980, 7, 8),
+              "affiliation" => "美浦(田島 俊明)"
+            }
+          })
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::JockeyPageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
+
+        expect(context).to match(
+          "jockeys" => {
+            "05386" => {
+              "jockey_id" => "05386",
+              "name" => "戸崎 圭太",
+              "name_kana" => "トサキ ケイタ",
+              "date_of_birth" => Time.local(1980, 7, 8),
+              "affiliation" => "美浦(田島 俊明)"
+            }
+          })
+      end
     end
   end
 end

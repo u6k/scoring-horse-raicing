@@ -1,38 +1,35 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
   before do
+    WebMock.enable!
+
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
     # Setup data
     InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
 
     ## 2018-06-24 hanshin no 1 race result data
     url = "https://keiba.yahoo.co.jp/race/result/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.20180624.hanshin.1.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20180624.hanshin.1.html").read)
 
-    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
     parser.parse({})
 
     @meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030801")
 
     ## 2018-06-24 hanshin no 11 race result data
     url = "https://keiba.yahoo.co.jp/race/result/1809030811/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/1809030811/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.20180624.hanshin.11.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20180624.hanshin.11.html").read)
 
-    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
     parser.parse({})
 
     @meta_11 = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030811")
@@ -42,86 +39,44 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
 
     # Setup parser
     ## 2018-06-24 hanshin no 1 race entry page parser
-    url = "https://keiba.yahoo.co.jp/race/denma/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.20180624.hanshin.1.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    @url = "https://keiba.yahoo.co.jp/race/denma/1809030801/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20180624.hanshin.1.html").read)
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url, @downloader.download_with_get(@url))
 
     ## 2018-06-24 hanshin no 11 race entry page parser
-    url = "https://keiba.yahoo.co.jp/race/denma/1809030811/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/1809030811/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.20180624.hanshin.11.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 11, 12, 13)}
+    @url_11 = "https://keiba.yahoo.co.jp/race/denma/1809030811/"
+    WebMock.stub_request(:get, @url_11).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20180624.hanshin.11.html").read)
 
-    @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_11, @downloader.download_with_get(@url_11))
 
     ## error page parser
     url = "https://keiba.yahoo.co.jp/race/denma/0000000000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/0000000000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.0000000000.error.html").read,
-      "downloaded_timestamp" => Time.now}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.0000000000.error.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, @downloader.download_with_get(url))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
     context "2018-06-24 hanshin no 1 race entry page" do
-      it "redownload if newer than 2 months" do
-        Timecop.freeze(Time.local(2018, 9, 21)) do
+      it "redownload if newer than 30 days" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 4, 0)) do
           expect(@parser).to be_redownload
         end
       end
 
-      it "do not redownload if over 3 months old" do
-        Timecop.freeze(Time.local(2018, 9, 22)) do
+      it "do not redownload if over 30 days old" do
+        Timecop.freeze(Time.local(2018, 7, 24, 10, 5, 0)) do
           expect(@parser).not_to be_redownload
         end
-      end
-
-      it "redownload if 1 day has passed" do
-        Timecop.freeze(Time.utc(2018, 6, 25, 0, 0, 0)) do
-          expect(@parser).to be_redownload
-        end
-      end
-
-      it "do not redownload within 1 day" do
-        Timecop.freeze(Time.utc(2018, 6, 24, 23, 59, 59)) do
-          expect(@parser).not_to be_redownload
-        end
-      end
-    end
-  end
-
-  describe "#valid?" do
-    context "2018-06-24 hanshin no 1 race entry page" do
-      it "is valid" do
-        expect(@parser).to be_valid
-      end
-    end
-
-    context "2018-06-24 hanshin no 11 race entry page" do
-      it "is valid" do
-        expect(@parser).to be_valid
-      end
-    end
-
-    context "error page" do
-      it "is invalid" do
-        expect(@parser_error).not_to be_valid
       end
     end
   end
@@ -129,109 +84,13 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
   describe "#related_links" do
     context "2018-06-24 hanshin no 1 race entry page" do
       it "is horse, jocky, trainer pages" do
-        expect(@parser.related_links).to contain_exactly(
-          "https://keiba.yahoo.co.jp/directory/horse/2015103590/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015104308/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015104979/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015102853/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015103335/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015104928/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015105363/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015100586/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015102694/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015100632/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015103557/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015104964/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015102837/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015103462/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015101618/",
-          "https://keiba.yahoo.co.jp/directory/horse/2015106259/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05386/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05339/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01116/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01018/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01165/",
-          "https://keiba.yahoo.co.jp/directory/jocky/00894/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01019/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01114/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05203/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01088/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01154/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01014/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01126/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01130/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01166/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01034/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01157/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01120/",
-          "https://keiba.yahoo.co.jp/directory/trainer/00438/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01111/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01041/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01073/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01138/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01140/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01104/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01046/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01022/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01022/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01050/",
-          "https://keiba.yahoo.co.jp/directory/trainer/00356/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01066/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01078/")
+        expect(@parser.related_links).to be_nil
       end
     end
 
     context "2018-06-24 hanshin no 11 race entry page" do
       it "is horse, jockey, trainer pages" do
-        expect(@parser_11.related_links).to contain_exactly(
-          "https://keiba.yahoo.co.jp/directory/horse/2011103854/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013102360/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013106101/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013106099/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013110001/",
-          "https://keiba.yahoo.co.jp/directory/horse/2011104019/",
-          "https://keiba.yahoo.co.jp/directory/horse/2012104503/",
-          "https://keiba.yahoo.co.jp/directory/horse/2014106010/",
-          "https://keiba.yahoo.co.jp/directory/horse/2012104668/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013106007/",
-          "https://keiba.yahoo.co.jp/directory/horse/2010101161/",
-          "https://keiba.yahoo.co.jp/directory/horse/2012106426/",
-          "https://keiba.yahoo.co.jp/directory/horse/2011190007/",
-          "https://keiba.yahoo.co.jp/directory/horse/2010102459/",
-          "https://keiba.yahoo.co.jp/directory/horse/2013105904/",
-          "https://keiba.yahoo.co.jp/directory/horse/2014101976/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05203/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01130/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05339/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01018/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01088/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01116/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05386/",
-          "https://keiba.yahoo.co.jp/directory/jocky/00666/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01077/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01014/",
-          "https://keiba.yahoo.co.jp/directory/jocky/00894/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01019/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05529/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01126/",
-          "https://keiba.yahoo.co.jp/directory/jocky/01032/",
-          "https://keiba.yahoo.co.jp/directory/jocky/05212/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01055/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01073/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01071/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01002/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01071/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01070/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01055/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01002/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01070/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01061/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01084/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01046/",
-          "https://keiba.yahoo.co.jp/directory/trainer/05576/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01058/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01126/",
-          "https://keiba.yahoo.co.jp/directory/trainer/01053/")
+        expect(@parser_11.related_links).to be_nil
       end
     end
   end
@@ -1197,6 +1056,15 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
           "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
 
         expect { InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data) }.to raise_error "RaceMeta(race_id: 1809030801) not found."
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url, @downloader.download_with_get(@url))
+        parser.parse({})
+
+        expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.all.count).to be > 0
       end
     end
   end

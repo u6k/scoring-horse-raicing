@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#7031: ロガーの名前をAPP_LOGGER_xxxに変更する](https://redmine.u6k.me/issues/7031)
 - [#7021: 再ダウンロード判定から、最近ダウンロードしたから再ダウンロードしない、という条件を除去する](https://redmine.u6k.me/issues/7021)
+- [#7036: horse、trainer、jockeyページをダウンロードしない](https://redmine.u6k.me/issues/7036)
 
 ## [1.2.0] - 2019-05-01
 

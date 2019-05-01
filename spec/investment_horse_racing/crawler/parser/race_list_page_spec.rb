@@ -1,32 +1,31 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::RaceListPageParser do
   before do
-    # 2018-06-24 hanshin race list page parser
-    url = "https://keiba.yahoo.co.jp/race/list/18090308/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/list/18090308/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/race_list.20180624.hanshin.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::RaceListPageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # 2018-06-24 hanshin race list page parser
+    @url = "https://keiba.yahoo.co.jp/race/list/18090308/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/race_list.20180624.hanshin.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::RaceListPageParser.new(@url, @downloader.download_with_get(@url))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/race/list/00000000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/list/00000000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/race_list.00000000.error.html").read,
-      "downloaded_timestamp" => Time.now}
+    @url_error = "https://keiba.yahoo.co.jp/race/list/00000000/"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/race_list.00000000.error.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::RaceListPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::RaceListPageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
@@ -85,6 +84,17 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::RaceListPageParser do
         context = {}
 
         @parser.parse(context)
+
+        expect(context).to be_empty
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::RaceListPageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
 
         expect(context).to be_empty
       end

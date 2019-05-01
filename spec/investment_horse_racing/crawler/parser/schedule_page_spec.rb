@@ -1,56 +1,47 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::SchedulePageParser do
   before do
-    # 2018-06 schedule page parser
-    url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/schedule.201806.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 1, 0, 0, 0)}
+    WebMock.enable!
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(url, data)
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
+    # 2018-06 schedule page parser
+    @url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=06"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/schedule.201806.html").read)
+
+    @parser = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(@url, @downloader.download_with_get(@url))
 
     # 2018-08 schedule page (case link is incomplete) parser
-    url = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/schedule.201808.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 8, 1, 0, 0, 0)}
+    @url_201808 = "https://keiba.yahoo.co.jp/schedule/list/2018/?month=08"
+    WebMock.stub_request(:get, @url_201808).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/schedule.201808.html").read)
 
-    @parser_201808 = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(url, data)
+    @parser_201808 = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(@url_201808, @downloader.download_with_get(@url_201808))
 
     # 1986-01 schedule page parser
-    url = "https://keiba.yahoo.co.jp/schedule/list/1986/?month=01"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/schedule/list/1986/?month=01",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/schedule.198601.html").read,
-      "downloaded_timestamp" => Time.utc(1986, 1, 1, 0, 0, 0)}
+    @url_198601 = "https://keiba.yahoo.co.jp/schedule/list/1986/?month=01"
+    WebMock.stub_request(:get, @url_198601).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/schedule.198601.html").read)
 
-    @parser_198601 = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(url, data)
+    @parser_198601 = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(@url_198601, @downloader.download_with_get(@url_198601))
 
     # error page parser
-    url = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/schedule.190001.html").read,
-      "downloaded_timestamp" => Time.now}
+    @url_error = "https://keiba.yahoo.co.jp/schedule/list/1900/?month=01"
+    WebMock.stub_request(:get, @url_error).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/schedule.190001.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(@url_error, @downloader.download_with_get(@url_error))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
@@ -197,12 +188,25 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::SchedulePageParser do
   end
 
   describe "#parse" do
-    it "is empty" do
-      context = {}
+    context "local data" do
+      it "is empty" do
+        context = {}
 
-      @parser.parse(context)
+        @parser.parse(context)
 
-      expect(context).to be_empty
+        expect(context).to be_empty
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::SchedulePageParser.new(@url, @downloader.download_with_get(@url))
+
+        context = {}
+        parser.parse(context)
+
+        expect(context).to be_empty
+      end
     end
   end
 end

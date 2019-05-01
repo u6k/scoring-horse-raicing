@@ -1,38 +1,35 @@
 require "timecop"
+require "webmock/rspec"
 
 require "spec_helper"
 
 RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
   before do
+    WebMock.enable!
+
+    @downloader = Crawline::Downloader.new("investment-horse-racing-crawler/#{InvestmentHorseRacing::Crawler::VERSION}")
+
     # Setup data
     InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
 
     ## 2018-06-24 hanshin no 1 race result data
     url = "https://keiba.yahoo.co.jp/race/result/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.20180624.hanshin.1.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20180624.hanshin.1.html").read)
 
-    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
     parser.parse({})
 
     @meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030801")
 
     ## 2018-06-24 hanshin no 11 race result data
     url = "https://keiba.yahoo.co.jp/race/result/1809030811/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/result/1809030811/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/result.20180624.hanshin.11.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20180624.hanshin.11.html").read)
 
-    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, data)
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
     parser.parse({})
 
     @meta_11 = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030811")
@@ -42,40 +39,30 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
 
     # Setup parser
     ## 2018-06-24 hanshin no 1 race entry page parser
-    url = "https://keiba.yahoo.co.jp/race/denma/1809030801/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/1809030801/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.20180624.hanshin.1.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
+    @url = "https://keiba.yahoo.co.jp/race/denma/1809030801/"
+    WebMock.stub_request(:get, @url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20180624.hanshin.1.html").read)
 
-    @parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url, @downloader.download_with_get(@url))
 
     ## 2018-06-24 hanshin no 11 race entry page parser
-    url = "https://keiba.yahoo.co.jp/race/denma/1809030811/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/1809030811/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.20180624.hanshin.11.html").read,
-      "downloaded_timestamp" => Time.utc(2018, 6, 24, 11, 12, 13)}
+    @url_11 = "https://keiba.yahoo.co.jp/race/denma/1809030811/"
+    WebMock.stub_request(:get, @url_11).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20180624.hanshin.11.html").read)
 
-    @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_11, @downloader.download_with_get(@url_11))
 
     ## error page parser
     url = "https://keiba.yahoo.co.jp/race/denma/0000000000/"
-    data = {
-      "url" => "https://keiba.yahoo.co.jp/race/denma/0000000000/",
-      "request_method" => "GET",
-      "request_headers" => {},
-      "response_headers" => {},
-      "response_body" => File.open("spec/data/entry.0000000000.error.html").read,
-      "downloaded_timestamp" => Time.now}
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.0000000000.error.html").read)
 
-    @parser_error = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data)
+    @parser_error = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, @downloader.download_with_get(url))
+
+    WebMock.disable!
   end
 
   describe "#redownload?" do
@@ -1069,6 +1056,15 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
           "downloaded_timestamp" => Time.utc(2018, 6, 24, 0, 0, 0)}
 
         expect { InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(url, data) }.to raise_error "RaceMeta(race_id: 1809030801) not found."
+      end
+    end
+
+    context "valid page on web" do
+      it "parse success" do
+        parser = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url, @downloader.download_with_get(@url))
+        parser.parse({})
+
+        expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.all.count).to be > 0
       end
     end
   end

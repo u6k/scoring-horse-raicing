@@ -310,11 +310,11 @@
       <pre class="lines">
 
 
-32
-33</pre>
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -364,17 +364,13 @@
 16
 17
 18
-19
-20
-21</pre>
+19</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 15</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redownload?'>redownload?</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>SchedulePageParser#redownload?: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span> <span class='op'>-</span> <span class='ivar'>@data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>downloaded_timestamp</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
 
   <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@date</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>90</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -398,12 +394,12 @@
       <pre class="lines">
 
 
-28
-29
-30</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_related_links'>related_links</span>
   <span class='ivar'>@related_links</span>
@@ -450,13 +446,13 @@
       <pre class="lines">
 
 
+21
+22
 23
-24
-25
-26</pre>
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/schedule_page.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='lparen'>(</span><span class='lparen'>(</span><span class='kw'>not</span> <span class='ivar'>@related_links</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
@@ -472,7 +468,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 15:54:51 2019 by
+  Generated on Wed May  1 16:29:51 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

@@ -34,6 +34,15 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
 
     @meta_11 = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030811")
 
+    ## 2019-04-06 fukushima no 11 race result data
+    url = "https://keiba.yahoo.co.jp/race/result/1903010111/"
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20190406.fukushima.11.html").read)
+
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
+    parser.parse({})
+
     ## error race meta data
     InvestmentHorseRacing::Crawler::Model::RaceMeta.create(race_id: "0000000000")
 
@@ -53,6 +62,14 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
       body: File.open("spec/data/entry.20180624.hanshin.11.html").read)
 
     @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_11, @downloader.download_with_get(@url_11))
+
+    ## 2019-04-06 fukushima no 11 race entry page parser
+    @url_20190406 = "https://keiba.yahoo.co.jp/race/denma/1903010111/"
+    WebMock.stub_request(:get, @url_20190406).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20190406.fukushima.11.html").read)
+
+    @parser_20190406 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_20190406, @downloader.download_with_get(@url_20190406))
 
     ## error page parser
     url = "https://keiba.yahoo.co.jp/race/denma/0000000000/"
@@ -695,6 +712,18 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
             mother_horse_name: "ブリッツフィナーレ"
           ),
         ])
+      end
+    end
+
+    context "2019-04-06 fukushima no 11 race entry page" do
+      it "is entry info" do
+        context = {}
+
+        @parser_20190406.parse(context)
+
+        expect(context).to be_empty
+
+        expect({}).to be_empty # TODO
       end
     end
 

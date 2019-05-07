@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#7045: lib/investment_horse_racing/crawler/parser/entry_page.rb:61 - undefined method `strip' for nil:NilClass (NoMethodError)](https://redmine.u6k.me/issues/7045)
+- [#7046: lib/investment_horse_racing/crawler/parser/result_page.rb:20 - can't convert nil into an exact number (TypeError)](https://redmine.u6k.me/issues/7046)
 
 ## [1.3.0] - 2019-05-02
 

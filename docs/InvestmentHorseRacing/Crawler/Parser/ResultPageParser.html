@@ -288,10 +288,6 @@
       <pre class="lines">
 
 
-27
-28
-29
-30
 31
 32
 33
@@ -304,10 +300,14 @@
 40
 41
 42
-43</pre>
+43
+44
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/result_page.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/result_page.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ResultPageParser#parse: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -372,7 +372,11 @@
 18
 19
 20
-21</pre>
+21
+22
+23
+24
+25</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/result_page.rb', line 17</span>
@@ -380,7 +384,11 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_redownload?'>redownload?</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ResultPageParser#redownload?: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
-  <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>30</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='kw'>not</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>30</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>true</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -402,12 +410,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+27
+28
+29</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/result_page.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/result_page.rb', line 27</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_related_links'>related_links</span>
   <span class='ivar'>@related_links</span>
@@ -422,7 +430,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed May  1 16:29:50 2019 by
+  Generated on Tue May  7 04:51:33 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

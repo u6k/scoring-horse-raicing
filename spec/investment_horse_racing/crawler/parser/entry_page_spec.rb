@@ -34,6 +34,17 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
 
     @meta_11 = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1809030811")
 
+    ## 2019-04-06 fukushima no 11 race result data
+    url = "https://keiba.yahoo.co.jp/race/result/1903010111/"
+    WebMock.stub_request(:get, url).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20190406.fukushima.11.html").read)
+
+    parser = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(url, @downloader.download_with_get(url))
+    parser.parse({})
+
+    @meta_20190406 = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: "1903010111")
+
     ## error race meta data
     InvestmentHorseRacing::Crawler::Model::RaceMeta.create(race_id: "0000000000")
 
@@ -53,6 +64,14 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
       body: File.open("spec/data/entry.20180624.hanshin.11.html").read)
 
     @parser_11 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_11, @downloader.download_with_get(@url_11))
+
+    ## 2019-04-06 fukushima no 11 race entry page parser
+    @url_20190406 = "https://keiba.yahoo.co.jp/race/denma/1903010111/"
+    WebMock.stub_request(:get, @url_20190406).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/entry.20190406.fukushima.11.html").read)
+
+    @parser_20190406 = InvestmentHorseRacing::Crawler::Parser::EntryPageParser.new(@url_20190406, @downloader.download_with_get(@url_20190406))
 
     ## error page parser
     url = "https://keiba.yahoo.co.jp/race/denma/0000000000/"
@@ -693,6 +712,291 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::EntryPageParser do
             jockey_weight: 58.0,
             father_horse_name: "ルーラーシップ",
             mother_horse_name: "ブリッツフィナーレ"
+          ),
+        ])
+      end
+    end
+
+    context "2019-04-06 fukushima no 11 race entry page" do
+      it "is entry info" do
+        context = {}
+
+        @parser_20190406.parse(context)
+
+        expect(context).to be_empty
+
+        expect({}).to be_empty
+
+        expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.all).to match_array([
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 1,
+            horse_number: 1,
+            horse_id: "2014102733",
+            horse_name: "ロイヤルメジャー",
+            gender: "牝",
+            age: 5,
+            coat_color: "鹿毛",
+            trainer_id: "00388",
+            trainer_name: "山内 研二",
+            horse_weight: 458,
+            jockey_id: "01157",
+            jockey_name: "鮫島 克駿",
+            jockey_weight: 55.0,
+            father_horse_name: "ダイワメジャー",
+            mother_horse_name: "クリミナルコード"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 2,
+            horse_number: 2,
+            horse_id: "2013103801",
+            horse_name: "ニシノラディアント",
+            gender: "牡",
+            age: 6,
+            coat_color: "鹿毛",
+            trainer_id: "01078",
+            trainer_name: "北出 成人",
+            horse_weight: 490,
+            jockey_id: "01117",
+            jockey_name: "丸田 恭介",
+            jockey_weight: 57.0,
+            father_horse_name: "アドマイヤマックス",
+            mother_horse_name: "スターデュエット"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 2,
+            horse_number: 3,
+            horse_id: "2014105781",
+            horse_name: "インシュラー",
+            gender: "せん",
+            age: 5,
+            coat_color: "鹿毛",
+            trainer_id: "00420",
+            trainer_name: "宗像 義忠",
+            horse_weight: 458,
+            jockey_id: "01127",
+            jockey_name: "丸山 元気",
+            jockey_weight: 57.0,
+            father_horse_name: "マンハッタンカフェ",
+            mother_horse_name: "アイルドフランス"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 3,
+            horse_number: 4,
+            horse_id: "2015105214",
+            horse_name: "メイケイダイハード",
+            gender: "牡",
+            age: 4,
+            coat_color: "鹿毛",
+            trainer_id: "01039",
+            trainer_name: "中竹 和也",
+            horse_weight: 532,
+            jockey_id: "05243",
+            jockey_name: "柴山 雄一",
+            jockey_weight: 57.0,
+            father_horse_name: "ハードスパン",
+            mother_horse_name: "メイケイソフィア"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 3,
+            horse_number: 5,
+            horse_id: "2009100706",
+            horse_name: "リバティーホール",
+            gender: "牝",
+            age: 10,
+            coat_color: "鹿毛",
+            trainer_id: "00436",
+            trainer_name: "堀井 雅広",
+            horse_weight: 448,
+            jockey_id: "01004",
+            jockey_name: "西田 雄一郎",
+            jockey_weight: 55.0,
+            father_horse_name: "ケイムホーム",
+            mother_horse_name: "ムーンライトソナタ"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 4,
+            horse_number: 6,
+            horse_id: "2013101575",
+            horse_name: "カネトシブレス",
+            gender: "牝",
+            age: 6,
+            coat_color: "鹿毛",
+            trainer_id: "01158",
+            trainer_name: "寺島 良",
+            horse_weight: 448,
+            jockey_id: "01166",
+            jockey_name: "川又 賢治",
+            jockey_weight: 55.0,
+            father_horse_name: "ダノンシャンティ",
+            mother_horse_name: "カネトシレジアス"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 4,
+            horse_number: 7,
+            horse_id: "2013102031",
+            horse_name: "チタンクレバー",
+            gender: "牝",
+            age: 6,
+            coat_color: "青鹿毛",
+            trainer_id: "00392",
+            trainer_name: "古賀 史生",
+            horse_weight: 446,
+            jockey_id: "01025",
+            jockey_name: "勝浦 正樹",
+            jockey_weight: 55.0,
+            father_horse_name: "ベーカバド",
+            mother_horse_name: "ウインプラチナム"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 5,
+            horse_number: 8,
+            horse_id: "2015103673",
+            horse_name: "トンボイ",
+            gender: "牝",
+            age: 4,
+            coat_color: "栗毛",
+            trainer_id: "01028",
+            trainer_name: "西園 正都",
+            horse_weight: 432,
+            jockey_id: "01164",
+            jockey_name: "藤田 菜七子",
+            jockey_weight: 55.0,
+            father_horse_name: "アドマイヤマックス",
+            mother_horse_name: "ショウナンアオバ"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 5,
+            horse_number: 9,
+            horse_id: "2015100822",
+            horse_name: "タイセイアベニール",
+            gender: nil,
+            age: nil,
+            coat_color: nil,
+            trainer_id: nil,
+            trainer_name: nil,
+            horse_weight: 476,
+            jockey_id: "01092",
+            jockey_name: "津村 明秀",
+            jockey_weight: 57.0,
+            father_horse_name: "ベーカバド",
+            mother_horse_name: "ハロードリーム"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 6,
+            horse_number: 10,
+            horse_id: "2015103901",
+            horse_name: "ディアサルファー",
+            gender: "牝",
+            age: 4,
+            coat_color: "栗毛",
+            trainer_id: "01052",
+            trainer_name: "菊川 正達",
+            horse_weight: 474,
+            jockey_id: "01118",
+            jockey_name: "宮崎 北斗",
+            jockey_weight: 55.0,
+            father_horse_name: "ローエングリン",
+            mother_horse_name: "リバラン"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 6,
+            horse_number: 11,
+            horse_id: "2014103601",
+            horse_name: "ゲンパチケンシン",
+            gender: "牡",
+            age: 5,
+            coat_color: "芦毛",
+            trainer_id: "00425",
+            trainer_name: "加用 正",
+            horse_weight: 474,
+            jockey_id: "01171",
+            jockey_name: "西村 淳也",
+            jockey_weight: 57.0,
+            father_horse_name: "クロフネ",
+            mother_horse_name: "レチャーダ"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 7,
+            horse_number: 12,
+            horse_id: "2014100253",
+            horse_name: "ペスカネラ",
+            gender: "牝",
+            age: 5,
+            coat_color: "黒鹿毛",
+            trainer_id: "01149",
+            trainer_name: "松下 武士",
+            horse_weight: 442,
+            jockey_id: "01038",
+            jockey_name: "中谷 雄太",
+            jockey_weight: 55.0,
+            father_horse_name: "ブラックタイド",
+            mother_horse_name: "ピーチドラフト"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 7,
+            horse_number: 13,
+            horse_id: "2015100673",
+            horse_name: "コーラルリーフ",
+            gender: "牝",
+            age: 4,
+            coat_color: "栗毛",
+            trainer_id: "01073",
+            trainer_name: "宮本 博",
+            horse_weight: 416,
+            jockey_id: "01170",
+            jockey_name: "横山 武史",
+            jockey_weight: 55.0,
+            father_horse_name: "ヨハネスブルグ",
+            mother_horse_name: "フィーユ"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 8,
+            horse_number: 14,
+            horse_id: "2015105192",
+            horse_name: "ブルレジーナ",
+            gender: "牝",
+            age: 4,
+            coat_color: "栗毛",
+            trainer_id: "01085",
+            trainer_name: "小崎 憲",
+            horse_weight: 446,
+            jockey_id: "01144",
+            jockey_name: "菱田 裕二",
+            jockey_weight: 55.0,
+            father_horse_name: "ハーツクライ",
+            mother_horse_name: "リキオリンピア"
+          ),
+          have_attributes(
+            race_meta_id: @meta_20190406.id,
+            bracket_number: 8,
+            horse_number: 15,
+            horse_id: "2015102817",
+            horse_name: "メイショウツバキ",
+            gender: "牝",
+            age: 4,
+            coat_color: "黒鹿毛",
+            trainer_id: "00434",
+            trainer_name: "西橋 豊治",
+            horse_weight: 450,
+            jockey_id: "01168",
+            jockey_name: "富田 暁",
+            jockey_weight: 55.0,
+            father_horse_name: "メイショウサムソン",
+            mother_horse_name: "メイショウラグーナ"
           ),
         ])
       end

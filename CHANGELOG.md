@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2019-05-07
+
+### Fixed
+
+- [#7045: lib/investment_horse_racing/crawler/parser/entry_page.rb:61 - undefined method `strip' for nil:NilClass (NoMethodError)](https://redmine.u6k.me/issues/7045)
+- [#7046: lib/investment_horse_racing/crawler/parser/result_page.rb:20 - can't convert nil into an exact number (TypeError)](https://redmine.u6k.me/issues/7046)
+
 ## [1.3.0] - 2019-05-02
 
 ### Changed

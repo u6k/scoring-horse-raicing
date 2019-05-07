@@ -17,7 +17,11 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("ResultPageParser#redownload?: start")
 
-      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
+      if not @race_meta.start_datetime.nil?
+        (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
+      else
+        true
+      end
     end
 
     def related_links

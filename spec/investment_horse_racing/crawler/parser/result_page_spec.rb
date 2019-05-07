@@ -25,6 +25,14 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
 
     @parser_19860126 = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url_19860126, @downloader.download_with_get(@url_19860126))
 
+    # 2019-04-06 start_datetime is nul result page parser
+    @url_start_null = "https://keiba.yahoo.co.jp/race/result/1903010111/"
+    WebMock.stub_request(:get, @url_start_null).to_return(
+      status: [200, "OK"],
+      body: File.open("spec/data/result.20190406.fukushima.start_null.html").read)
+
+    @parser_start_null = InvestmentHorseRacing::Crawler::Parser::ResultPageParser.new(@url_start_null, @downloader.download_with_get(@url_start_null))
+
     # error page parser
     @url_error = "https://keiba.yahoo.co.jp/race/result/0000000000/"
     WebMock.stub_request(:get, @url_error).to_return(
@@ -54,6 +62,12 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::ResultPageParser do
     context "1986-01-26 tyukyou no 11 race result page" do
       it "do not redownload" do
         expect(@parser_19860126).not_to be_redownload
+      end
+    end
+
+    context "start_datetime is null" do
+      it "always redownload" do
+        expect(@parser_start_null).to be_redownload
       end
     end
   end

@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_29_194732) do
+ActiveRecord::Schema.define(version: 2019_05_09_042450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "crawline_caches", force: :cascade do |t|
+    t.string "url"
+    t.string "request_method"
+    t.datetime "downloaded_timestamp"
+    t.string "storage_path"
+  end
+
+  create_table "crawline_headers", force: :cascade do |t|
+    t.bigint "crawline_cache_id"
+    t.string "message_type"
+    t.string "header_name"
+    t.string "header_value"
+    t.index ["crawline_cache_id"], name: "index_crawline_headers_on_crawline_cache_id"
+  end
+
+  create_table "crawline_related_links", force: :cascade do |t|
+    t.bigint "crawline_cache_id"
+    t.string "url"
+    t.index ["crawline_cache_id"], name: "index_crawline_related_links_on_crawline_cache_id"
+  end
 
   create_table "race_entries", force: :cascade do |t|
     t.bigint "race_meta_id"
@@ -73,6 +94,8 @@ ActiveRecord::Schema.define(version: 2019_04_29_194732) do
     t.index ["race_meta_id"], name: "index_race_scores_on_race_meta_id"
   end
 
+  add_foreign_key "crawline_headers", "crawline_caches", column: "crawline_cache_id"
+  add_foreign_key "crawline_related_links", "crawline_caches", column: "crawline_cache_id"
   add_foreign_key "race_entries", "race_meta", column: "race_meta_id"
   add_foreign_key "race_refunds", "race_meta", column: "race_meta_id"
   add_foreign_key "race_scores", "race_meta", column: "race_meta_id"

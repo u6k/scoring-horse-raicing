@@ -12,10 +12,10 @@ RUN apt-get update && \
       echo "rm ./db/migrate/*crawline*"; \
       echo "rake spec"; \
       echo "rake build"; \
-    } | tee /usr/local/bin/init.sh && \
-    chmod +x /usr/local/bin/init.sh
+    } | tee /usr/local/bin/build.sh && \
+    chmod +x /usr/local/bin/build.sh
 
 VOLUME /var/myapp
 WORKDIR /var/myapp
 
-CMD ["/usr/local/bin/init.sh"]
+CMD ["/usr/local/bin/build.sh"]

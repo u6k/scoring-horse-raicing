@@ -44,5 +44,14 @@ class OddsWin < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
+
+    create_table :odds_exacta do |t|
+      t.belongs_to :race_meta, index: true, foreign_key: true
+      t.integer :horse_number_1
+      t.integer :horse_number_2
+      t.float :odds
+
+      t.timestamps
+    end
   end
 end

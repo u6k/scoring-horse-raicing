@@ -87,6 +87,17 @@ ActiveRecord::Schema.define(version: 2019_05_10_030035) do
     t.index ["race_meta_id"], name: "index_odds_quinellas_on_race_meta_id"
   end
 
+  create_table "odds_trifecta", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.integer "horse_number_3"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_trifecta_on_race_meta_id"
+  end
+
   create_table "odds_trios", force: :cascade do |t|
     t.bigint "race_meta_id"
     t.integer "horse_number_1"
@@ -172,6 +183,7 @@ ActiveRecord::Schema.define(version: 2019_05_10_030035) do
   add_foreign_key "odds_places", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_quinella_places", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_quinellas", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_trifecta", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_trios", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_wins", "race_meta", column: "race_meta_id"
   add_foreign_key "race_entries", "race_meta", column: "race_meta_id"

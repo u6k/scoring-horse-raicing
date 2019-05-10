@@ -284,6 +284,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to eq 0
 
     InvestmentHorseRacing::Crawler::CLI.new.invoke(
       "crawl", [],
@@ -306,6 +310,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to be > 0
   end
 
   it "crawl (specify entrypoint_url) is success" do
@@ -331,6 +339,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to eq 0
   end
 
   it "parse is success" do
@@ -339,6 +351,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to eq 0
 
     InvestmentHorseRacing::Crawler::CLI.new.invoke(
       "crawl", [],
@@ -361,6 +377,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to be > 0
 
     InvestmentHorseRacing::Crawler::Model::RaceMeta.destroy_all
 
@@ -369,6 +389,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to eq 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to eq 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to eq 0
 
     InvestmentHorseRacing::Crawler::CLI.new.invoke(
       "parse", [],
@@ -390,6 +414,10 @@ RSpec.describe InvestmentHorseRacing::Crawler::CLI do
     expect(InvestmentHorseRacing::Crawler::Model::RaceRefund.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceScore.count).to be > 0
     expect(InvestmentHorseRacing::Crawler::Model::RaceEntry.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsWin.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsPlace.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.count).to be > 0
+    expect(InvestmentHorseRacing::Crawler::Model::OddsQuinella.count).to be > 0
   end
 
   def count_s3_objects

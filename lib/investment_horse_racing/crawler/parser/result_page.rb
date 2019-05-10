@@ -193,6 +193,7 @@ module InvestmentHorseRacing::Crawler::Model
     has_many :odds_places, dependent: :destroy
     has_many :odds_bracket_quinellas, dependent: :destroy
     has_many :odds_quinellas, dependent: :destroy
+    has_many :odds_quinella_places, dependent: :destroy
   end
 
   class RaceRefund < ActiveRecord::Base

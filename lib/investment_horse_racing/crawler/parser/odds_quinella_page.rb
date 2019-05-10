@@ -42,7 +42,7 @@ module InvestmentHorseRacing::Crawler::Parser
       race_id = url.match(/^.+?\/odds\/ur\/([0-9]+)\/$/)[1]
       @race_meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: race_id)
       raise "RaceMeta(race_id: #{race_id}) not found." if @race_meta.nil?
-      @logger.debug("OddsWinPageParser#_parse: race_meta.id=#{@race_meta.id}")
+      @logger.debug("OddsQuinellaPageParser#_parse: race_meta.id=#{@race_meta.id}")
 
       doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 

@@ -46,6 +46,16 @@ ActiveRecord::Schema.define(version: 2019_05_10_030035) do
     t.index ["race_meta_id"], name: "index_odds_bracket_quinellas_on_race_meta_id"
   end
 
+  create_table "odds_exacta", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_exacta_on_race_meta_id"
+  end
+
   create_table "odds_places", force: :cascade do |t|
     t.bigint "race_meta_id"
     t.integer "horse_number"
@@ -147,6 +157,7 @@ ActiveRecord::Schema.define(version: 2019_05_10_030035) do
   add_foreign_key "crawline_headers", "crawline_caches", column: "crawline_cache_id"
   add_foreign_key "crawline_related_links", "crawline_caches", column: "crawline_cache_id"
   add_foreign_key "odds_bracket_quinellas", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_exacta", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_places", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_quinella_places", "race_meta", column: "race_meta_id"
   add_foreign_key "odds_quinellas", "race_meta", column: "race_meta_id"

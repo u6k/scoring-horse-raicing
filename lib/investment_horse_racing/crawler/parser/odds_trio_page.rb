@@ -15,11 +15,7 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("OddsTrioPageParser#redownload?: start")
 
-      (Time.now - @start_datetime) < (30 * 24 * 60 * 60)
-    end
-
-    def valid?
-      (@title === "3連複")
+      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
     def related_links
@@ -27,10 +23,15 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      # TODO: Parse all result info
-      context["odds_trio"] = {
-        @odds_trio_id => {}
-      }
+      @logger.debug("OddsTrioPageParser#_parse: start")
+
+      ActiveRecord::Base.transaction do
+        @race_meta.odds_trios.destroy_all
+        @logger.debug("OddsTrioPageParser#_parse: OddsTrio(race_meta_id: #{@race_meta.id}) destroy all")
+
+        InvestmentHorseRacing::Crawler::Model::OddsTrio.import(@odds_trios)
+        @logger.debug("OddsTrioPageParser#_parse: OddsTrio(count: #{@odds_trios.count}) saved")
+      end
     end
 
     private
@@ -38,32 +39,33 @@ module InvestmentHorseRacing::Crawler::Parser
     def _parse(url, data)
       @logger.debug("OddsTrioPageParser#_parse: start")
 
-      @odds_trio_id = url.match(/^.+?\/odds\/sf\/([0-9]+)\/$/)[1]
-      @logger.debug("OddsTrioPageParser#_parse: @odds_trio_id=#{@odds_trio_id}")
+      race_id = url.match(/^.+?\/odds\/sf\/([0-9]+)\/$/)[1]
+      @race_meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: race_id)
+      raise "RaceMeta(race_id: #{race_id}) not found." if @race_meta.nil?
+      @logger.debug("OddsTrioPageParser#_parse: race_meta.id=#{@race_meta.id}")
 
       doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
-      doc.xpath("//li[@id='raceNavi2C']").each do |li|
-        @logger.debug("OddsTrioPageParser#_parse: li=#{li.inspect}")
+      current_horse_number_1 = nil
+      current_horse_number_2 = nil
+      @odds_trios = []
 
-        @title = li.children[0].text.strip
-        @logger.debug("OddsTrioPageParser#_parse: @title=#{@title}")
-      end
+      doc.xpath("//table[@class='oddsLs']/tbody/tr").each do |tr|
+        @logger.debug("OddsTrioPageParser#_parse: tr=#{tr}")
 
-      doc.xpath("//p[@id='raceTitDay']").each do |p|
-        @logger.debug("OddsTrioPageParser#_parse: p=#{p.inspect}")
+        if not tr.at_xpath("th[@class='oddsJk']").nil?
+          parts = tr.at_xpath("th").text.strip.split("－")
+          current_horse_number_1 = parts[0].to_i
+          current_horse_number_2 = parts[1].to_i
+        else
+          odds_trio = InvestmentHorseRacing::Crawler::Model::OddsTrio.new(
+            race_meta: @race_meta,
+            horse_number_1: current_horse_number_1,
+            horse_number_2: current_horse_number_2,
+            horse_number_3: tr.at_xpath("th").text.strip.to_i,
+            odds: tr.at_xpath("td").text.strip.to_f)
 
-        date = p.children[0].text.strip.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
-          Time.new(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
-        end
-
-        time = p.children[4].text.strip.match(/^([0-9]+):([0-9]+)発走/) do |time_parts|
-          Time.new(1900, 1, 1, time_parts[1].to_i, time_parts[2].to_i, 0)
-        end
-
-        if (not date.nil?) && (not time.nil?)
-          @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.debug("OddsTrioPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @odds_trios << odds_trio
         end
       end
 
@@ -82,5 +84,13 @@ module InvestmentHorseRacing::Crawler::Parser
         @logger.debug("OddsTrioPageParser#_parse: related_link=#{related_link}")
       end
     end
+  end
+end
+
+module InvestmentHorseRacing::Crawler::Model
+  class OddsTrio < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
   end
 end

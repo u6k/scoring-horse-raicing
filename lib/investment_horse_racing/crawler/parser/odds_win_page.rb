@@ -1,5 +1,7 @@
 require "nokogiri"
 require "crawline"
+require "active_record"
+require "activerecord-import"
 
 module InvestmentHorseRacing::Crawler::Parser
   class OddsWinPageParser < Crawline::BaseParser
@@ -15,7 +17,7 @@ module InvestmentHorseRacing::Crawler::Parser
     def redownload?
       @logger.debug("OddsWinPageParser#redownload?: start")
 
-      (Time.now - @start_datetime) < (30 * 24 * 60 * 60)
+      (Time.now - @race_meta.start_datetime) < (30 * 24 * 60 * 60)
     end
 
     def valid?
@@ -27,10 +29,27 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      # TODO: Parse all result info
-      context["odds_win"] = {
-        @odds_win_id => {}
-      }
+      @logger.debug("OddsWinPageParser#parse: start")
+
+      ActiveRecord::Base.transaction do
+        @race_meta.odds_wins.destroy_all
+        @logger.debug("OddsWinPageParser#parse: OddsWin(race_meta_id: #{@race_meta.id}) destroy all")
+
+        @race_meta.odds_places.destroy_all
+        @logger.debug("OddsWinPageParser#parse: OddsPlace(race_meta_id: #{@race_meta.id}) destroy all")
+
+        @race_meta.odds_bracket_quinellas.destroy_all
+        @logger.debug("OddsWinPageParser#parse: OddsBracketQuinella(race_meta_id: #{@race_meta.id}) destroy all")
+
+        InvestmentHorseRacing::Crawler::Model::OddsWin.import(@odds_wins)
+        @logger.debug("OddsWinPageParser#parse: OddsWin(count: #{@odds_wins.count}) saved")
+
+        InvestmentHorseRacing::Crawler::Model::OddsPlace.import(@odds_places)
+        @logger.debug("OddsWinPageParser#parse: OddsPlace(count: #{@odds_places.count}) saved")
+
+        InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.import(@odds_bracket_quinellas)
+        @logger.debug("OddsWinPageParser#parse: OddsBracketQuinella(count: #{@odds_bracket_quinellas.count}) saved")
+      end
     end
 
     private
@@ -38,32 +57,51 @@ module InvestmentHorseRacing::Crawler::Parser
     def _parse(url, data)
       @logger.debug("OddsWinPageParser#_parse: start")
 
-      @odds_win_id = url.match(/^.+?\/odds\/tfw\/([0-9]+)\/$/)[1]
-      @logger.debug("OddsWinPageParser#_parse: @odds_win_id=#{@odds_win_id}")
+      race_id = url.match(/^.+?\/odds\/tfw\/([0-9]+)\/$/)[1]
+      @race_meta = InvestmentHorseRacing::Crawler::Model::RaceMeta.find_by(race_id: race_id)
+      raise "RaceMeta(race_id: #{race_id}) not found." if @race_meta.nil?
+      @logger.debug("OddsWinPageParser#_parse: race_meta.id=#{@race_meta.id}")
 
       doc = Nokogiri::HTML.parse(data["response_body"], nil, "UTF-8")
 
-      doc.xpath("//li[@id='raceNavi2C']").each do |li|
-        @logger.debug("OddsWinPageParser#_parse: li=#{li.inspect}")
+      @odds_wins = []
+      @odds_places = []
 
-        @title = li.children[0].text.strip
-        @logger.debug("OddsWinPageParser#_parse: @title=#{@title}")
+      doc.xpath("//table[contains(@class,'oddTkwLs')]/tbody/tr[position()>1]").each do |tr|
+        @logger.debug("OddsWinPageParser#_parse: win, place: tr=#{tr}")
+
+        odds_win = InvestmentHorseRacing::Crawler::Model::OddsWin.new(
+          race_meta: @race_meta,
+          horse_number: tr.at_xpath("td[2]").text.strip.to_i,
+          odds: tr.at_xpath("td[4]").text.strip.to_f)
+
+        @odds_wins << odds_win
+
+        odds_place = InvestmentHorseRacing::Crawler::Model::OddsPlace.new(
+          race_meta: @race_meta,
+          horse_number: tr.at_xpath("td[2]").text.strip.to_i,
+          odds_1: tr.at_xpath("td[5]").text.strip.to_f,
+          odds_2: tr.at_xpath("td[7]").text.strip.to_f)
+
+        @odds_places << odds_place
       end
 
-      doc.xpath("//p[@id='raceTitDay']").each do |p|
-        @logger.debug("OddsWinPageParser#_parse: p")
+      current_bracket_number = nil
+      @odds_bracket_quinellas = []
 
-        date = p.children[0].text.strip.match(/^([0-9]+)年([0-9]+)月([0-9]+)日/) do |date_parts|
-          Time.new(date_parts[1].to_i, date_parts[2].to_i, date_parts[3].to_i)
-        end
+      doc.xpath("//table[contains(@class,'oddsLs')]/tbody/tr").each do |tr|
+        @logger.debug("OddsWinPageParser#_parser: bracket quinella: tr=#{tr}")
 
-        time = p.children[4].text.strip.match(/^([0-9]+):([0-9]+)発走/) do |time_parts|
-          Time.new(1900, 1, 1, time_parts[1].to_i, time_parts[2].to_i, 0)
-        end
+        if not tr.at_xpath("th[contains(@class,'oddsJk')]").nil?
+          current_bracket_number = tr.at_xpath("th[contains(@class,'oddsJk')]/div").text.strip.to_i
+        else
+          odds_bracket_quinella = InvestmentHorseRacing::Crawler::Model::OddsBracketQuinella.new(
+            race_meta: @race_meta,
+            bracket_number_1: current_bracket_number,
+            bracket_number_2: tr.at_xpath("th").text.strip.to_i,
+            odds: tr.at_xpath("td").text.strip.to_f)
 
-        if (not date.nil?) && (not time.nil?)
-          @start_datetime = Time.new(date.year, date.month, date.day, time.hour, time.min, 0)
-          @logger.debug("OddsWinPageParser#_parse: @start_datetime=#{@start_datetime}")
+          @odds_bracket_quinellas << odds_bracket_quinella
         end
       end
 
@@ -82,5 +120,25 @@ module InvestmentHorseRacing::Crawler::Parser
         @logger.debug("OddsWinPageParser#_parse: related_link=#{related_link}")
       end
     end
+  end
+end
+
+module InvestmentHorseRacing::Crawler::Model
+  class OddsWin < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
+  end
+
+  class OddsPlace < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
+  end
+
+  class OddsBracketQuinella < ActiveRecord::Base
+    belongs_to :race_meta
+
+    validates :race_meta, presence: true
   end
 end

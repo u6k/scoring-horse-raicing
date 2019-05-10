@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_09_042450) do
+ActiveRecord::Schema.define(version: 2019_05_10_030035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,88 @@ ActiveRecord::Schema.define(version: 2019_05_09_042450) do
     t.bigint "crawline_cache_id"
     t.string "url"
     t.index ["crawline_cache_id"], name: "index_crawline_related_links_on_crawline_cache_id"
+  end
+
+  create_table "odds_bracket_quinellas", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "bracket_number_1"
+    t.integer "bracket_number_2"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_bracket_quinellas_on_race_meta_id"
+  end
+
+  create_table "odds_exacta", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_exacta_on_race_meta_id"
+  end
+
+  create_table "odds_places", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number"
+    t.float "odds_1"
+    t.float "odds_2"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_places_on_race_meta_id"
+  end
+
+  create_table "odds_quinella_places", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.float "odds_1"
+    t.float "odds_2"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_quinella_places_on_race_meta_id"
+  end
+
+  create_table "odds_quinellas", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_quinellas_on_race_meta_id"
+  end
+
+  create_table "odds_trifecta", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.integer "horse_number_3"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_trifecta_on_race_meta_id"
+  end
+
+  create_table "odds_trios", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number_1"
+    t.integer "horse_number_2"
+    t.integer "horse_number_3"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_trios_on_race_meta_id"
+  end
+
+  create_table "odds_wins", force: :cascade do |t|
+    t.bigint "race_meta_id"
+    t.integer "horse_number"
+    t.float "odds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_meta_id"], name: "index_odds_wins_on_race_meta_id"
   end
 
   create_table "race_entries", force: :cascade do |t|
@@ -96,6 +178,14 @@ ActiveRecord::Schema.define(version: 2019_05_09_042450) do
 
   add_foreign_key "crawline_headers", "crawline_caches", column: "crawline_cache_id"
   add_foreign_key "crawline_related_links", "crawline_caches", column: "crawline_cache_id"
+  add_foreign_key "odds_bracket_quinellas", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_exacta", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_places", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_quinella_places", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_quinellas", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_trifecta", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_trios", "race_meta", column: "race_meta_id"
+  add_foreign_key "odds_wins", "race_meta", column: "race_meta_id"
   add_foreign_key "race_entries", "race_meta", column: "race_meta_id"
   add_foreign_key "race_refunds", "race_meta", column: "race_meta_id"
   add_foreign_key "race_scores", "race_meta", column: "race_meta_id"

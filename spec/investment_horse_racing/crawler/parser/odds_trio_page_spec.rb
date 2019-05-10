@@ -72,7 +72,7 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsTrioPageParser do
 
         expect(context).to be_empty
 
-        expected = build_have_attributes
+        expected = build_expected
 
         expect(InvestmentHorseRacing::Crawler::Model::OddsTrio.all).to match_array(expected)
       end
@@ -91,7 +91,7 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsTrioPageParser do
 
         expect(context).to be_empty
 
-        expected = build_have_attributes
+        expected = build_expected
         expected << have_attributes(race_meta_id: meta_11111.id, horse_number_1: 1, horse_number_2: 1, horse_number_3: 1, odds: 111.11)
         expected << have_attributes(race_meta_id: meta_22222.id, horse_number_1: 2, horse_number_2: 2, horse_number_3: 2, odds: 222.22)
 
@@ -113,7 +113,7 @@ RSpec.describe InvestmentHorseRacing::Crawler::Parser::OddsTrioPageParser do
       end
     end
 
-    def build_have_attributes
+    def build_expected
       [
         have_attributes(race_meta_id: @meta.id, horse_number_1: 1, horse_number_2: 2, horse_number_3: 3, odds: 153.5),
         have_attributes(race_meta_id: @meta.id, horse_number_1: 1, horse_number_2: 2, horse_number_3: 4, odds: 202.0),

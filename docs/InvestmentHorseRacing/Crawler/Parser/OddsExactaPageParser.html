@@ -208,28 +208,6 @@
 </li>
 
       
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#valid%3F-instance_method" title="#valid? (instance method)">#<strong>valid?</strong>  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
     </ul>
   
 
@@ -310,21 +288,31 @@
       <pre class="lines">
 
 
+25
+26
+27
+28
 29
 30
 31
 32
 33
-34</pre>
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/odds_exacta_page.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/odds_exacta_page.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
-  <span class='comment'># TODO: Parse all result info
-</span>  <span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>odds_exacta</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span>
-    <span class='ivar'>@odds_exacta_id</span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
-  <span class='rbrace'>}</span>
+  <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OddsExactaPageParser#parse: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='const'>ActiveRecord</span><span class='op'>::</span><span class='const'>Base</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span> <span class='kw'>do</span>
+    <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_odds_exactas'>odds_exactas</span><span class='period'>.</span><span class='id identifier rubyid_destroy_all'>destroy_all</span>
+    <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OddsExactaPageParser#parse: OddsExacta(race_meta_id: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>) destroy all</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+    <span class='const'><span class='object_link'><a href="../../../InvestmentHorseRacing.html" title="InvestmentHorseRacing (module)">InvestmentHorseRacing</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Crawler.html" title="InvestmentHorseRacing::Crawler (module)">Crawler</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Model.html" title="InvestmentHorseRacing::Crawler::Model (module)">Model</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Model/OddsExacta.html" title="InvestmentHorseRacing::Crawler::Model::OddsExacta (class)">OddsExacta</a></span></span><span class='period'>.</span><span class='id identifier rubyid_import'>import</span><span class='lparen'>(</span><span class='ivar'>@odds_exactas</span><span class='rparen'>)</span>
+    <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OddsExactaPageParser#parse: OddsExacta(count: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@odds_exactas</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='embexpr_end'>}</span><span class='tstring_content'>) saved</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -380,7 +368,7 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_redownload?'>redownload?</span>
   <span class='ivar'>@logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OddsExactaPageParser#redownload?: start</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
-  <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@start_datetime</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>30</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
+  <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='ivar'>@race_meta</span><span class='period'>.</span><span class='id identifier rubyid_start_datetime'>start_datetime</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='lparen'>(</span><span class='int'>30</span> <span class='op'>*</span> <span class='int'>24</span> <span class='op'>*</span> <span class='int'>60</span> <span class='op'>*</span> <span class='int'>60</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -402,58 +390,6 @@
       <pre class="lines">
 
 
-25
-26
-27</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/odds_exacta_page.rb', line 25</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_related_links'>related_links</span>
-  <span class='ivar'>@related_links</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="valid?-instance_method">
-  
-    #<strong>valid?</strong>  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
 21
 22
 23</pre>
@@ -461,8 +397,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/investment_horse_racing/crawler/parser/odds_exacta_page.rb', line 21</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
-  <span class='lparen'>(</span><span class='ivar'>@title</span> <span class='op'>===</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>馬単</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_related_links'>related_links</span>
+  <span class='ivar'>@related_links</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -474,7 +410,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu May  9 16:39:34 2019 by
+  Generated on Fri May 10 11:18:26 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.6.3).
 </div>

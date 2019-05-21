@@ -23,7 +23,7 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      @logger.debug("OddsTrioPageParser#_parse: start")
+      @logger.debug("OddsTrioPageParser#_parse: start: start_datetime=#{@race_meta.start_datetime}, race_number=#{@race_meta.race_number}")
 
       ActiveRecord::Base.transaction do
         @race_meta.odds_trios.destroy_all

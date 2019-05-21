@@ -29,7 +29,7 @@ module InvestmentHorseRacing::Crawler::Parser
     end
 
     def parse(context)
-      @logger.debug("ResultPageParser#parse: start")
+      @logger.debug("ResultPageParser#parse: start: start_datetime=#{@race_meta.start_datetime}, race_number=#{@race_meta.race_number}")
 
       ActiveRecord::Base.transaction do
         InvestmentHorseRacing::Crawler::Model::RaceMeta.where(race_id: @race_meta.race_id).destroy_all

@@ -1,6 +1,10 @@
 # 競馬情報クローラー _(investment-horse-racing-crawler)_
 
-[![Build Status](https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master)](https://travis-ci.org/u6k/investment-horse-racing-crawler) [![license](https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE) [![GitHub release](https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/releases) [![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine)](https://redmine.u6k.me/projects/investment-horse-racing-crawler) [![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=API%20reference)](https://u6k.github.io/investment-horse-racing-crawler/) [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![Build Status](https://travis-ci.org/u6k/investment-horse-racing-crawler.svg?branch=master)](https://travis-ci.org/u6k/investment-horse-racing-crawler)
+[![license](https://img.shields.io/github/license/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/u6k/investment-horse-racing-crawler.svg)](https://github.com/u6k/investment-horse-racing-crawler/releases)
+[![WebSite](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=u6k.Redmine)](https://redmine.u6k.me/projects/investment-horse-racing-crawler)
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 > 競馬投資に使用するデータを収集する
 
@@ -9,7 +13,6 @@ __Table of Contents__
 - [Install](#Install)
 - [Usage](#Usage)
 - [Other](#Other)
-- [API](#API)
 - [Maintainer](#Maintainer)
 - [Contributing](#Contributing)
 - [License](#License)
@@ -48,23 +51,15 @@ docker pull u6kapps/investment-horse-racing-crawler
 
 ## Usage
 
+クロールします。
+
 ```
-$ docker run u6kapps/investment-horse-racing-crawler help
-Commands:
-  investment-horse-racing-crawler crawl             # Crawl horse racing
-  investment-horse-racing-crawler help [COMMAND]    # Describe available commands or one specific command
-  investment-horse-racing-crawler list_cache_state  # Listing cache state
-  investment-horse-racing-crawler parse             # Parse horse racing
-  investment-horse-racing-crawler version           # Display version
+$ docker run u6kapps/investment-horse-racing-crawler
 ```
 
 ## Other
 
 最新の情報は、[Wiki - investment-horse-racing-crawler - u6k.Redmine](https://redmine.u6k.me/projects/investment-horse-racing-crawler/wiki/Wiki)を参照してください。
-
-## API
-
-[APIリファレンス](https://u6k.github.io/investment-horse-racing-crawler/) を参照してください。
 
 ## Maintainer
 

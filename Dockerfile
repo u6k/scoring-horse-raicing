@@ -9,8 +9,6 @@ RUN apt-get update && \
 WORKDIR /var/tmp
 COPY Pipfile .
 COPY Pipfile.lock .
-#COPY setup.py .
-#COPY setup.cfg .
 RUN pipenv install --deploy --system
 
 VOLUME /var/myapp

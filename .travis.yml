@@ -9,6 +9,7 @@ addons:
 script:
   - docker-compose build
   - docker-compose run app
+  - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:
   - if [ -n "$TRAVIS_TAG" ]; then

@@ -1,5 +1,5 @@
-language: ruby
-cache: bundler
+language: python
+cache: pip
 
 addons:
   apt:

@@ -5,4 +5,4 @@ services:
     build: .
     volumes:
       - ".:/var/myapp"
-    command: /bin/sh -c "pipenv install -d && pipenv run lint && pipenv run test"
+    command: /bin/sh -c "pipenv run lint && pipenv run test"

@@ -6,6 +6,13 @@ RUN apt-get update && \
     apt-get clean && \
     pip install pipenv
 
+WORKDIR /var/tmp
+COPY Pipfile .
+COPY Pipfile.lock .
+#COPY setup.py .
+#COPY setup.cfg .
+RUN pipenv install --deploy --system
+
 VOLUME /var/myapp
 WORKDIR /var/myapp
 

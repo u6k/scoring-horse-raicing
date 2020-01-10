@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require "investment_horse_racing/crawler"
-
-InvestmentHorseRacing::Crawler::CLI.start(ARGV)

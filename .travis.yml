@@ -1,5 +1,5 @@
-language: ruby
-cache: bundler
+language: python
+cache: pip
 
 addons:
   apt:
@@ -9,8 +9,7 @@ addons:
 script:
   - docker-compose build
   - docker-compose run app
-  - docker build -f Dockerfile.production -t u6kapps/investment-horse-racing-crawler .
-  - docker run --rm u6kapps/investment-horse-racing-crawler version
+  - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:
   - if [ -n "$TRAVIS_TAG" ]; then

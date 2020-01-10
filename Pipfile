@@ -5,8 +5,6 @@ verify_ssl = true
 
 [packages]
 scrapy = "*"
-
-[dev-packages]
 flake8 = "*"
 autopep8 = "*"
 nose = "*"

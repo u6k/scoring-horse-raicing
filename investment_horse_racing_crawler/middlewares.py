@@ -5,7 +5,13 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import logging
+import os
 from scrapy import signals
+from scrapy.utils.request import request_fingerprint
+
+
+logger = logging.getLogger(__name__)
 
 
 class InvestmentHorseRacingCrawlerSpiderMiddleware(object):
@@ -101,3 +107,48 @@ class InvestmentHorseRacingCrawlerDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class S3CacheStorage(object):
+
+    def __init__(self, settings):
+        self.s3_endpoint = settings["S3_ENDPOINT"]
+        self.s3_region = settings["S3_REGION"]
+        self.s3_access_key = settings["S3_ACCESS_KEY"]
+        self.s3_secret_key = settings["S3_SECRET_KEY"]
+        self.s3_bucket = settings["S3_BUCKET"]
+        self.s3_folder = settings["S3_FOLDER"]
+
+    def open_spider(self, spider):
+        logger.debug("*** Using s3 cache storage. spider=%s" % spider)
+
+    def close_spider(self, spider):
+        logger.debug("*** Close spider")
+
+    def retrieve_response(self, spider, request):
+        logger.debug("*** Retrieve response")
+
+        rpath = self._get_request_path(spider, request)
+        logger.debug("*** rpath=%s" % rpath)
+
+        metadata = self._read_meta(spider, request)
+        if metadata is None:
+            return  # not cached
+
+        return
+
+    def store_response(self, spider, request, response):
+        logger.debug("*** Store response")
+
+        rpath = self._get_request_path(spider, request)
+        logger.debug("*** rpath=%s" % rpath)
+
+    def _get_request_path(self, spider, request):
+        key = request_fingerprint(request)
+        return os.path.join("s3://", self.s3_bucket, self.s3_folder, key[0:2], key)
+
+    def _read_meta(self, spider, request):
+        rpath = self._get_request_path(spider, request)
+        logger.debug("*** rpath=%s" % rpath)
+
+        return

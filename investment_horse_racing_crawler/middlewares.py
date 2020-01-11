@@ -121,27 +121,21 @@ class S3CacheStorage(object):
         self.s3_folder = settings["S3_FOLDER"]
 
     def open_spider(self, spider):
-        logger.debug("*** Using s3 cache storage. spider=%s" % spider)
-
-        logger.debug("*** Connect s3")
         self.s3_client = boto3.resource(
-                "s3",
-                endpoint_url=self.s3_endpoint,
-                aws_access_key_id=self.s3_access_key,
-                aws_secret_access_key=self.s3_secret_key,
-                region_name=self.s3_region)
+            "s3",
+            endpoint_url=self.s3_endpoint,
+            aws_access_key_id=self.s3_access_key,
+            aws_secret_access_key=self.s3_secret_key,
+            region_name=self.s3_region)
         self.s3_bucket_obj = self.s3_client.Bucket(self.s3_bucket)
         if not self.s3_bucket_obj.creation_date:
             self.s3_bucket_obj.create()
 
     def close_spider(self, spider):
-        logger.debug("*** Close spider")
+        pass
 
     def retrieve_response(self, spider, request):
-        logger.debug("*** Retrieve response")
-
         rpath = self._get_request_path(spider, request)
-        logger.debug("*** rpath=%s" % rpath)
 
         metadata = self._read_meta(spider, request)
         if metadata is None:
@@ -150,10 +144,7 @@ class S3CacheStorage(object):
         return
 
     def store_response(self, spider, request, response):
-        logger.debug("*** Store response")
-
         rpath = self._get_request_path(spider, request)
-        logger.debug("*** rpath=%s" % rpath)
 
         self.s3_bucket_obj.put_object(Key=rpath, Body="test")
 
@@ -163,6 +154,5 @@ class S3CacheStorage(object):
 
     def _read_meta(self, spider, request):
         rpath = self._get_request_path(spider, request)
-        logger.debug("*** rpath=%s" % rpath)
 
         return

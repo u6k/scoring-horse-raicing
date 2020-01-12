@@ -8,6 +8,10 @@ BOT_NAME = 'investment_horse_racing_crawler'
 SPIDER_MODULES = ['investment_horse_racing_crawler.spiders']
 NEWSPIDER_MODULE = 'investment_horse_racing_crawler.spiders'
 
+ITEM_PIPELINES = {
+    "investment_horse_racing_crawler.pipelines.PostgreSQLPipeline": 300,
+}
+
 ROBOTSTXT_OBEY = True
 
 DOWNLOAD_DELAY = 3
@@ -26,3 +30,9 @@ S3_ACCESS_KEY = os.environ["S3_ACCESS_KEY"]
 S3_SECRET_KEY = os.environ["S3_SECRET_KEY"]
 S3_BUCKET = os.environ["S3_BUCKET"]
 S3_FOLDER = os.environ["S3_FOLDER"]
+
+DB_HOST = os.environ["DB_HOST"]
+DB_PORT = os.environ["DB_PORT"]
+DB_DATABASE = os.environ["DB_DATABASE"]
+DB_USERNAME = os.environ["DB_USERNAME"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]

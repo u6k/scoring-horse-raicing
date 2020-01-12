@@ -5,19 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2020-01-13
 
 ### Added
 
 - [#7874: キャッシュをS3に、出力データをDBに格納する](https://redmine.u6k.me/issues/7874)
 
-## [2.0.0]
+## [2.0.0] - 2020-01-10
 
 ### Changed
 
 - [#7851: Scrapyで最小限のページだけ収集するクローラーを再構築して、運用を再開する](https://redmine.u6k.me/issues/7851)
 
-## [1.6.0]
+## [1.6.0] - 2019-05-21
 
 ### Changed
 

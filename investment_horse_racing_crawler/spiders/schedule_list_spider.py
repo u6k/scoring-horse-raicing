@@ -1,4 +1,7 @@
 import scrapy
+from scrapy.loader import ItemLoader
+
+from investment_horse_racing_crawler.items import ScheduleListItem
 
 
 class ScheduleListSpider(scrapy.Spider):
@@ -9,7 +12,9 @@ class ScheduleListSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        for title in response.xpath("//title/text()"):
-            yield {
-                "title": title.get(),
-            }
+        self.logger.debug("#parse: start: url=%s" % response.url)
+
+        loader = ItemLoader(item=ScheduleListItem(), response=response)
+        loader.add_xpath("title", "//title/text()")
+
+        return loader.load_item()

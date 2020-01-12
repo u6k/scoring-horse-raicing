@@ -8,6 +8,8 @@ scrapy = "*"
 flake8 = "*"
 autopep8 = "*"
 nose = "*"
+boto3 = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"

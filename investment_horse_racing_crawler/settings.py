@@ -8,6 +8,10 @@ BOT_NAME = 'investment_horse_racing_crawler'
 SPIDER_MODULES = ['investment_horse_racing_crawler.spiders']
 NEWSPIDER_MODULE = 'investment_horse_racing_crawler.spiders'
 
+ITEM_PIPELINES = {
+    "investment_horse_racing_crawler.pipelines.PostgreSQLPipeline": 300,
+}
+
 ROBOTSTXT_OBEY = True
 
 DOWNLOAD_DELAY = 3

@@ -1,7 +1,4 @@
 import scrapy
-from scrapy.loader import ItemLoader
-
-from investment_horse_racing_crawler.items import ScheduleListItem
 
 
 class HorseRacingSpider(scrapy.Spider):

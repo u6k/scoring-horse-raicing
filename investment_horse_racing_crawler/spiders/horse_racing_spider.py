@@ -31,3 +31,18 @@ class HorseRacingSpider(scrapy.Spider):
 
     def parse_race_result(self, response):
         self.logger.debug("#parse_race_result: start: url=%s" % response.url)
+
+        for a in response.xpath("//a"):
+            if a.xpath("@href").get().startswith("/race/denma/"):
+                self.logger.debug("#parse_race_result: race denma page: href=%s" % a.xpath("@href").get())
+                yield response.follow(a, callback=self.parse_race_denma)
+
+            if a.xpath("@href").get().startswith("/odds/tfw/"):
+                self.logger.debug("#parse_race_result: odds page: href=%s" % a.xpath("@href").get())
+                yield response.follow(a, callback=self.parse_odds)
+
+    def parse_race_denma(self, response):
+        self.logger.debug("#parse_race_denma: start: url=%s" % response.url)
+
+    def parse_odds(self, response):
+        self.logger.debug("#parse_odds: start: url=%s" % response.url)

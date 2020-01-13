@@ -22,14 +22,12 @@ class HorseRacingSpider(scrapy.Spider):
             self.logger.debug("#parse: race list page: href=%s" % a.xpath("@href").get())
             yield response.follow(a, callback=self.parse_race_list)
 
-        loader = ItemLoader(item=ScheduleListItem(), response=response)
-        loader.add_xpath("title", "//title/text()")
-
-        return loader.load_item()
-
     def parse_race_list(self, response):
         self.logger.debug("#parse_race_list: start: url=%s" % response.url)
 
-        return {
-            "title": response.xpath("//title/text()").get()
-        }
+        for a in response.xpath("//table[@class='scheLs']/tbody/tr/td[@class='wsLB']/a"):
+            self.logger.debug("#parse_race_list: race result page: href=%s" % a.xpath("@href").get())
+            yield response.follow(a, callback=self.parse_race_result)
+
+    def parse_race_result(self, response):
+        self.logger.debug("#parse_race_result: start: url=%s" % response.url)

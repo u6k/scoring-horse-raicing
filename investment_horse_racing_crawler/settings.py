@@ -12,6 +12,13 @@ ITEM_PIPELINES = {
     "investment_horse_racing_crawler.pipelines.PostgreSQLPipeline": 300,
 }
 
+SPIDER_CONTRACTS = {
+    "investment_horse_racing_crawler.contracts.ScheduleListContract": 10,
+    "investment_horse_racing_crawler.contracts.RaceListContract": 10,
+    "investment_horse_racing_crawler.contracts.RaceResultContract": 10,
+    "investment_horse_racing_crawler.contracts.RaceDenmaContract": 10,
+}
+
 ROBOTSTXT_OBEY = True
 
 DOWNLOAD_DELAY = 3

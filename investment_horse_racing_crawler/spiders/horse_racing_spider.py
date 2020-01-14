@@ -3,7 +3,7 @@ import re
 import scrapy
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -133,6 +133,46 @@ class HorseRacingSpider(scrapy.Spider):
             i["favorite_order"] = int(tr.xpath("td[3]/span/text()").get()[:-3])
 
             self.logger.debug("#parse_race_result: race payoff=%s" % i)
+            yield i
+
+        # Parse race result
+        self.logger.debug("#parse_race_result: parse race result")
+
+        for tr in response.xpath("//table[@id='raceScore']/tbody/tr"):
+            i = RaceResultItem()
+            i["race_id"] = race_id
+            i["result"] = int(tr.xpath("td[1]/text()").get())
+            i["bracket_number"] = int(tr.xpath("td[2]/span/text()").get())
+            i["horse_number"] = int(tr.xpath("td[3]/text()").get())
+            i["horse_id"] = tr.xpath("td[4]/a/@href").get().split("/")[-2]
+            i["horse_name"] = tr.xpath("td[4]/a/text()").get().strip()
+
+            horse_gender_re = re.search(r"^([^\d]+)(\d+)$", tr.xpath("td[4]/span/text()").get().strip().split("/")[0])
+            i["horse_gender"] = horse_gender_re.group(1)
+            i["horse_age"] = int(horse_gender_re.group(2))
+
+            horse_weight_re = re.search(r"^(\d+)\(([\+\-]?\d+)\)$", tr.xpath("td[4]/span/text()").get().strip().split("/")[1])
+            i["horse_weight"] = int(horse_weight_re.group(1))
+            i["horse_weight_diff"] = int(horse_weight_re.group(2))
+
+            arrival_time_strs = tr.xpath("td[5]/text()").get().strip().split(".")
+            i["arrival_time"] = int(arrival_time_strs[0])*60.0+int(arrival_time_strs[1])+int(arrival_time_strs[2])*0.1
+
+            i["jockey_id"] = tr.xpath("td[7]/a/@href").get().split("/")[-2]
+            i["jockey_name"] = tr.xpath("td[7]/a/text()").get().strip()
+
+            jockey_weight_re = re.search(r"^[^\d]?([\d\.]+)$", tr.xpath("td[7]/span/text()").get().strip())
+            i["jockey_weight"] = float(jockey_weight_re.group(1))
+
+            i["favorite_order"] = int(tr.xpath("td[8]/text()").get().strip())
+
+            odds_re = re.search(r"^\(([\d\.]+)\)$", tr.xpath("td[8]/span/text()").get().strip())
+            i["odds"] = float(odds_re.group(1))
+
+            i["trainer_id"] = tr.xpath("td[9]/a/@href").get().split("/")[-2]
+            i["trainer_name"] = tr.xpath("td[9]/a/text()").get().strip()
+
+            self.logger.debug("#parse_race_result: race result=%s" % i)
             yield i
 
         # Parse link

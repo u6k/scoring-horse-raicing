@@ -7,7 +7,7 @@ from scrapy.contracts import Contract
 from scrapy.exceptions import ContractFail
 from scrapy.http import Request
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
 
 
 logger = logging.getLogger(__name__)
@@ -125,6 +125,66 @@ class RaceResultContract(Contract):
 
             if type(item["favorite_order"]) is not int:
                 raise ContractFail("favorite_order is not int")
+
+        # Check race result
+        items = [o for o in output if isinstance(o, RaceResultItem)]
+        if len(items) == 0:
+            raise ContractFail("RaceResultItem is empty")
+
+        for item in items:
+            if type(item["race_id"]) is not str or len(item["race_id"]) == 0:
+                raise ContractFail("race_id is not str or empty")
+
+            if item["result"] is not None and type(item["result"]) is not int:
+                raise ContractFail("result is not None and not int")
+
+            if type(item["bracket_number"]) is not int:
+                raise ContractFail("bracket_number is not int")
+
+            if type(item["horse_number"]) is not int:
+                raise ContractFail("horse_number is not int")
+
+            if type(item["horse_id"]) is not str or len(item["horse_id"]) == 0:
+                raise ContractFail("horse_id is not str or empty")
+
+            if type(item["horse_name"]) is not str or len(item["horse_name"]) == 0:
+                raise ContractFail("horse_name is not str or empty")
+
+            if type(item["horse_gender"]) is not str or len(item["horse_gender"]) == 0:
+                raise ContractFail("horse_gender is not str or empty")
+
+            if type(item["horse_age"]) is not int:
+                raise ContractFail("horse_age is not int")
+
+            if type(item["horse_weight"]) is not int:
+                raise ContractFail("horse_weight is not int")
+
+            if type(item["horse_weight_diff"]) is not int:
+                raise ContractFail("horse_weight_diff is not int")
+
+            if item["arrival_time"] is not None and type(item["arrival_time"]) is not float:
+                raise ContractFail("arrival_time is not None and not float")
+
+            if type(item["jockey_id"]) is not str or len(item["jockey_id"]) == 0:
+                raise ContractFail("jockey_id is not str or empty")
+
+            if type(item["jockey_name"]) is not str or len(item["jockey_name"]) == 0:
+                raise ContractFail("jockey_name is not str or empty")
+
+            if type(item["jockey_weight"]) is not float:
+                raise ContractFail("jockey_weight is not float")
+
+            if type(item["favorite_order"]) is not int:
+                raise ContractFail("favorite_order is not int")
+
+            if type(item["odds"]) is not float:
+                raise ContractFail("odds is not float")
+
+            if type(item["trainer_id"]) is not str or len(item["trainer_id"]) == 0:
+                raise ContractFail("trainer_id is not str or empty")
+
+            if type(item["trainer_name"]) is not str or len(item["trainer_name"]) == 0:
+                raise ContractFail("trainer_name is not str or empty")
 
 
 class RaceDenmaContract(Contract):

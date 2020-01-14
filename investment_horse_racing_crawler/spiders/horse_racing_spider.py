@@ -14,6 +14,7 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/schedule/list/2019/?month=12
         @returns items 0
         @returns requests 1
+        @schedule_list
         """
         self.logger.debug("#parse: start: url=%s" % response.url)
 
@@ -34,6 +35,7 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/race/list/19060502/
         @returns items 0
         @returns requests 1
+        @race_list
         """
         self.logger.debug("#parse_race_list: start: url=%s" % response.url)
 
@@ -50,6 +52,7 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/race/result/1906050201/
         @returns items 0
         @returns requests 2 2
+        @race_result
         """
         self.logger.debug("#parse_race_result: start: url=%s" % response.url)
 
@@ -70,6 +73,7 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/race/denma/1906050201/
         @returns items 0
         @returns requests 1
+        @race_denma
         """
         self.logger.debug("#parse_race_denma: start: url=%s" % response.url)
 

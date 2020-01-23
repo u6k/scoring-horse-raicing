@@ -1,6 +1,5 @@
-import datetime
-import re
 import scrapy
+from scrapy.loader import ItemLoader
 
 
 from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
@@ -64,20 +63,19 @@ class HorseRacingSpider(scrapy.Spider):
         # Parse race info
         self.logger.debug("#parse_race_result: parse race info")
 
-        i = RaceInfoItem()
+        loader = ItemLoader(item=RaceInfoItem(), response=response)
         race_id = response.url.split("/")[-2]
-        i["race_id"] = race_id
-        i["race_round"] = int(response.xpath("//td[@id='raceNo']/text()").get()[:-1])
-        i["start_datetime"] = response.xpath("//p[@id='raceTitDay']/text()").get() + response.xpath("//p[@id='raceTitDay']/text()[3]").get()
-        i["start_datetime"] = re.sub(r"^(\d+)年(\d+)月(\d+)日.+?(\d+):(\d+)発走$", r"\1-\2-\3 \4:\5", i["start_datetime"])
-        i["start_datetime"] = datetime.datetime.strptime(i["start_datetime"], "%Y-%m-%d %H:%M")
-        i["place_name"] = response.xpath("//p[@id='raceTitDay']/text()[2]").get().strip()
-        i["race_name"] = response.xpath("//div[@id='raceTitName']/h1/text()").get().strip()
-        i["course_type"] = response.xpath("//p[@id='raceTitMeta']/text()").get().strip()
-        i["course_length"] = response.xpath("//p[@id='raceTitMeta']/text()").get().strip()
-        i["weather"] = response.xpath("//p[@id='raceTitMeta']/img[1]/@alt").get()
-        i["course_condition"] = response.xpath("//p[@id='raceTitMeta']/img[2]/@alt").get().strip()
-        i["added_money"] = response.xpath("//p[@id='raceTitMeta']/text()[8]").get().strip()
+        loader.add_value("race_id", race_id)
+        loader.add_xpath("race_round", "//td[@id='raceNo']/text()")
+        loader.add_xpath("start_date", "//p[@id='raceTitDay']/text()[1]")
+        loader.add_xpath("start_time", "//p[@id='raceTitDay']/text()[3]")
+        loader.add_xpath("place_name", "//p[@id='raceTitDay']/text()[2]")
+        loader.add_xpath("race_name", "//div[@id='raceTitName']/h1/text()")
+        loader.add_xpath("course_type_length", "//p[@id='raceTitMeta']/text()[1]")
+        loader.add_xpath("weather", "//p[@id='raceTitMeta']/img[1]/@alt")
+        loader.add_xpath("course_condition", "//p[@id='raceTitMeta']/img[2]/@alt")
+        loader.add_xpath("added_money", "//p[@id='raceTitMeta']/text()[8]")
+        i = loader.load_item()
 
         self.logger.debug("#parse_race_result: race info=%s" % i)
         yield i
@@ -87,50 +85,17 @@ class HorseRacingSpider(scrapy.Spider):
 
         payoff_type = None
         for tr in response.xpath("//table[contains(@class, 'resultYen')]/tr"):
-            i = RacePayoffItem()
-            i["race_id"] = race_id
-
             payoff_type_str = tr.xpath("th/text()").get()
-            if payoff_type_str == "単勝":
-                payoff_type = "win"
-            elif payoff_type_str == "複勝":
-                payoff_type = "place"
-            elif payoff_type_str == "枠連":
-                payoff_type = "bracket_quinella"
-            elif payoff_type_str == "馬連":
-                payoff_type = "quinella"
-            elif payoff_type_str == "ワイド":
-                payoff_type = "quinella_place"
-            elif payoff_type_str == "馬単":
-                payoff_type = "exacta"
-            elif payoff_type_str == "3連複":
-                payoff_type = "trio"
-            elif payoff_type_str == "3連単":
-                payoff_type = "trifecta"
-            elif payoff_type_str is None:
-                pass
-            else:
-                raise RuntimeError("Unknown payoff type str: %s" % payoff_type_str)
-            i["payoff_type"] = payoff_type
+            if payoff_type_str is not None:
+                payoff_type = payoff_type_str
 
-            horse_number_strs = tr.xpath("td[1]/text()").get().split("－")
-            if len(horse_number_strs) == 1:
-                i["horse_number_1"] = int(horse_number_strs[0])
-                i["horse_number_2"] = None
-                i["horse_number_3"] = None
-            elif len(horse_number_strs) == 2:
-                i["horse_number_1"] = int(horse_number_strs[0])
-                i["horse_number_2"] = int(horse_number_strs[1])
-                i["horse_number_3"] = None
-            elif len(horse_number_strs) == 3:
-                i["horse_number_1"] = int(horse_number_strs[0])
-                i["horse_number_2"] = int(horse_number_strs[1])
-                i["horse_number_3"] = int(horse_number_strs[2])
-            else:
-                raise RuntimeError("Unknown horse number str: %s" % horse_number_strs)
-
-            i["odds"] = int(tr.xpath("td[2]/text()").get().replace(",", "")[:-1]) / 100.0
-            i["favorite_order"] = int(tr.xpath("td[3]/span/text()").get()[:-3])
+            loader = ItemLoader(item=RacePayoffItem(), selector=tr)
+            loader.add_value("race_id", race_id)
+            loader.add_value("payoff_type", payoff_type)
+            loader.add_xpath("horse_number", "td[1]/text()")
+            loader.add_xpath("odds", "td[2]/text()")
+            loader.add_xpath("favorite_order", "td[3]/span/text()")
+            i = loader.load_item()
 
             self.logger.debug("#parse_race_result: race payoff=%s" % i)
             yield i
@@ -139,38 +104,24 @@ class HorseRacingSpider(scrapy.Spider):
         self.logger.debug("#parse_race_result: parse race result")
 
         for tr in response.xpath("//table[@id='raceScore']/tbody/tr"):
-            i = RaceResultItem()
-            i["race_id"] = race_id
-            i["result"] = int(tr.xpath("td[1]/text()").get())
-            i["bracket_number"] = int(tr.xpath("td[2]/span/text()").get())
-            i["horse_number"] = int(tr.xpath("td[3]/text()").get())
-            i["horse_id"] = tr.xpath("td[4]/a/@href").get().split("/")[-2]
-            i["horse_name"] = tr.xpath("td[4]/a/text()").get().strip()
-
-            horse_gender_re = re.search(r"^([^\d]+)(\d+)$", tr.xpath("td[4]/span/text()").get().strip().split("/")[0])
-            i["horse_gender"] = horse_gender_re.group(1)
-            i["horse_age"] = int(horse_gender_re.group(2))
-
-            horse_weight_re = re.search(r"^(\d+)\(([\+\-]?\d+)\)$", tr.xpath("td[4]/span/text()").get().strip().split("/")[1])
-            i["horse_weight"] = int(horse_weight_re.group(1))
-            i["horse_weight_diff"] = int(horse_weight_re.group(2))
-
-            arrival_time_strs = tr.xpath("td[5]/text()").get().strip().split(".")
-            i["arrival_time"] = int(arrival_time_strs[0])*60.0+int(arrival_time_strs[1])+int(arrival_time_strs[2])*0.1
-
-            i["jockey_id"] = tr.xpath("td[7]/a/@href").get().split("/")[-2]
-            i["jockey_name"] = tr.xpath("td[7]/a/text()").get().strip()
-
-            jockey_weight_re = re.search(r"^[^\d]?([\d\.]+)$", tr.xpath("td[7]/span/text()").get().strip())
-            i["jockey_weight"] = float(jockey_weight_re.group(1))
-
-            i["favorite_order"] = int(tr.xpath("td[8]/text()").get().strip())
-
-            odds_re = re.search(r"^\(([\d\.]+)\)$", tr.xpath("td[8]/span/text()").get().strip())
-            i["odds"] = float(odds_re.group(1))
-
-            i["trainer_id"] = tr.xpath("td[9]/a/@href").get().split("/")[-2]
-            i["trainer_name"] = tr.xpath("td[9]/a/text()").get().strip()
+            loader = ItemLoader(item=RaceResultItem(), selector=tr)
+            loader.add_value("race_id", race_id)
+            loader.add_xpath("result", "td[1]/text()")
+            loader.add_xpath("bracket_number", "td[2]/span/text()")
+            loader.add_xpath("horse_number", "td[3]/text()")
+            loader.add_xpath("horse_id", "td[4]/a/@href")
+            loader.add_xpath("horse_name", "td[4]/a/text()")
+            loader.add_xpath("horse_gender_age", "td[4]/span/text()")
+            loader.add_xpath("horse_weight_and_diff", "td[4]/span/text()")
+            loader.add_xpath("arrival_time", "td[5]/text()[1]")
+            loader.add_xpath("jockey_id", "td[7]/a/@href")
+            loader.add_xpath("jockey_name", "td[7]/a/text()")
+            loader.add_xpath("jockey_weight", "td[7]/span/text()")
+            loader.add_xpath("favorite_order", "td[8]/text()[1]")
+            loader.add_xpath("odds", "td[8]/span/text()")
+            loader.add_xpath("trainer_id", "td[9]/a/@href")
+            loader.add_xpath("trainer_name", "td[9]/a/text()")
+            i = loader.load_item()
 
             self.logger.debug("#parse_race_result: race result=%s" % i)
             yield i

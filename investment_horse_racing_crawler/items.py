@@ -7,11 +7,11 @@ from scrapy import Item, Field
 class RaceInfoItem(Item):
     race_id = Field()
     race_round = Field()
-    start_datetime = Field()
+    start_date = Field()
+    start_time = Field()
     place_name = Field()
     race_name = Field()
-    course_type = Field()
-    course_length = Field()
+    course_type_length = Field()
     weather = Field()
     course_condition = Field()
     added_money = Field()
@@ -19,23 +19,9 @@ class RaceInfoItem(Item):
 
 class RacePayoffItem(Item):
     race_id = Field()
-
-    # win
-    # place
-    # bracket_quinella
-    # quinella
-    # quinella_place
-    # exacta
-    # trio
-    # trifecta
     payoff_type = Field()
-
-    horse_number_1 = Field()
-    horse_number_2 = Field()
-    horse_number_3 = Field()
-
+    horse_number = Field()
     odds = Field()
-
     favorite_order = Field()
 
 
@@ -46,10 +32,8 @@ class RaceResultItem(Item):
     horse_number = Field()
     horse_id = Field()
     horse_name = Field()
-    horse_gender = Field()
-    horse_age = Field()
-    horse_weight = Field()
-    horse_weight_diff = Field()
+    horse_gender_age = Field()
+    horse_weight_and_diff = Field()
     arrival_time = Field()
     jockey_id = Field()
     jockey_name = Field()

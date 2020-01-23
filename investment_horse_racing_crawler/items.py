@@ -54,3 +54,12 @@ class HorseItem(Item):
     owner = Field()
     breeder = Field()
     breeding_farm = Field()
+
+
+class TrainerItem(Item):
+    trainer_id = Field()
+    name_kana = Field()
+    name = Field()
+    birthday = Field()
+    belong_to = Field()
+    first_licensing_year = Field()

@@ -6,7 +6,7 @@ from scrapy.contracts import Contract
 from scrapy.exceptions import ContractFail
 from scrapy.http import Request
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem
 
 
 logger = logging.getLogger(__name__)
@@ -120,3 +120,16 @@ class HorseContract(Contract):
 
         if not isinstance(output[0], HorseItem):
             raise ContractFail("output is not HorseItem")
+
+
+class TrainerContract(Contract):
+    name = "trainer"
+
+    def post_process(self, output):
+        logger.debug("TrainerContract#post_process: start")
+
+        if len(output) != 1:
+            raise ContractFail("output is not single")
+
+        if not isinstance(output[0], TrainerItem):
+            raise ContractFail("output is not TrainerItem")

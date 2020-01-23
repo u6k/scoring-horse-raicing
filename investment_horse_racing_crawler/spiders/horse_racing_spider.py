@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -199,6 +199,20 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         """
         self.logger.debug("#parse_trainer: start: url=%s" % response.url)
+
+        trainer_id = response.url.split("/")[-2]
+
+        loader = ItemLoader(item=TrainerItem(), response=response)
+        loader.add_value("trainer_id", trainer_id)
+        loader.add_xpath("name_kana", "//div[@id='dirTitName']/p/text()[1]")
+        loader.add_xpath("name", "//div[@id='dirTitName']/h1/text()")
+        loader.add_xpath("birthday", "//div[@id='dirTitName']/ul/li[1]/text()")
+        loader.add_xpath("belong_to", "//div[@id='dirTitName']/ul/li[2]/text()")
+        loader.add_xpath("first_licensing_year", "//div[@id='dirTitName']/ul/li[3]/text()")
+        i = loader.load_item()
+
+        self.logger.debug("#parse_trainer: trainer=%s" % i)
+        yield i
 
     def parse_jockey(self, response):
         """ Parse jockey page.

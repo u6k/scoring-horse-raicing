@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -197,6 +197,7 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/directory/trainer/01012/
         @returns items 0
         @returns requests 0 0
+        @trainer
         """
         self.logger.debug("#parse_trainer: start: url=%s" % response.url)
 
@@ -220,8 +221,23 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/directory/jocky/01167/
         @returns items 0
         @returns requests 0 0
+        @jockey
         """
         self.logger.debug("#parse_jockey: start: url=%s" % response.url)
+
+        jockey_id = response.url.split("/")[-2]
+
+        loader = ItemLoader(item=JockeyItem(), response=response)
+        loader.add_value("jockey_id", jockey_id)
+        loader.add_xpath("name_kana", "//div[@id='dirTitName']/p/text()[1]")
+        loader.add_xpath("name", "//div[@id='dirTitName']/h1/text()")
+        loader.add_xpath("birthday", "//div[@id='dirTitName']/ul/li[1]/text()")
+        loader.add_xpath("belong_to", "//div[@id='dirTitName']/ul/li[2]/text()")
+        loader.add_xpath("first_licensing_year", "//div[@id='dirTitName']/ul/li[3]/text()")
+        i = loader.load_item()
+
+        self.logger.debug("#parse_jockey: jockey=%s" % i)
+        yield i
 
     def parse_odds(self, response):
         """ Parse odds page.

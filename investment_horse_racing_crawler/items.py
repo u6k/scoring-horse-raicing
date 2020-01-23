@@ -63,3 +63,12 @@ class TrainerItem(Item):
     birthday = Field()
     belong_to = Field()
     first_licensing_year = Field()
+
+
+class JockeyItem(Item):
+    jockey_id = Field()
+    name_kana = Field()
+    name = Field()
+    birthday = Field()
+    belong_to = Field()
+    first_licensing_year = Field()

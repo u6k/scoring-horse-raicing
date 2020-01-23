@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -169,10 +169,27 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse horse page.
 
         @url https://keiba.yahoo.co.jp/directory/horse/2017101602/
-        @returns items 0
+        @returns items 1 1
         @returns requests 0 0
+        @horse
         """
         self.logger.debug("#parse_horse: start: url=%s" % response.url)
+
+        horse_id = response.url.split("/")[-2]
+
+        loader = ItemLoader(item=HorseItem(), response=response)
+        loader.add_value("horse_id", horse_id)
+        loader.add_xpath("name", "//div[@id='dirTitName']/p/text()[1]")
+        loader.add_xpath("birthday", "//div[@id='dirTitName']/ul/li[1]/text()")
+        loader.add_xpath("coat_color", "//div[@id='dirTitName']/ul/li[2]/text()")
+        loader.add_xpath("trainer_id", "//div[@id='dirTitName']/ul/li[3]/a/@href")
+        loader.add_xpath("owner", "//div[@id='dirTitName']/ul/li[4]/text()")
+        loader.add_xpath("breeder", "//div[@id='dirTitName']/ul/li[5]/text()")
+        loader.add_xpath("breeding_farm", "//div[@id='dirTitName']/ul/li[6]/text()")
+        i = loader.load_item()
+
+        self.logger.debug("#parse_horse: horse=%s" % i)
+        yield i
 
     def parse_trainer(self, response):
         """ Parse trainer page.

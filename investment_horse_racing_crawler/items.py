@@ -42,3 +42,15 @@ class RaceResultItem(Item):
     odds = Field()
     trainer_id = Field()
     trainer_name = Field()
+
+
+class HorseItem(Item):
+    horse_id = Field()
+    gender = Field()
+    name = Field()
+    birthday = Field()
+    coat_color = Field()
+    trainer_id = Field()
+    owner = Field()
+    breeder = Field()
+    breeding_farm = Field()

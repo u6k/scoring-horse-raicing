@@ -6,7 +6,7 @@ from scrapy.contracts import Contract
 from scrapy.exceptions import ContractFail
 from scrapy.http import Request
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
 
 
 logger = logging.getLogger(__name__)
@@ -107,3 +107,16 @@ class RaceDenmaContract(Contract):
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
+
+
+class HorseContract(Contract):
+    name = "horse"
+
+    def post_process(self, output):
+        logger.debug("HorseContract#post_process: start")
+
+        if len(output) != 1:
+            raise ContractFail("output is not single")
+
+        if not isinstance(output[0], HorseItem):
+            raise ContractFail("output is not HorseItem")

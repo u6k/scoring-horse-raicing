@@ -66,7 +66,7 @@ class PostgreSQLPipeline(object):
         elif isinstance(item, RacePayoffItem):
             new_item = self.process_race_payoff_item(item, spider)
         elif isinstance(item, RaceResultItem):
-            logger.debug("#process_item: RaceResultItem")
+            new_item = self.process_race_result_item(item, spider)
         elif isinstance(item, HorseItem):
             logger.debug("#process_item: HorseItem")
         elif isinstance(item, TrainerItem):
@@ -143,5 +143,59 @@ class PostgreSQLPipeline(object):
         i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
 
         i["favorite_order"] = int(item["favorite_order"][0].replace("番人気", ""))
+
+        return i
+
+    def process_race_result_item(self, item, spider):
+        logger.debug("#process_race_result_item: start: item=%s" % item)
+
+        i = {}
+
+        i["race_id"] = item["race_id"][0]
+
+        i["result"] = int(item["result"][0].strip())
+
+        i["bracket_number"] = int(item["bracket_number"][0].strip())
+
+        i["horse_number"] = int(item["horse_number"][0].strip())
+
+        i["horse_id"] = item["horse_id"][0].split("/")[-2]
+
+        i["horse_name"] = item["horse_name"][0].strip()
+
+        horse_gender_age_reg = re.match("^([^0-9]+)([0-9]+)$", item["horse_gender_age"][0].strip().split("/")[0])
+        if horse_gender_age_reg:
+            i["horse_gender"] = horse_gender_age_reg.group(1)
+            i["horse_age"] = int(horse_gender_age_reg.group(2))
+        else:
+            raise DropItem("Unknown horse_gender_age")
+
+        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip().split("/")[1])
+        if horse_weight_and_diff_reg:
+            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
+            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+        else:
+            raise DropItem("Unknown horse_weight_and_diff")
+
+        arrival_time_parts = item["arrival_time"][0].strip().split(".")
+        i["arrival_time"] = int(arrival_time_parts[0])*60.0+int(arrival_time_parts[1])+int(arrival_time_parts[2])*0.1
+
+        i["jockey_id"] = item["jockey_id"][0].split("/")[-2]
+
+        i["jockey_name"] = item["jockey_name"][0].strip()
+
+        i["jockey_weight"] = float(item["jockey_weight"][0].strip())
+
+        i["favorite_order"] = int(item["favorite_order"][0].strip())
+
+        odds_reg = re.match("^\\(([\\.0-9]+)\\)$", item["odds"][0].strip())
+        if odds_reg:
+            i["odds"] = float(odds_reg.group(1))
+        else:
+            raise DropItem("Unknown odds pattern")
+
+        i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+
+        i["trainer_name"] = item["trainer_name"][0].strip()
 
         return i

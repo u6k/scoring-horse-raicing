@@ -6,7 +6,7 @@ from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem
 
 from investment_horse_racing_crawler.spiders.horse_racing_spider import HorseRacingSpider
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
 from investment_horse_racing_crawler.pipelines import PostgreSQLPipeline
 
 
@@ -94,3 +94,43 @@ class TestPostgreSQLPipeline:
         item["favorite_order"] = ['9番人気']
 
         self.pipeline.process_item(item, None)
+
+    def test_process_race_result_item(self):
+        item = RaceResultItem()
+        item["race_id"] = ['2010010212']
+        item["result"] = ['\n1  ']
+        item["bracket_number"] = ['3']
+        item["horse_number"] = ['\n4  ']
+        item["horse_id"] = ['/directory/horse/2015104408/']
+        item["horse_name"] = ['ワセダインブルー']
+        item["horse_gender_age"] = ['\n牡5/442(-6)/    ']
+        item["horse_weight_and_diff"] = ['\n牡5/442(-6)/    ']
+        item["arrival_time"] = ['\n2.43.6']
+        item["jockey_id"] = ['/directory/jocky/01143/']
+        item["jockey_name"] = ['原田 和真']
+        item["jockey_weight"] = ['57.0']
+        item["favorite_order"] = ['\n7    ']
+        item["odds"] = ['(13.6)']
+        item["trainer_id"] = ['/directory/trainer/01132/']
+        item["trainer_name"] = ['金成 貴史']
+
+        new_item = self.pipeline.process_item(item, None)
+
+        assert new_item["race_id"] == "2010010212"
+        assert new_item["result"] == 1
+        assert new_item["bracket_number"] == 3
+        assert new_item["horse_number"] == 4
+        assert new_item["horse_id"] == "2015104408"
+        assert new_item["horse_name"] == "ワセダインブルー"
+        assert new_item["horse_gender"] == "牡"
+        assert new_item["horse_age"] == 5
+        assert new_item["horse_weight"] == 442.0
+        assert new_item["horse_weight_diff"] == -6.0
+        assert new_item["arrival_time"] == 163.6
+        assert new_item["jockey_id"] == "01143"
+        assert new_item["jockey_name"] == "原田 和真"
+        assert new_item["jockey_weight"] == 57.0
+        assert new_item["favorite_order"] == 7
+        assert new_item["odds"] == 13.6
+        assert new_item["trainer_id"] == "01132"
+        assert new_item["trainer_name"] == "金成 貴史"

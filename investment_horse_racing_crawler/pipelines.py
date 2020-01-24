@@ -64,7 +64,7 @@ class PostgreSQLPipeline(object):
         if isinstance(item, RaceInfoItem):
             new_item = self.process_race_info_item(item, spider)
         elif isinstance(item, RacePayoffItem):
-            logger.debug("#process_item: RacePayoffItem")
+            new_item = self.process_race_payoff_item(item, spider)
         elif isinstance(item, RaceResultItem):
             logger.debug("#process_item: RaceResultItem")
         elif isinstance(item, HorseItem):
@@ -121,5 +121,27 @@ class PostgreSQLPipeline(object):
         i["course_condition"] = item["course_condition"][0].strip()
 
         i["added_money"] = item["added_money"][0].strip()
+
+        return i
+
+    def process_race_payoff_item(self, item, spider):
+        logger.debug("#process_race_payoff_item: start: item=%s" % item)
+
+        i = {}
+
+        i["race_id"] = item["race_id"][0]
+
+        if item["payoff_type"][0] == "単勝":
+            i["payoff_type"] = "win"
+        elif item["payoff_type"][0] == "複勝":
+            i["payoff_type"] = "place"
+        else:
+            raise DropItem("Unknown payoff_type")
+
+        i["horse_number"] = int(item["horse_number"][0])
+
+        i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
+
+        i["favorite_order"] = int(item["favorite_order"][0].replace("番人気", ""))
 
         return i

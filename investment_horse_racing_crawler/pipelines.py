@@ -68,7 +68,7 @@ class PostgreSQLPipeline(object):
         elif isinstance(item, RaceResultItem):
             new_item = self.process_race_result_item(item, spider)
         elif isinstance(item, HorseItem):
-            logger.debug("#process_item: HorseItem")
+            new_item = self.process_horse_item(item, spider)
         elif isinstance(item, TrainerItem):
             logger.debug("#process_item: TrainerItem")
         elif isinstance(item, JockeyItem):
@@ -197,5 +197,34 @@ class PostgreSQLPipeline(object):
         i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
 
         i["trainer_name"] = item["trainer_name"][0].strip()
+
+        return i
+
+    def process_horse_item(self, item, spider):
+        logger.debug("#process_horse_item: start: item=%s" % item)
+
+        i = {}
+
+        i["horse_id"] = item["horse_id"][0]
+
+        i["gender"] = item["gender"][0].strip()
+
+        i["name"] = item["name"][0].strip()
+
+        birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
+        if birthday_reg:
+            i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+        else:
+            raise DropItem("Unknown birthday pattern")
+
+        i["coat_color"] = item["coat_color"][0].strip()
+
+        i["trainer_id"] = item["trainer_id"][0].strip().split("/")[-2]
+
+        i["owner"] = item["owner"][0].strip()
+
+        i["breeder"] = item["breeder"][0].strip()
+
+        i["breeding_farm"] = item["breeding_farm"][0].strip()
 
         return i

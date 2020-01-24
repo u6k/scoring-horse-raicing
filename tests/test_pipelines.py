@@ -6,7 +6,7 @@ from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem
 
 from investment_horse_racing_crawler.spiders.horse_racing_spider import HorseRacingSpider
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
 from investment_horse_racing_crawler.pipelines import PostgreSQLPipeline
 
 
@@ -174,3 +174,27 @@ class TestPostgreSQLPipeline:
         assert new_item["odds"] == 6.9
         assert new_item["trainer_id"] == "01082"
         assert new_item["trainer_name"] == "平田 修"
+
+    def test_process_horse_item(self):
+        item = HorseItem()
+        item["horse_id"] = ['2017101602']
+        item["gender"] = [' 牡 ']
+        item["name"] = ['エリンクロノス']
+        item["birthday"] = ['2017年3月31日']
+        item["coat_color"] = ['栗毛']
+        item["trainer_id"] = ['/directory/trainer/01012/']
+        item["owner"] = ['田頭 勇貴']
+        item["breeder"] = ['大栄牧場']
+        item["breeding_farm"] = ['新冠町']
+
+        new_item = self.pipeline.process_item(item, None)
+
+        assert new_item["horse_id"] == "2017101602"
+        assert new_item["gender"] == "牡"
+        assert new_item["name"] == "エリンクロノス"
+        assert new_item["birthday"] == datetime(2017, 3, 31, 0, 0, 0)
+        assert new_item["coat_color"] == "栗毛"
+        assert new_item["trainer_id"] == "01012"
+        assert new_item["owner"] == "田頭 勇貴"
+        assert new_item["breeder"] == "大栄牧場"
+        assert new_item["breeding_farm"] == "新冠町"

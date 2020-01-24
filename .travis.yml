@@ -8,7 +8,9 @@ addons:
 
 script:
   - docker-compose build
-  - docker-compose run app
+  - docker-compose run app pipenv run lint
+  - docker-compose run app pipenv run migrate
+  - docker-compose run app pipenv run test
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:

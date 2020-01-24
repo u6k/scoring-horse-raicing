@@ -70,7 +70,7 @@ class PostgreSQLPipeline(object):
         elif isinstance(item, HorseItem):
             new_item = self.process_horse_item(item, spider)
         elif isinstance(item, TrainerItem):
-            logger.debug("#process_item: TrainerItem")
+            new_item = self.process_trainer_item(item, spider)
         elif isinstance(item, JockeyItem):
             logger.debug("#process_item: JockeyItem")
         elif isinstance(item, OddsWinPlaceItem):
@@ -226,5 +226,32 @@ class PostgreSQLPipeline(object):
         i["breeder"] = item["breeder"][0].strip()
 
         i["breeding_farm"] = item["breeding_farm"][0].strip()
+
+        return i
+
+    def process_trainer_item(self, item, spider):
+        logger.debug("#process_trainer_item: start: item=%s" % item)
+
+        i = {}
+
+        i["trainer_id"] = item["trainer_id"][0]
+
+        i["name_kana"] = item["name_kana"][0].strip()
+
+        i["name"] = item["name"][0].strip()
+
+        birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
+        if birthday_reg:
+            i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+        else:
+            raise DropItem("Unknown birthday pattern")
+
+        i["belong_to"] = item["belong_to"][0].strip()
+
+        first_licensing_year_reg = re.match("^([0-9]+)年$", item["first_licensing_year"][0].strip())
+        if first_licensing_year_reg:
+            i["first_licensing_year"] = int(first_licensing_year_reg.group(1))
+        else:
+            raise DropItem("Unknown first_licensing_year pattern")
 
         return i

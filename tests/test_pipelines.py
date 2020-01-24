@@ -6,7 +6,7 @@ from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem
 
 from investment_horse_racing_crawler.spiders.horse_racing_spider import HorseRacingSpider
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem
 from investment_horse_racing_crawler.pipelines import PostgreSQLPipeline
 
 
@@ -198,3 +198,21 @@ class TestPostgreSQLPipeline:
         assert new_item["owner"] == "田頭 勇貴"
         assert new_item["breeder"] == "大栄牧場"
         assert new_item["breeding_farm"] == "新冠町"
+
+    def test_process_trainer_item(self):
+        item = TrainerItem()
+        item["trainer_id"] = ['01012']
+        item["name_kana"] = ['オオエハラ サトシ ']
+        item["name"] = ['大江原 哲']
+        item["birthday"] = ['1953年2月13日']
+        item["belong_to"] = ['\n美浦']
+        item["first_licensing_year"] = ['1996年']
+
+        new_item = self.pipeline.process_item(item, None)
+
+        assert new_item["trainer_id"] == "01012"
+        assert new_item["name_kana"] == "オオエハラ サトシ"
+        assert new_item["name"] == "大江原 哲"
+        assert new_item["birthday"] == datetime(1953, 2, 13, 0, 0, 0)
+        assert new_item["belong_to"] == "美浦"
+        assert new_item["first_licensing_year"] == 1996

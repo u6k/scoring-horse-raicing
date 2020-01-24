@@ -95,7 +95,7 @@ class TestPostgreSQLPipeline:
 
         self.pipeline.process_item(item, None)
 
-    def test_process_race_result_item(self):
+    def test_process_race_result_item_1(self):
         item = RaceResultItem()
         item["race_id"] = ['2010010212']
         item["result"] = ['\n1  ']
@@ -134,3 +134,43 @@ class TestPostgreSQLPipeline:
         assert new_item["odds"] == 13.6
         assert new_item["trainer_id"] == "01132"
         assert new_item["trainer_name"] == "金成 貴史"
+
+    def test_process_race_result_item_2(self):
+        item = RaceResultItem()
+        item["race_id"] = ['2010010212']
+        item["result"] = ['\n4  ']
+        item["bracket_number"] = ['8']
+        item["horse_number"] = ['\n13  ']
+        item["horse_id"] = ['/directory/horse/2015106286/']
+        item["horse_name"] = ['サダムラピュタ']
+        item["horse_gender_age"] = ['\nせん5/478(+10)/B    ']
+        item["horse_weight_and_diff"] = ['\nせん5/478(+10)/B    ']
+        item["arrival_time"] = ['\n2.44.9']
+        item["jockey_id"] = ['/directory/jocky/01154/']
+        item["jockey_name"] = ['松若 風馬']
+        item["jockey_weight"] = ['57.0']
+        item["favorite_order"] = ['\n3    ']
+        item["odds"] = ['(6.9)']
+        item["trainer_id"] = ['/directory/trainer/01082/']
+        item["trainer_name"] = ['平田 修']
+
+        new_item = self.pipeline.process_item(item, None)
+
+        assert new_item["race_id"] == "2010010212"
+        assert new_item["result"] == 4
+        assert new_item["bracket_number"] == 8
+        assert new_item["horse_number"] == 13
+        assert new_item["horse_id"] == "2015106286"
+        assert new_item["horse_name"] == 'サダムラピュタ'
+        assert new_item["horse_gender"] == "せん"
+        assert new_item["horse_age"] == 5
+        assert new_item["horse_weight"] == 478.0
+        assert new_item["horse_weight_diff"] == 10.0
+        assert new_item["arrival_time"] == 164.9
+        assert new_item["jockey_id"] == "01154"
+        assert new_item["jockey_name"] == "松若 風馬"
+        assert new_item["jockey_weight"] == 57.0
+        assert new_item["favorite_order"] == 3
+        assert new_item["odds"] == 6.9
+        assert new_item["trainer_id"] == "01082"
+        assert new_item["trainer_name"] == "平田 修"

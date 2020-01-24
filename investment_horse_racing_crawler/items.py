@@ -72,3 +72,12 @@ class JockeyItem(Item):
     birthday = Field()
     belong_to = Field()
     first_licensing_year = Field()
+
+
+class OddsWinPlaceItem(Item):
+    race_id = Field()
+    horse_number = Field()
+    horse_id = Field()
+    odds_win = Field()
+    odds_place_min = Field()
+    odds_place_max = Field()

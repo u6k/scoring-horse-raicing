@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -245,5 +245,25 @@ class HorseRacingSpider(scrapy.Spider):
         @url https://keiba.yahoo.co.jp/odds/tfw/1906050201/
         @returns items 0
         @returns requests 0 0
+        @odds_win_place
         """
         self.logger.debug("#parse_odds: start: url=%s" % response.url)
+
+        race_id = response.url.split("/")[-2]
+
+        for tr in response.xpath("//table[@class='dataLs oddTkwLs']/tbody/tr"):
+            if len(tr.xpath("th")) > 0:
+                continue
+
+            loader = ItemLoader(item=OddsWinPlaceItem(), selector=tr)
+            loader.add_value("race_id", race_id)
+            loader.add_xpath("horse_number", "td[2]/text()")
+            loader.add_xpath("horse_id", "td[3]/a/@href")
+            loader.add_xpath("odds_win", "td[4]/text()")
+            loader.add_xpath("odds_place_min", "td[5]/text()")
+            loader.add_xpath("odds_place_max", "td[7]/text()")
+
+            i = loader.load_item()
+
+            self.logger.debug("#parse_odds: odds=%s" % i)
+            yield i

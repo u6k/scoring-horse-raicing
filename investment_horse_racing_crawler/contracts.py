@@ -6,7 +6,7 @@ from scrapy.contracts import Contract
 from scrapy.exceptions import ContractFail
 from scrapy.http import Request
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 
 
 logger = logging.getLogger(__name__)
@@ -146,3 +146,17 @@ class JockeyContract(Contract):
 
         if not isinstance(output[0], JockeyItem):
             raise ContractFail("output is not JockeyItem")
+
+
+class OddsWinPlaceContract(Contract):
+    name = "odds_win_place"
+
+    def post_process(self, output):
+        logger.debug("OddsWinPlaceContract#post_process: start")
+
+        if len(output) < 1:
+            raise ContractFail("Empty odds")
+
+        for request in output:
+            if not isinstance(request, OddsWinPlaceItem):
+                raise ContractFail("request is not OddsWinPlaceItem")

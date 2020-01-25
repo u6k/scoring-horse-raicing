@@ -1,5 +1,1 @@
 VERSION = '2.4.0-develop'
-
-
-def hello():
-    return "hello"

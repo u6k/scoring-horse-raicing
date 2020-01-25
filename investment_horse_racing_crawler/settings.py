@@ -17,6 +17,10 @@ SPIDER_CONTRACTS = {
     "investment_horse_racing_crawler.contracts.RaceListContract": 10,
     "investment_horse_racing_crawler.contracts.RaceResultContract": 10,
     "investment_horse_racing_crawler.contracts.RaceDenmaContract": 10,
+    "investment_horse_racing_crawler.contracts.HorseContract": 10,
+    "investment_horse_racing_crawler.contracts.TrainerContract": 10,
+    "investment_horse_racing_crawler.contracts.JockeyContract": 10,
+    "investment_horse_racing_crawler.contracts.OddsWinPlaceContract": 10,
 }
 
 ROBOTSTXT_OBEY = True

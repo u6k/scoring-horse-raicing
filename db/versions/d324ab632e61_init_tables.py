@@ -25,7 +25,7 @@ def upgrade():
         sa.Column("place_name", sa.String(255), nullable=False),
         sa.Column("race_name", sa.String(255), nullable=False),
         sa.Column("course_type", sa.String(255), nullable=False),
-        sa.Column("course_length", sa.String(255), nullable=False),
+        sa.Column("course_length", sa.Integer, nullable=False),
         sa.Column("weather", sa.String(255), nullable=False),
         sa.Column("course_condition", sa.String(255), nullable=False),
         sa.Column("added_money", sa.String(255), nullable=False),

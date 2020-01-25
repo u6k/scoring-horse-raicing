@@ -12,6 +12,7 @@ from investment_horse_racing_crawler.pipelines import PostgreSQLPipeline
 
 class TestPostgreSQLPipeline:
     def setup(self):
+        # Setting pipeline
         settings = {
             "DB_HOST": os.getenv("DB_HOST"),
             "DB_PORT": os.getenv("DB_PORT"),
@@ -23,10 +24,14 @@ class TestPostgreSQLPipeline:
         self.pipeline = PostgreSQLPipeline.from_crawler(crawler)
         self.pipeline.open_spider(None)
 
+        # Setting db
+        self.pipeline.db_cursor.execute("delete from race_info")
+
     def teardown(self):
         self.pipeline.close_spider(None)
 
     def test_process_race_info_item(self):
+        # Setup
         item = RaceInfoItem()
         item["race_id"] = ['2010010212']
         item["race_round"] = ['12R']
@@ -39,8 +44,14 @@ class TestPostgreSQLPipeline:
         item["course_condition"] = ['重']
         item["added_money"] = [' 本賞金：1060、420、270、160、106万円 ']
 
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_info")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
         new_item = self.pipeline.process_item(item, None)
 
+        # Check return
         assert new_item["race_id"] == "2010010212"
         assert new_item["race_round"] == 12
         assert new_item["start_datetime"] == datetime(2020, 1, 19, 16, 1, 0)
@@ -51,6 +62,24 @@ class TestPostgreSQLPipeline:
         assert new_item["weather"] == "曇"
         assert new_item["course_condition"] == "重"
         assert new_item["added_money"] == "本賞金：1060、420、270、160、106万円"
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_info")
+
+        race_infos = self.pipeline.db_cursor.fetchall()
+        assert len(race_infos) == 1
+
+        race_info = race_infos[0]
+        assert race_info["race_id"] == "2010010212"
+        assert race_info["race_round"] == 12
+        assert race_info["start_datetime"] == datetime(2020, 1, 19, 16, 1, 0)
+        assert race_info["place_name"] == "1回小倉2日"
+        assert race_info["race_name"] == "呼子特別"
+        assert race_info["course_type"] == "芝・右"
+        assert race_info["course_length"] == 2600
+        assert race_info["weather"] == "曇"
+        assert race_info["course_condition"] == "重"
+        assert race_info["added_money"] == "本賞金：1060、420、270、160、106万円"
 
     def test_process_race_payoff_item_1(self):
         item = RacePayoffItem()

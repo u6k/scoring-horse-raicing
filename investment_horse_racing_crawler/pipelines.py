@@ -4,6 +4,7 @@
 from datetime import datetime
 import logging
 import psycopg2
+from psycopg2.extras import DictCursor
 import re
 from scrapy.exceptions import DropItem
 
@@ -46,6 +47,8 @@ class PostgreSQLPipeline(object):
             password=self.db_password
         )
         self.db_conn.autocommit = False
+        self.db_conn.set_client_encoding("utf-8")
+        self.db_conn.cursor_factory = DictCursor
         self.db_cursor = self.db_conn.cursor()
 
         logger.debug("#open_spider: database connected")
@@ -121,6 +124,8 @@ class PostgreSQLPipeline(object):
         i["course_condition"] = item["course_condition"][0].strip()
 
         i["added_money"] = item["added_money"][0].strip()
+
+        self.db_cursor.execute("insert into race_info (race_id, race_round, start_datetime, place_name, race_name, course_type, course_length, weather, course_condition, added_money) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (i["race_id"], i["race_round"], i["start_datetime"], i["place_name"], i["race_name"], i["course_type"], i["course_length"], i["weather"], i["course_condition"], i["added_money"]))
 
         return i
 

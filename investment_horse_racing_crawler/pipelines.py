@@ -166,6 +166,7 @@ class PostgreSQLPipeline(object):
     def process_race_result_item(self, item, spider):
         logger.debug("#process_race_result_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["race_id"] = item["race_id"][0]
@@ -215,11 +216,19 @@ class PostgreSQLPipeline(object):
 
         i["trainer_name"] = item["trainer_name"][0].strip()
 
+        # Insert db
+        race_result_id = "{}_{}".format(i["race_id"], i["horse_number"])
+
+        self.db_cursor.execute("delete from race_result where race_result_id=%s", (race_result_id,))
+        self.db_cursor.execute("insert into race_result (race_result_id, race_id, result, bracket_number, horse_number, horse_id, horse_weight, horse_weight_diff, arrival_time, jockey_id, jockey_weight, favorite_order, odds, trainer_id) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (race_result_id, i["race_id"], i["result"], i["bracket_number"], i["horse_number"], i["horse_id"], i["horse_weight"], i["horse_weight_diff"], i["arrival_time"], i["jockey_id"], i["jockey_weight"], i["favorite_order"], i["odds"], i["trainer_id"]))
+        self.db_conn.commit()
+
         return i
 
     def process_horse_item(self, item, spider):
         logger.debug("#process_horse_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["horse_id"] = item["horse_id"][0]
@@ -244,11 +253,17 @@ class PostgreSQLPipeline(object):
 
         i["breeding_farm"] = item["breeding_farm"][0].strip()
 
+        # Insert db
+        self.db_cursor.execute("delete from horse where horse_id=%s", (i["horse_id"],))
+        self.db_cursor.execute("insert into horse (horse_id, gender, name, birthday, coat_color, trainer_id, owner, breeder, breeding_farm) values(%s, %s, %s, %s, %s, %s, %s, %s, %s)", (i["horse_id"], i["gender"], i["name"], i["birthday"], i["coat_color"], i["trainer_id"], i["owner"], i["breeder"], i["breeding_farm"]))
+        self.db_conn.commit()
+
         return i
 
     def process_trainer_item(self, item, spider):
         logger.debug("#process_trainer_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["trainer_id"] = item["trainer_id"][0]
@@ -271,11 +286,17 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown first_licensing_year pattern")
 
+        # Insert db
+        self.db_cursor.execute("delete from trainer where trainer_id=%s", (i["trainer_id"],))
+        self.db_cursor.execute("insert into trainer (trainer_id, name_kana, name, birthday, belong_to, first_licensing_year) values (%s, %s, %s, %s, %s, %s)", (i["trainer_id"], i["name_kana"], i["name"], i["birthday"], i["belong_to"], i["first_licensing_year"]))
+        self.db_conn.commit()
+
         return i
 
     def process_jockey_item(self, item, spider):
         logger.debug("#process_jockey_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["jockey_id"] = item["jockey_id"][0]
@@ -298,11 +319,17 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown first_licensing_year pattern")
 
+        # Insert db
+        self.db_cursor.execute("delete from jockey where jockey_id=%s", (i["jockey_id"],))
+        self.db_cursor.execute("insert into jockey (jockey_id, name_kana, name, birthday, belong_to, first_licensing_year) values (%s, %s, %s, %s, %s, %s)", (i["jockey_id"], i["name_kana"], i["name"], i["birthday"], i["belong_to"], i["first_licensing_year"]))
+        self.db_conn.commit()
+
         return i
 
     def process_odds_item(self, item, spider):
         logger.debug("#process_odds_item: start: item=%s" % item)
 
+        # Build item
         i = {"win": {}, "place": {}}
 
         i["win"]["race_id"] = item["race_id"][0]
@@ -315,5 +342,17 @@ class PostgreSQLPipeline(object):
         i["place"]["horse_id"] = i["win"]["horse_id"]
         i["place"]["odds_min"] = float(item["odds_place_min"][0])
         i["place"]["odds_max"] = float(item["odds_place_max"][0])
+
+        # Insert db
+        odds_win_id = "{}_{}".format(i["win"]["race_id"], i["win"]["horse_number"])
+        odds_place_id = "{}_{}".format(i["place"]["race_id"], i["place"]["horse_number"])
+
+        self.db_cursor.execute("delete from odds_win where odds_win_id=%s", (odds_win_id,))
+        self.db_cursor.execute("insert into odds_win (odds_win_id, race_id, horse_number, horse_id, odds) values (%s, %s, %s, %s, %s)", (odds_win_id, i["win"]["race_id"], i["win"]["horse_number"], i["win"]["horse_id"], i["win"]["odds"]))
+
+        self.db_cursor.execute("delete from odds_place where odds_place_id=%s", (odds_place_id,))
+        self.db_cursor.execute("insert into odds_place (odds_place_id, race_id, horse_number, horse_id, odds_min, odds_max) values (%s, %s, %s, %s, %s, %s)", (odds_place_id, i["place"]["race_id"], i["place"]["horse_number"], i["place"]["horse_id"], i["place"]["odds_min"], i["place"]["odds_max"]))
+
+        self.db_conn.commit()
 
         return i

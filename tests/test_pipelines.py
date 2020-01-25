@@ -6,7 +6,7 @@ from scrapy.crawler import Crawler
 from scrapy.exceptions import DropItem
 
 from investment_horse_racing_crawler.spiders.horse_racing_spider import HorseRacingSpider
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 from investment_horse_racing_crawler.pipelines import PostgreSQLPipeline
 
 
@@ -234,3 +234,27 @@ class TestPostgreSQLPipeline:
         assert new_item["birthday"] == datetime(1998, 9, 21, 0, 0, 0)
         assert new_item["belong_to"] == "美浦(藤沢 和雄)"
         assert new_item["first_licensing_year"] == 2017
+
+    def test_process_odds_win_place_item(self):
+        item = OddsWinPlaceItem()
+        item["race_id"] = ['1906050201']
+        item["horse_number"] = ['1']
+        item["horse_id"] = ['/directory/horse/2017101602/']
+        item["odds_win"] = ['161.2']
+        item["odds_place_min"] = ['26.0']
+        item["odds_place_max"] = ['43.8']
+
+        new_item = self.pipeline.process_item(item, None)
+
+        odds_win_item = new_item["win"]
+        assert odds_win_item["race_id"] == "1906050201"
+        assert odds_win_item["horse_number"] == 1
+        assert odds_win_item["horse_id"] == "2017101602"
+        assert odds_win_item["odds"] == 161.2
+
+        odds_place_item = new_item["place"]
+        assert odds_place_item["race_id"] == "1906050201"
+        assert odds_place_item["horse_number"] == 1
+        assert odds_place_item["horse_id"] == "2017101602"
+        assert odds_place_item["odds_min"] == 26.0
+        assert odds_place_item["odds_max"] == 43.8

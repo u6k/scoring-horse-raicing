@@ -74,7 +74,7 @@ class PostgreSQLPipeline(object):
         elif isinstance(item, JockeyItem):
             new_item = self.process_jockey_item(item, spider)
         elif isinstance(item, OddsWinPlaceItem):
-            logger.debug("#process_item: OddsWinPlaceItem")
+            new_item = self.process_odds_item(item, spider)
         else:
             raise DropItem("Unknown item type")
 
@@ -280,5 +280,23 @@ class PostgreSQLPipeline(object):
             i["first_licensing_year"] = int(first_licensing_year_reg.group(1))
         else:
             raise DropItem("Unknown first_licensing_year pattern")
+
+        return i
+
+    def process_odds_item(self, item, spider):
+        logger.debug("#process_odds_item: start: item=%s" % item)
+
+        i = {"win": {}, "place": {}}
+
+        i["win"]["race_id"] = item["race_id"][0]
+        i["win"]["horse_number"] = int(item["horse_number"][0])
+        i["win"]["horse_id"] = item["horse_id"][0].split("/")[-2]
+        i["win"]["odds"] = float(item["odds_win"][0])
+
+        i["place"]["race_id"] = i["win"]["race_id"]
+        i["place"]["horse_number"] = i["win"]["horse_number"]
+        i["place"]["horse_id"] = i["win"]["horse_id"]
+        i["place"]["odds_min"] = float(item["odds_place_min"][0])
+        i["place"]["odds_max"] = float(item["odds_place_max"][0])
 
         return i

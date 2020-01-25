@@ -83,6 +83,27 @@ class TestPostgreSQLPipeline:
         assert race_info["course_condition"] == "重"
         assert race_info["added_money"] == "本賞金：1060、420、270、160、106万円"
 
+        # Execute (2)
+        self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from race_info")
+
+        race_infos = self.pipeline.db_cursor.fetchall()
+        assert len(race_infos) == 1
+
+        race_info = race_infos[0]
+        assert race_info["race_id"] == "2010010212"
+        assert race_info["race_round"] == 12
+        assert race_info["start_datetime"] == datetime(2020, 1, 19, 16, 1, 0)
+        assert race_info["place_name"] == "1回小倉2日"
+        assert race_info["race_name"] == "呼子特別"
+        assert race_info["course_type"] == "芝・右"
+        assert race_info["course_length"] == 2600
+        assert race_info["weather"] == "曇"
+        assert race_info["course_condition"] == "重"
+        assert race_info["added_money"] == "本賞金：1060、420、270、160、106万円"
+
     def test_process_race_payoff_item_1(self):
         # Setup
         item = RacePayoffItem()
@@ -107,6 +128,23 @@ class TestPostgreSQLPipeline:
         assert new_item["favorite_order"] == 7
 
         # Check db
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+
+        race_payoffs = self.pipeline.db_cursor.fetchall()
+        assert len(race_payoffs) == 1
+
+        race_payoff = race_payoffs[0]
+        assert race_payoff["race_payoff_id"] == '2010010212_win_4'
+        assert race_payoff["race_id"] == '2010010212'
+        assert race_payoff["payoff_type"] == "win"
+        assert race_payoff["horse_number"] == 4
+        assert race_payoff["odds"] == 13.6
+        assert race_payoff["favorite_order"] == 7
+
+        # Execute (2)
+        self.pipeline.process_item(item, None)
+
+        # Check db (2)
         self.pipeline.db_cursor.execute("select * from race_payoff")
 
         race_payoffs = self.pipeline.db_cursor.fetchall()

@@ -91,6 +91,7 @@ class PostgreSQLPipeline(object):
     def process_race_info_item(self, item, spider):
         logger.debug("#process_race_info_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["race_id"] = item["race_id"][0]
@@ -125,13 +126,16 @@ class PostgreSQLPipeline(object):
 
         i["added_money"] = item["added_money"][0].strip()
 
+        # Insert db
         self.db_cursor.execute("insert into race_info (race_id, race_round, start_datetime, place_name, race_name, course_type, course_length, weather, course_condition, added_money) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (i["race_id"], i["race_round"], i["start_datetime"], i["place_name"], i["race_name"], i["course_type"], i["course_length"], i["weather"], i["course_condition"], i["added_money"]))
+        self.db_conn.commit()
 
         return i
 
     def process_race_payoff_item(self, item, spider):
         logger.debug("#process_race_payoff_item: start: item=%s" % item)
 
+        # Build item
         i = {}
 
         i["race_id"] = item["race_id"][0]
@@ -148,6 +152,10 @@ class PostgreSQLPipeline(object):
         i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
 
         i["favorite_order"] = int(item["favorite_order"][0].replace("番人気", ""))
+
+        # Insert db
+        self.db_cursor.execute("insert into race_payoff (race_payoff_id, race_id, payoff_type, horse_number, odds, favorite_order) values (%s, %s, %s, %s, %s, %s)", ("{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number"]), i["race_id"], i["payoff_type"], i["horse_number"], i["odds"], i["favorite_order"]))
+        self.db_conn.commit()
 
         return i
 

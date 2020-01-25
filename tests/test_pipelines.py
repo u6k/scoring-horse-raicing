@@ -26,6 +26,8 @@ class TestPostgreSQLPipeline:
 
         # Setting db
         self.pipeline.db_cursor.execute("delete from race_info")
+        self.pipeline.db_cursor.execute("delete from race_payoff")
+        self.pipeline.db_conn.commit()
 
     def teardown(self):
         self.pipeline.close_spider(None)
@@ -82,6 +84,7 @@ class TestPostgreSQLPipeline:
         assert race_info["added_money"] == "本賞金：1060、420、270、160、106万円"
 
     def test_process_race_payoff_item_1(self):
+        # Setup
         item = RacePayoffItem()
         item["race_id"] = ['2010010212']
         item["payoff_type"] = ['単勝']
@@ -89,13 +92,33 @@ class TestPostgreSQLPipeline:
         item["odds"] = ['1,360円']
         item["favorite_order"] = ['7番人気']
 
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
         new_item = self.pipeline.process_item(item, None)
 
+        # Check return
         assert new_item["race_id"] == '2010010212'
         assert new_item["payoff_type"] == "win"
         assert new_item["horse_number"] == 4
         assert new_item["odds"] == 13.6
         assert new_item["favorite_order"] == 7
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+
+        race_payoffs = self.pipeline.db_cursor.fetchall()
+        assert len(race_payoffs) == 1
+
+        race_payoff = race_payoffs[0]
+        assert race_payoff["race_payoff_id"] == '2010010212_win_4'
+        assert race_payoff["race_id"] == '2010010212'
+        assert race_payoff["payoff_type"] == "win"
+        assert race_payoff["horse_number"] == 4
+        assert race_payoff["odds"] == 13.6
+        assert race_payoff["favorite_order"] == 7
 
     def test_process_race_payoff_item_2(self):
         item = RacePayoffItem()

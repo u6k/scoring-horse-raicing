@@ -160,7 +160,7 @@ class S3CacheStorage(object):
             s3_obj.last_modified
         except ClientError as err:
             if err.response["Error"]["Code"] == "404":
-                logger.debug("#retrieve_response: not cached")
+                logger.debug("#retrieve_response: cache_nothing")
                 return
             else:
                 raise err
@@ -174,7 +174,7 @@ class S3CacheStorage(object):
         respcls = responsetypes.from_args(headers=headers, url=url)
         response = respcls(url=url, headers=headers, status=status, body=body)
 
-        logger.debug("#retrieve_response: data got")
+        logger.debug("#retrieve_response: cache_exist")
 
         return response
 

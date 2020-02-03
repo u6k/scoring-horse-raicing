@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [#7916: 本番用コンテナに".env"が含まれているため、Dockerコンテナに設定した環境変数ではなく".env"が使われてしまう](https://redmine.u6k.me/issues/7916)
+- [#7918: キャッシュあるなしログを揃える](https://redmine.u6k.me/issues/7918)
 
 ## [2.4.0] - 2020-01-25
 

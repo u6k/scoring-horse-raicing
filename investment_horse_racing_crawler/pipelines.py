@@ -233,7 +233,7 @@ class PostgreSQLPipeline(object):
 
         i["horse_id"] = item["horse_id"][0]
 
-        i["gender"] = item["gender"][0].strip()
+        i["gender"] = item["gender"][0].split("|")[-2].strip()
 
         i["name"] = item["name"][0].strip()
 

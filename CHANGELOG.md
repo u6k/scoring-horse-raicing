@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7873: Scrapyの設定を見直す](https://redmine.u6k.me/issues/7873)
 - [#7967: boto3のログを抑止する](https://redmine.u6k.me/issues/7967)
 
+### Added
+- [#7962: 出馬表もパースする](https://redmine.u6k.me/issues/7962)
+
 ## [2.4.0] - 2020-01-25
 
 ### Added

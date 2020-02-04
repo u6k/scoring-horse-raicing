@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, RaceDenmaItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -149,6 +149,32 @@ class HorseRacingSpider(scrapy.Spider):
         @race_denma
         """
         self.logger.debug("#parse_race_denma: start: url=%s" % response.url)
+
+        # Parse race denma
+        self.logger.debug("#parse_race_denma: parse race denma")
+
+        race_id = response.url.split("/")[-2]
+
+        for tr in response.xpath("//table[contains(@class, 'denmaLs')]/tr[position()>1]"):
+            loader = ItemLoader(item=RaceDenmaItem(), selector=tr)
+            loader.add_value("race_id", race_id)
+            loader.add_xpath("bracket_number", "td[1]/span/text()")
+            loader.add_xpath("horse_number", "td[2]/strong/text()")
+            loader.add_xpath("horse_id", "td[3]/a/@href")
+            loader.add_xpath("trainer_id", "td[3]/span/a/@href")
+            loader.add_xpath("horse_weight_and_diff", "string(td[4])")
+            loader.add_xpath("jockey_id", "td[5]/a/@href")
+            loader.add_xpath("jockey_weight", "td[5]/text()")
+            loader.add_xpath("result_count_all_period", "td[7]/text()[1]")
+            loader.add_xpath("result_count_grade_race", "td[7]/text()[2]")
+            loader.add_xpath("prize_total_money", "td[7]/text()[3]")
+            i = loader.load_item()
+
+            self.logger.debug("#parse_race_denma: race denma=%s" % i)
+            yield i
+
+        # Parse link
+        self.logger.debug("#parse_race_denma: parse link")
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()

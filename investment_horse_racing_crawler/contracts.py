@@ -6,7 +6,7 @@ from scrapy.contracts import Contract
 from scrapy.exceptions import ContractFail
 from scrapy.http import Request
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, RaceDenmaItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 
 
 logger = logging.getLogger(__name__)
@@ -107,6 +107,11 @@ class RaceDenmaContract(Contract):
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
+
+        # Check race denma item
+        items = [o for o in output if isinstance(o, RaceDenmaItem)]
+        if len(items) < 1:
+            raise ContractFail("RaceDenmaItem is empty")
 
 
 class HorseContract(Contract):

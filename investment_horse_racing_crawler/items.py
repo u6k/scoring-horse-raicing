@@ -44,6 +44,20 @@ class RaceResultItem(Item):
     trainer_name = Field()
 
 
+class RaceDenmaItem(Item):
+    race_id = Field()
+    bracket_number = Field()
+    horse_number = Field()
+    horse_id = Field()
+    trainer_id = Field()
+    horse_weight_and_diff = Field()
+    jockey_id = Field()
+    jockey_weight = Field()
+    result_count_all_period = Field()
+    result_count_grade_race = Field()
+    prize_total_money = Field()
+
+
 class HorseItem(Item):
     horse_id = Field()
     gender = Field()

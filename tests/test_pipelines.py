@@ -428,11 +428,11 @@ class TestPostgreSQLPipeline:
         assert race_result["odds"] == 6.9
         assert race_result["trainer_id"] == "01082"
 
-    def test_process_horse_item(self):
+    def test_process_horse_item_1(self):
         # Setup
         item = HorseItem()
         item["horse_id"] = ['2017101602']
-        item["gender"] = [' 牡 ']
+        item["gender"] = [' 牡 | 登録抹消 ']
         item["name"] = ['エリンクロノス']
         item["birthday"] = ['2017年3月31日']
         item["coat_color"] = ['栗毛']
@@ -479,7 +479,7 @@ class TestPostgreSQLPipeline:
         # Execute (2)
         new_item = self.pipeline.process_item(item, None)
 
-        # Check db (1)
+        # Check db (2)
         self.pipeline.db_cursor.execute("select * from horse")
 
         horses = self.pipeline.db_cursor.fetchall()
@@ -495,6 +495,142 @@ class TestPostgreSQLPipeline:
         assert horse["owner"] == "田頭 勇貴"
         assert horse["breeder"] == "大栄牧場"
         assert horse["breeding_farm"] == "新冠町"
+
+    def test_process_horse_item_2(self):
+        # Setup
+        item = HorseItem()
+        item["birthday"] = ['2015年2月24日']
+        item["breeder"] = ['三嶋牧場']
+        item["breeding_farm"] = ['浦河町']
+        item["coat_color"] = ['鹿毛']
+        item["gender"] = ['（地） | 牡 | 登録抹消 ']
+        item["horse_id"] = ['2015103355']
+        item["name"] = ['ネクストステップ']
+        item["owner"] = ['吉澤 克己']
+        item["trainer_id"] = ['/directory/trainer/01002/']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from horse")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["horse_id"] == '2015103355'
+        assert new_item["gender"] == '牡'
+        assert new_item["name"] == 'ネクストステップ'
+        assert new_item["birthday"] == datetime(2015, 2, 24, 0, 0, 0)
+        assert new_item["coat_color"] == '鹿毛'
+        assert new_item["trainer_id"] == '01002'
+        assert new_item["owner"] == '吉澤 克己'
+        assert new_item["breeder"] == '三嶋牧場'
+        assert new_item["breeding_farm"] == '浦河町'
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2015103355'
+        assert horse["gender"] == '牡'
+        assert horse["name"] == 'ネクストステップ'
+        assert horse["birthday"] == datetime(2015, 2, 24, 0, 0, 0)
+        assert horse["coat_color"] == '鹿毛'
+        assert horse["trainer_id"] == '01002'
+        assert horse["owner"] == '吉澤 克己'
+        assert horse["breeder"] == '三嶋牧場'
+        assert horse["breeding_farm"] == '浦河町'
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2015103355'
+        assert horse["gender"] == '牡'
+        assert horse["name"] == 'ネクストステップ'
+        assert horse["birthday"] == datetime(2015, 2, 24, 0, 0, 0)
+        assert horse["coat_color"] == '鹿毛'
+        assert horse["trainer_id"] == '01002'
+        assert horse["owner"] == '吉澤 克己'
+        assert horse["breeder"] == '三嶋牧場'
+        assert horse["breeding_farm"] == '浦河町'
+
+    def test_process_horse_item_3(self):
+        # Setup
+        item = HorseItem()
+        item["birthday"] = ['2015年2月28日']
+        item["breeder"] = ['Lansdowne Thoroughbreds, LLC']
+        item["breeding_farm"] = ['米']
+        item["coat_color"] = ['芦毛']
+        item["gender"] = ['（外）（地） | 牝 | 登録抹消 ']
+        item["horse_id"] = ['2015110026']
+        item["name"] = ['マッチョベリー']
+        item["owner"] = ['栗山 良子']
+        item["trainer_id"] = ['/directory/trainer/01010/']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from horse")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["horse_id"] == '2015110026'
+        assert new_item["gender"] == '牝'
+        assert new_item["name"] == 'マッチョベリー'
+        assert new_item["birthday"] == datetime(2015, 2, 28, 0, 0, 0)
+        assert new_item["coat_color"] == '芦毛'
+        assert new_item["trainer_id"] == '01010'
+        assert new_item["owner"] == '栗山 良子'
+        assert new_item["breeder"] == 'Lansdowne Thoroughbreds, LLC'
+        assert new_item["breeding_farm"] == '米'
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2015110026'
+        assert horse["gender"] == '牝'
+        assert horse["name"] == 'マッチョベリー'
+        assert horse["birthday"] == datetime(2015, 2, 28, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '01010'
+        assert horse["owner"] == '栗山 良子'
+        assert horse["breeder"] == 'Lansdowne Thoroughbreds, LLC'
+        assert horse["breeding_farm"] == '米'
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2015110026'
+        assert horse["gender"] == '牝'
+        assert horse["name"] == 'マッチョベリー'
+        assert horse["birthday"] == datetime(2015, 2, 28, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '01010'
+        assert horse["owner"] == '栗山 良子'
+        assert horse["breeder"] == 'Lansdowne Thoroughbreds, LLC'
+        assert horse["breeding_farm"] == '米'
 
     def test_process_trainer_item(self):
         # Setup

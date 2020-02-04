@@ -179,7 +179,7 @@ class HorseRacingSpider(scrapy.Spider):
 
         loader = ItemLoader(item=HorseItem(), response=response)
         loader.add_value("horse_id", horse_id)
-        loader.add_xpath("gender", "//div[@id='dirTitName']/p/text()[1]")
+        loader.add_xpath("gender", "string(//div[@id='dirTitName']/p)")
         loader.add_xpath("name", "//div[@id='dirTitName']/h1/text()")
         loader.add_xpath("birthday", "//div[@id='dirTitName']/ul/li[1]/text()")
         loader.add_xpath("coat_color", "//div[@id='dirTitName']/ul/li[2]/text()")

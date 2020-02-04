@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7918: キャッシュあるなしログを揃える](https://redmine.u6k.me/issues/7918)
 - [#7961: horseのgenderに想定外の文字列が混入している](https://redmine.u6k.me/issues/7961)
 - [#7915: jockey_weightに想定外の文字列があり、変換に失敗する](https://redmine.u6k.me/issues/7915)
+- [#7873: Scrapyの設定を見直す](https://redmine.u6k.me/issues/7873)
 
 ## [2.4.0] - 2020-01-25
 

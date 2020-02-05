@@ -173,7 +173,11 @@ class PostgreSQLPipeline(object):
 
         i["race_id"] = item["race_id"][0]
 
-        i["result"] = int(item["result"][0].strip())
+        result_str = item["result"][0].strip()
+        if len(result_str) > 0:
+            i["result"] = int(result_str)
+        else:
+            i["result"] = None
 
         i["bracket_number"] = int(item["bracket_number"][0].strip())
 
@@ -190,15 +194,28 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown horse_gender_age")
 
-        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip().split("/")[1])
+        horse_weight_and_diff_reg = re.match("^([\\- 0-9]+)\\(([\\+\\- 0-9]+)\\)$", item["horse_weight_and_diff"][0].strip().split("/")[1])
         if horse_weight_and_diff_reg:
-            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
-            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+            horse_weight_str = horse_weight_and_diff_reg.group(1).strip()
+            if horse_weight_str != "-":
+                i["horse_weight"] = float(horse_weight_str)
+            else:
+                i["horse_weight"] = None
+
+            horse_weight_diff_str = horse_weight_and_diff_reg.group(2).strip()
+            if horse_weight_diff_str != "-":
+                i["horse_weight_diff"] = float(horse_weight_diff_str)
+            else:
+                i["horse_weight_diff"] = None
         else:
             raise DropItem("Unknown horse_weight_and_diff")
 
-        arrival_time_parts = item["arrival_time"][0].strip().split(".")
-        i["arrival_time"] = int(arrival_time_parts[0])*60.0+int(arrival_time_parts[1])+int(arrival_time_parts[2])*0.1
+        arrival_time_str = item["arrival_time"][0].strip()
+        if len(arrival_time_str) > 0:
+            arrival_time_parts = arrival_time_str.split(".")
+            i["arrival_time"] = int(arrival_time_parts[0])*60.0+int(arrival_time_parts[1])+int(arrival_time_parts[2])*0.1
+        else:
+            i["arrival_time"] = None
 
         i["jockey_id"] = item["jockey_id"][0].split("/")[-2]
 
@@ -210,11 +227,19 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown jockey_weight pattern")
 
-        i["favorite_order"] = int(item["favorite_order"][0].strip())
+        favorite_order_str = item["favorite_order"][0].strip()
+        if len(favorite_order_str) > 0:
+            i["favorite_order"] = int(favorite_order_str)
+        else:
+            i["favorite_order"] = None
 
-        odds_reg = re.match("^\\(([\\.0-9]+)\\)$", item["odds"][0].strip())
+        odds_reg = re.match("^\\(([\\.\\- 0-9]+)\\)$", item["odds"][0].strip())
         if odds_reg:
-            i["odds"] = float(odds_reg.group(1))
+            odds_str = odds_reg.group(1).strip()
+            if odds_str != "-":
+                i["odds"] = float(odds_str)
+            else:
+                i["odds"] = None
         else:
             raise DropItem("Unknown odds pattern")
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logging
 
 
 BOT_NAME = 'investment_horse_racing_crawler'
@@ -26,14 +27,19 @@ SPIDER_CONTRACTS = {
 ROBOTSTXT_OBEY = True
 
 DOWNLOAD_DELAY = 3
+DOWNLOAD_TIMEOUT = 10
 
 HTTPCACHE_ENABLED = True
 HTTPCACHE_STORAGE = "investment_horse_racing_crawler.middlewares.S3CacheStorage"
 
+CONCURRENT_REQUESTS = 1
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
-CONCURRENT_REQUESTS_PER_IP = 1
+CONCURRENT_REQUESTS_PER_IP = 0
 
 USER_AGENT = "horse_racing_crawler/1.0 (+https://github.com/u6k/investment-horse-racing-crawler)"
+
+logging.getLogger("boto3").setLevel(logging.INFO)
+logging.getLogger("botocore").setLevel(logging.INFO)
 
 S3_ENDPOINT = os.environ["S3_ENDPOINT"]
 S3_REGION = os.environ["S3_REGION"]

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2020-02-05
+### Fixed
+- [#7916: 本番用コンテナに".env"が含まれているため、Dockerコンテナに設定した環境変数ではなく".env"が使われてしまう](https://redmine.u6k.me/issues/7916)
+- [#7918: キャッシュあるなしログを揃える](https://redmine.u6k.me/issues/7918)
+- [#7961: horseのgenderに想定外の文字列が混入している](https://redmine.u6k.me/issues/7961)
+- [#7915: jockey_weightに想定外の文字列があり、変換に失敗する](https://redmine.u6k.me/issues/7915)
+- [#7873: Scrapyの設定を見直す](https://redmine.u6k.me/issues/7873)
+- [#7967: boto3のログを抑止する](https://redmine.u6k.me/issues/7967)
+- [#7968: odds_place_max, odds_place_min, odds_winの'****'は無視する](https://redmine.u6k.me/issues/7968)
+- [#7969: resultが空の場合に対応する](https://redmine.u6k.me/issues/7969)
+- [#7970: arrival_timeが1分未満の場合に対応する](https://redmine.u6k.me/issues/7970)
+- [#7973: RacePayoffItemに複勝の値が入らないことがある](https://redmine.u6k.me/issues/7973)
+- [#7972: RacePayoffItemに変な値が入る場合がある](https://redmine.u6k.me/issues/7972)
+- [#7971: RaceResultItemにoddsが含まれない場合がある](https://redmine.u6k.me/issues/7971)
+
+### Added
+- [#7962: 出馬表もパースする](https://redmine.u6k.me/issues/7962)
+
 ## [2.4.0] - 2020-01-25
 
 ### Added

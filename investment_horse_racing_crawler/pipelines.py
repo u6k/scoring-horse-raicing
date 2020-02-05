@@ -8,7 +8,7 @@ from psycopg2.extras import DictCursor
 import re
 from scrapy.exceptions import DropItem
 
-from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
+from investment_horse_racing_crawler.items import RaceInfoItem, RacePayoffItem, RaceResultItem, RaceDenmaItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
 
 
 logger = logging.getLogger(__name__)
@@ -70,6 +70,8 @@ class PostgreSQLPipeline(object):
             new_item = self.process_race_payoff_item(item, spider)
         elif isinstance(item, RaceResultItem):
             new_item = self.process_race_result_item(item, spider)
+        elif isinstance(item, RaceDenmaItem):
+            new_item = self.process_race_denma_item(item, spider)
         elif isinstance(item, HorseItem):
             new_item = self.process_horse_item(item, spider)
         elif isinstance(item, TrainerItem):
@@ -148,7 +150,10 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown payoff_type")
 
-        i["horse_number"] = int(item["horse_number"][0])
+        if "horse_number" in item:
+            i["horse_number"] = int(item["horse_number"][0])
+        else:
+            raise DropItem("Empty race payoff record")
 
         i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
 
@@ -171,7 +176,11 @@ class PostgreSQLPipeline(object):
 
         i["race_id"] = item["race_id"][0]
 
-        i["result"] = int(item["result"][0].strip())
+        result_str = item["result"][0].strip()
+        if len(result_str) > 0:
+            i["result"] = int(result_str)
+        else:
+            i["result"] = None
 
         i["bracket_number"] = int(item["bracket_number"][0].strip())
 
@@ -188,29 +197,60 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown horse_gender_age")
 
-        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip().split("/")[1])
+        horse_weight_and_diff_reg = re.match("^([\\- 0-9]+)\\(([\\+\\- 0-9]+)\\)$", item["horse_weight_and_diff"][0].strip().split("/")[1])
         if horse_weight_and_diff_reg:
-            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
-            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+            horse_weight_str = horse_weight_and_diff_reg.group(1).strip()
+            if horse_weight_str != "-":
+                i["horse_weight"] = float(horse_weight_str)
+            else:
+                i["horse_weight"] = None
+
+            horse_weight_diff_str = horse_weight_and_diff_reg.group(2).strip()
+            if horse_weight_diff_str != "-":
+                i["horse_weight_diff"] = float(horse_weight_diff_str)
+            else:
+                i["horse_weight_diff"] = None
         else:
             raise DropItem("Unknown horse_weight_and_diff")
 
-        arrival_time_parts = item["arrival_time"][0].strip().split(".")
-        i["arrival_time"] = int(arrival_time_parts[0])*60.0+int(arrival_time_parts[1])+int(arrival_time_parts[2])*0.1
+        arrival_time_str = item["arrival_time"][0].strip()
+        if len(arrival_time_str) > 0:
+            arrival_time_parts = arrival_time_str.split(".")
+            if len(arrival_time_parts) == 2:
+                i["arrival_time"] = int(arrival_time_parts[0]) + int(arrival_time_parts[1]) * 0.1
+            else:
+                i["arrival_time"] = int(arrival_time_parts[0]) * 60.0 + int(arrival_time_parts[1]) + int(arrival_time_parts[2]) * 0.1
+        else:
+            i["arrival_time"] = None
 
         i["jockey_id"] = item["jockey_id"][0].split("/")[-2]
 
         i["jockey_name"] = item["jockey_name"][0].strip()
 
-        i["jockey_weight"] = float(item["jockey_weight"][0].strip())
-
-        i["favorite_order"] = int(item["favorite_order"][0].strip())
-
-        odds_reg = re.match("^\\(([\\.0-9]+)\\)$", item["odds"][0].strip())
-        if odds_reg:
-            i["odds"] = float(odds_reg.group(1))
+        jockey_weight_reg = re.match("^[^0-9]?([\\.0-9]+)$", item["jockey_weight"][0].strip())
+        if jockey_weight_reg:
+            i["jockey_weight"] = float(jockey_weight_reg.group(1))
         else:
-            raise DropItem("Unknown odds pattern")
+            raise DropItem("Unknown jockey_weight pattern")
+
+        favorite_order_str = item["favorite_order"][0].strip()
+        if len(favorite_order_str) > 0:
+            i["favorite_order"] = int(favorite_order_str)
+        else:
+            i["favorite_order"] = None
+
+        if "odds" in item:
+            odds_reg = re.match("^\\(([\\.\\- 0-9]+)\\)$", item["odds"][0].strip())
+            if odds_reg:
+                odds_str = odds_reg.group(1).strip()
+                if odds_str != "-":
+                    i["odds"] = float(odds_str)
+                else:
+                    i["odds"] = None
+            else:
+                raise DropItem("Unknown odds pattern")
+        else:
+            i["odds"] = None
 
         i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
 
@@ -225,6 +265,60 @@ class PostgreSQLPipeline(object):
 
         return i
 
+    def process_race_denma_item(self, item, spider):
+        logger.debug("#process_race_denma_item: start: item=%s" % item)
+
+        # Build item
+        i = {}
+
+        i["race_id"] = item["race_id"][0]
+
+        i["bracket_number"] = int(item["bracket_number"][0].strip())
+
+        i["horse_number"] = int(item["horse_number"][0].strip())
+
+        i["horse_id"] = item["horse_id"][0].split("/")[-2]
+
+        i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+
+        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip())
+        if horse_weight_and_diff_reg:
+            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
+            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+        else:
+            raise DropItem("Unknown horse_weight_and_diff")
+
+        i["jockey_id"] = item["jockey_id"][0].split("/")[-2]
+
+        jockey_weight_reg = re.match("^([\\.0-9]+)[^0-9]*$", item["jockey_weight"][0].strip())
+        if jockey_weight_reg:
+            i["jockey_weight"] = float(jockey_weight_reg.group(1))
+        else:
+            raise DropItem("Unknown jockey_weight pattern")
+
+        result_count_all_period_parts = item["result_count_all_period"][0].strip().split(".")
+        i["result_1_count_all_period"] = int(result_count_all_period_parts[0])
+        i["result_2_count_all_period"] = int(result_count_all_period_parts[1])
+        i["result_3_count_all_period"] = int(result_count_all_period_parts[2])
+        i["result_4_count_all_period"] = int(result_count_all_period_parts[3])
+
+        result_count_grade_race_parts = item["result_count_grade_race"][0].strip().split(".")
+        i["result_1_count_grade_race"] = int(result_count_grade_race_parts[0])
+        i["result_2_count_grade_race"] = int(result_count_grade_race_parts[1])
+        i["result_3_count_grade_race"] = int(result_count_grade_race_parts[2])
+        i["result_4_count_grade_race"] = int(result_count_grade_race_parts[3])
+
+        i["prize_total_money"] = int(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
+
+        # Insert db
+        race_denma_id = "{}_{}".format(i["race_id"], i["horse_number"])
+
+        self.db_cursor.execute("delete from race_denma where race_denma_id=%s", (race_denma_id,))
+        self.db_cursor.execute("insert into race_denma (race_denma_id, race_id, bracket_number, horse_number, horse_id, trainer_id, horse_weight, horse_weight_diff, jockey_id, jockey_weight, result_1_count_all_period, result_2_count_all_period, result_3_count_all_period, result_4_count_all_period, result_1_count_grade_race, result_2_count_grade_race, result_3_count_grade_race, result_4_count_grade_race, prize_total_money) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (race_denma_id, i["race_id"], i["bracket_number"], i["horse_number"], i["horse_id"], i["trainer_id"], i["horse_weight"], i["horse_weight_diff"], i["jockey_id"], i["jockey_weight"], i["result_1_count_all_period"], i["result_2_count_all_period"], i["result_3_count_all_period"], i["result_4_count_all_period"], i["result_1_count_grade_race"], i["result_2_count_grade_race"], i["result_3_count_grade_race"], i["result_4_count_grade_race"], i["prize_total_money"]))
+        self.db_conn.commit()
+
+        return i
+
     def process_horse_item(self, item, spider):
         logger.debug("#process_horse_item: start: item=%s" % item)
 
@@ -233,7 +327,7 @@ class PostgreSQLPipeline(object):
 
         i["horse_id"] = item["horse_id"][0]
 
-        i["gender"] = item["gender"][0].strip()
+        i["gender"] = item["gender"][0].split("|")[-2].strip()
 
         i["name"] = item["name"][0].strip()
 
@@ -335,13 +429,37 @@ class PostgreSQLPipeline(object):
         i["win"]["race_id"] = item["race_id"][0]
         i["win"]["horse_number"] = int(item["horse_number"][0])
         i["win"]["horse_id"] = item["horse_id"][0].split("/")[-2]
-        i["win"]["odds"] = float(item["odds_win"][0])
+
+        if "odds_win" in item:
+            odds_win_str = item["odds_win"][0].strip()
+            if odds_win_str != "****":
+                i["win"]["odds"] = float(odds_win_str)
+            else:
+                i["win"]["odds"] = None
+        else:
+            i["win"]["odds"] = None
 
         i["place"]["race_id"] = i["win"]["race_id"]
         i["place"]["horse_number"] = i["win"]["horse_number"]
         i["place"]["horse_id"] = i["win"]["horse_id"]
-        i["place"]["odds_min"] = float(item["odds_place_min"][0])
-        i["place"]["odds_max"] = float(item["odds_place_max"][0])
+
+        if "odds_place_min" in item:
+            odds_place_min_str = item["odds_place_min"][0].strip()
+            if odds_place_min_str != "****":
+                i["place"]["odds_min"] = float(odds_place_min_str)
+            else:
+                i["place"]["odds_min"] = None
+        else:
+            i["place"]["odds_min"] = None
+
+        if "odds_place_max" in item:
+            odds_place_max_str = item["odds_place_max"][0].strip()
+            if odds_place_max_str != "****":
+                i["place"]["odds_max"] = float(odds_place_max_str)
+            else:
+                i["place"]["odds_max"] = None
+        else:
+            i["place"]["odds_max"] = None
 
         # Insert db
         odds_win_id = "{}_{}".format(i["win"]["race_id"], i["win"]["horse_number"])

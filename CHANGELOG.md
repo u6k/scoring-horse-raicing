@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7967: boto3のログを抑止する](https://redmine.u6k.me/issues/7967)
 - [#7968: odds_place_max, odds_place_min, odds_winの'****'は無視する](https://redmine.u6k.me/issues/7968)
 - [#7969: resultが空の場合に対応する](https://redmine.u6k.me/issues/7969)
+- [#7970: arrival_timeが1分未満の場合に対応する](https://redmine.u6k.me/issues/7970)
 
 ### Added
 - [#7962: 出馬表もパースする](https://redmine.u6k.me/issues/7962)

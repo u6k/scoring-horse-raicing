@@ -1226,7 +1226,7 @@ class TestPostgreSQLPipeline:
         assert jockey["belong_to"] == "美浦(藤沢 和雄)"
         assert jockey["first_licensing_year"] == 2017
 
-    def test_process_odds_win_place_item(self):
+    def test_process_odds_win_place_item_1(self):
         # Setup
         item = OddsWinPlaceItem()
         item["race_id"] = ['1906050201']
@@ -1314,3 +1314,35 @@ class TestPostgreSQLPipeline:
         assert odds_place["horse_id"] == "2017101602"
         assert odds_place["odds_min"] == 26.0
         assert odds_place["odds_max"] == 43.8
+
+    def test_process_odds_win_place_item_2(self):
+        # Setup
+        item = OddsWinPlaceItem()
+        item["horse_id"] = ['/directory/horse/2014105805/']
+        item["horse_number"] = ['4']
+        item["odds_place_max"] = ['****']
+        item["odds_place_min"] = ['****']
+        item["odds_win"] = ['****']
+        item["race_id"] = ['2008010212']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from odds_win")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        try:
+            self.pipeline.process_item(item, None)
+
+            assert False
+        except DropItem:
+            pass
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from odds_win")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0

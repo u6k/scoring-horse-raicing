@@ -418,21 +418,42 @@ class PostgreSQLPipeline(object):
         logger.debug("#process_odds_item: start: item=%s" % item)
 
         # Build item
-        if item["odds_win"][0] == "****":
-            raise DropItem("Undecided odds")
-
         i = {"win": {}, "place": {}}
 
         i["win"]["race_id"] = item["race_id"][0]
         i["win"]["horse_number"] = int(item["horse_number"][0])
         i["win"]["horse_id"] = item["horse_id"][0].split("/")[-2]
-        i["win"]["odds"] = float(item["odds_win"][0])
+
+        if "odds_win" in item:
+            odds_win_str = item["odds_win"][0].strip()
+            if odds_win_str != "****":
+                i["win"]["odds"] = float(odds_win_str)
+            else:
+                i["win"]["odds"] = None
+        else:
+            i["win"]["odds"] = None
 
         i["place"]["race_id"] = i["win"]["race_id"]
         i["place"]["horse_number"] = i["win"]["horse_number"]
         i["place"]["horse_id"] = i["win"]["horse_id"]
-        i["place"]["odds_min"] = float(item["odds_place_min"][0])
-        i["place"]["odds_max"] = float(item["odds_place_max"][0])
+
+        if "odds_place_min" in item:
+            odds_place_min_str = item["odds_place_min"][0].strip()
+            if odds_place_min_str != "****":
+                i["place"]["odds_min"] = float(odds_place_min_str)
+            else:
+                i["place"]["odds_min"] = None
+        else:
+            i["place"]["odds_min"] = None
+
+        if "odds_place_max" in item:
+            odds_place_max_str = item["odds_place_max"][0].strip()
+            if odds_place_max_str != "****":
+                i["place"]["odds_max"] = float(odds_place_max_str)
+            else:
+                i["place"]["odds_max"] = None
+        else:
+            i["place"]["odds_max"] = None
 
         # Insert db
         odds_win_id = "{}_{}".format(i["win"]["race_id"], i["win"]["horse_number"])

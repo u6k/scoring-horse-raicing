@@ -1517,16 +1517,160 @@ class TestPostgreSQLPipeline:
         assert len(self.pipeline.db_cursor.fetchall()) == 0
 
         # Execute
-        try:
-            self.pipeline.process_item(item, None)
+        new_item = self.pipeline.process_item(item, None)
 
-            assert False
-        except DropItem:
-            pass
+        # Check result
+        odds_win_item = new_item["win"]
+        assert odds_win_item["race_id"] == "2008010212"
+        assert odds_win_item["horse_number"] == 4
+        assert odds_win_item["horse_id"] == "2014105805"
+        assert odds_win_item["odds"] is None
+
+        odds_place_item = new_item["place"]
+        assert odds_place_item["race_id"] == "2008010212"
+        assert odds_place_item["horse_number"] == 4
+        assert odds_place_item["horse_id"] == "2014105805"
+        assert odds_place_item["odds_min"] is None
+        assert odds_place_item["odds_max"] is None
 
         # Check db
+        self.pipeline.db_cursor.execute("select * from odds_win")
+
+        odds_wins = self.pipeline.db_cursor.fetchall()
+        assert len(odds_wins) == 1
+
+        odds_win = odds_wins[0]
+        assert odds_win["odds_win_id"] == "2008010212_4"
+        assert odds_win["race_id"] == "2008010212"
+        assert odds_win["horse_number"] == 4
+        assert odds_win["horse_id"] == "2014105805"
+        assert odds_win["odds"] is None
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+
+        odds_places = self.pipeline.db_cursor.fetchall()
+        assert len(odds_places) == 1
+
+        odds_place = odds_places[0]
+        assert odds_place["odds_place_id"] == "2008010212_4"
+        assert odds_place["race_id"] == "2008010212"
+        assert odds_place["horse_number"] == 4
+        assert odds_place["horse_id"] == "2014105805"
+        assert odds_place["odds_min"] is None
+        assert odds_place["odds_max"] is None
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from odds_win")
+
+        odds_wins = self.pipeline.db_cursor.fetchall()
+        assert len(odds_wins) == 1
+
+        odds_win = odds_wins[0]
+        assert odds_win["odds_win_id"] == "2008010212_4"
+        assert odds_win["race_id"] == "2008010212"
+        assert odds_win["horse_number"] == 4
+        assert odds_win["horse_id"] == "2014105805"
+        assert odds_win["odds"] is None
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+
+        odds_places = self.pipeline.db_cursor.fetchall()
+        assert len(odds_places) == 1
+
+        odds_place = odds_places[0]
+        assert odds_place["odds_place_id"] == "2008010212_4"
+        assert odds_place["race_id"] == "2008010212"
+        assert odds_place["horse_number"] == 4
+        assert odds_place["horse_id"] == "2014105805"
+        assert odds_place["odds_min"] is None
+        assert odds_place["odds_max"] is None
+
+    def test_process_odds_win_place_item_3(self):
+        # Setup
+        item = OddsWinPlaceItem()
+        item["horse_id"] = ['/directory/horse/1989101565/']
+        item["horse_number"] = ['2']
+        item["odds_win"] = ['1.4']
+        item["race_id"] = ['9406040205']
+
+        # Before check
         self.pipeline.db_cursor.execute("select * from odds_win")
         assert len(self.pipeline.db_cursor.fetchall()) == 0
 
         self.pipeline.db_cursor.execute("select * from odds_place")
         assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check result
+        odds_win_item = new_item["win"]
+        assert odds_win_item["race_id"] == "9406040205"
+        assert odds_win_item["horse_number"] == 2
+        assert odds_win_item["horse_id"] == "1989101565"
+        assert odds_win_item["odds"] == 1.4
+
+        odds_place_item = new_item["place"]
+        assert odds_place_item["race_id"] == "9406040205"
+        assert odds_place_item["horse_number"] == 2
+        assert odds_place_item["horse_id"] == "1989101565"
+        assert odds_place_item["odds_min"] is None
+        assert odds_place_item["odds_max"] is None
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from odds_win")
+
+        odds_wins = self.pipeline.db_cursor.fetchall()
+        assert len(odds_wins) == 1
+
+        odds_win = odds_wins[0]
+        assert odds_win["odds_win_id"] == "9406040205_2"
+        assert odds_win["race_id"] == "9406040205"
+        assert odds_win["horse_number"] == 2
+        assert odds_win["horse_id"] == "1989101565"
+        assert odds_win["odds"] == 1.4
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+
+        odds_places = self.pipeline.db_cursor.fetchall()
+        assert len(odds_places) == 1
+
+        odds_place = odds_places[0]
+        assert odds_place["odds_place_id"] == "9406040205_2"
+        assert odds_place["race_id"] == "9406040205"
+        assert odds_place["horse_number"] == 2
+        assert odds_place["horse_id"] == "1989101565"
+        assert odds_place["odds_min"] is None
+        assert odds_place["odds_max"] is None
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from odds_win")
+
+        odds_wins = self.pipeline.db_cursor.fetchall()
+        assert len(odds_wins) == 1
+
+        odds_win = odds_wins[0]
+        assert odds_win["odds_win_id"] == "9406040205_2"
+        assert odds_win["race_id"] == "9406040205"
+        assert odds_win["horse_number"] == 2
+        assert odds_win["horse_id"] == "1989101565"
+        assert odds_win["odds"] == 1.4
+
+        self.pipeline.db_cursor.execute("select * from odds_place")
+
+        odds_places = self.pipeline.db_cursor.fetchall()
+        assert len(odds_places) == 1
+
+        odds_place = odds_places[0]
+        assert odds_place["odds_place_id"] == "9406040205_2"
+        assert odds_place["race_id"] == "9406040205"
+        assert odds_place["horse_number"] == 2
+        assert odds_place["horse_id"] == "1989101565"
+        assert odds_place["odds_min"] is None
+        assert odds_place["odds_max"] is None

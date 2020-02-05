@@ -213,7 +213,10 @@ class PostgreSQLPipeline(object):
         arrival_time_str = item["arrival_time"][0].strip()
         if len(arrival_time_str) > 0:
             arrival_time_parts = arrival_time_str.split(".")
-            i["arrival_time"] = int(arrival_time_parts[0])*60.0+int(arrival_time_parts[1])+int(arrival_time_parts[2])*0.1
+            if len(arrival_time_parts) == 2:
+                i["arrival_time"] = int(arrival_time_parts[0]) + int(arrival_time_parts[1]) * 0.1
+            else:
+                i["arrival_time"] = int(arrival_time_parts[0]) * 60.0 + int(arrival_time_parts[1]) + int(arrival_time_parts[2]) * 0.1
         else:
             i["arrival_time"] = None
 

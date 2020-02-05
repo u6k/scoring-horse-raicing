@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7915: jockey_weightに想定外の文字列があり、変換に失敗する](https://redmine.u6k.me/issues/7915)
 - [#7873: Scrapyの設定を見直す](https://redmine.u6k.me/issues/7873)
 - [#7967: boto3のログを抑止する](https://redmine.u6k.me/issues/7967)
+- [#7968: odds_place_max, odds_place_min, odds_winの'****'は無視する](https://redmine.u6k.me/issues/7968)
 
 ### Added
 - [#7962: 出馬表もパースする](https://redmine.u6k.me/issues/7962)

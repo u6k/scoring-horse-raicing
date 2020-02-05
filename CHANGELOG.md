@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7970: arrival_timeが1分未満の場合に対応する](https://redmine.u6k.me/issues/7970)
 - [#7973: RacePayoffItemに複勝の値が入らないことがある](https://redmine.u6k.me/issues/7973)
 - [#7972: RacePayoffItemに変な値が入る場合がある](https://redmine.u6k.me/issues/7972)
+- [#7971: RaceResultItemにoddsが含まれない場合がある](https://redmine.u6k.me/issues/7971)
 
 ### Added
 - [#7962: 出馬表もパースする](https://redmine.u6k.me/issues/7962)

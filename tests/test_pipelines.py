@@ -613,6 +613,98 @@ class TestPostgreSQLPipeline:
         assert race_result["odds"] == 21.8
         assert race_result["trainer_id"] == '01031'
 
+    def test_process_race_result_item_5(self):
+        # Setup
+        item = RaceResultItem()
+        item["arrival_time"] = ['\n']
+        item["bracket_number"] = ['2']
+        item["favorite_order"] = ['\n     ']
+        item["horse_gender_age"] = ['\n牝5/ - ( - )/    ']
+        item["horse_id"] = ['/directory/horse/2015102358/']
+        item["horse_name"] = ['イチザティアラ']
+        item["horse_number"] = ['\n2  ']
+        item["horse_weight_and_diff"] = ['\n牝5/ - ( - )/    ']
+        item["jockey_id"] = ['/directory/jocky/00894/']
+        item["jockey_name"] = ['小牧 太']
+        item["jockey_weight"] = ['55.0']
+        item["odds"] = ['( - )']
+        item["race_id"] = ['2008010104']
+        item["result"] = ['\n', '  ']
+        item["trainer_id"] = ['/directory/trainer/01040/']
+        item["trainer_name"] = ['服部 利之']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_result")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["race_id"] == '2008010104'
+        assert new_item["result"] is None
+        assert new_item["bracket_number"] == 2
+        assert new_item["horse_number"] == 2
+        assert new_item["horse_id"] == '2015102358'
+        assert new_item["horse_name"] == 'イチザティアラ'
+        assert new_item["horse_gender"] == '牝'
+        assert new_item["horse_age"] == 5
+        assert new_item["horse_weight"] is None
+        assert new_item["horse_weight_diff"] is None
+        assert new_item["arrival_time"] is None
+        assert new_item["jockey_id"] == '00894'
+        assert new_item["jockey_name"] == '小牧 太'
+        assert new_item["jockey_weight"] == 55.0
+        assert new_item["favorite_order"] is None
+        assert new_item["odds"] is None
+        assert new_item["trainer_id"] == '01040'
+        assert new_item["trainer_name"] == '服部 利之'
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_result")
+
+        race_results = self.pipeline.db_cursor.fetchall()
+        assert len(race_results) == 1
+
+        race_result = race_results[0]
+        assert race_result["race_id"] == '2008010104'
+        assert race_result["result"] is None
+        assert race_result["bracket_number"] == 2
+        assert race_result["horse_number"] == 2
+        assert race_result["horse_id"] == '2015102358'
+        assert race_result["horse_weight"] is None
+        assert race_result["horse_weight_diff"] is None
+        assert race_result["arrival_time"] is None
+        assert race_result["jockey_id"] == '00894'
+        assert race_result["jockey_weight"] == 55.0
+        assert race_result["favorite_order"] is None
+        assert race_result["odds"] is None
+        assert race_result["trainer_id"] == '01040'
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from race_result")
+
+        race_results = self.pipeline.db_cursor.fetchall()
+        assert len(race_results) == 1
+
+        race_result = race_results[0]
+        assert race_result["race_id"] == '2008010104'
+        assert race_result["result"] is None
+        assert race_result["bracket_number"] == 2
+        assert race_result["horse_number"] == 2
+        assert race_result["horse_id"] == '2015102358'
+        assert race_result["horse_weight"] is None
+        assert race_result["horse_weight_diff"] is None
+        assert race_result["arrival_time"] is None
+        assert race_result["jockey_id"] == '00894'
+        assert race_result["jockey_weight"] == 55.0
+        assert race_result["favorite_order"] is None
+        assert race_result["odds"] is None
+        assert race_result["trainer_id"] == '01040'
+
     def test_process_race_denma_item_1(self):
         # Setup
         item = RaceDenmaItem()

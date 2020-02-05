@@ -150,7 +150,10 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown payoff_type")
 
-        i["horse_number"] = int(item["horse_number"][0])
+        if "horse_number" in item:
+            i["horse_number"] = int(item["horse_number"][0])
+        else:
+            raise DropItem("Empty race payoff record")
 
         i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
 

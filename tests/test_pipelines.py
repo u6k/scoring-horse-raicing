@@ -243,6 +243,30 @@ class TestPostgreSQLPipeline:
         self.pipeline.db_cursor.execute("select * from race_payoff")
         assert len(self.pipeline.db_cursor.fetchall()) == 0
 
+    def test_process_race_payoff_item_4(self):
+        # Setup
+        item = RacePayoffItem()
+        item["favorite_order"] = ['-番人気']
+        item["odds"] = ['円']
+        item["payoff_type"] = ['複勝']
+        item["race_id"] = ['9002020101']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        try:
+            self.pipeline.process_item(item, None)
+
+            assert False
+        except DropItem:
+            pass
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
     def test_process_race_result_item_1(self):
         # Setup
         item = RaceResultItem()

@@ -390,6 +390,9 @@ class PostgreSQLPipeline(object):
         logger.debug("#process_odds_item: start: item=%s" % item)
 
         # Build item
+        if item["odds_win"][0] == "****":
+            raise DropItem("Undecided odds")
+
         i = {"win": {}, "place": {}}
 
         i["win"]["race_id"] = item["race_id"][0]

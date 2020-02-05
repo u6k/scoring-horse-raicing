@@ -239,15 +239,18 @@ class PostgreSQLPipeline(object):
         else:
             i["favorite_order"] = None
 
-        odds_reg = re.match("^\\(([\\.\\- 0-9]+)\\)$", item["odds"][0].strip())
-        if odds_reg:
-            odds_str = odds_reg.group(1).strip()
-            if odds_str != "-":
-                i["odds"] = float(odds_str)
+        if "odds" in item:
+            odds_reg = re.match("^\\(([\\.\\- 0-9]+)\\)$", item["odds"][0].strip())
+            if odds_reg:
+                odds_str = odds_reg.group(1).strip()
+                if odds_str != "-":
+                    i["odds"] = float(odds_str)
+                else:
+                    i["odds"] = None
             else:
-                i["odds"] = None
+                raise DropItem("Unknown odds pattern")
         else:
-            raise DropItem("Unknown odds pattern")
+            i["odds"] = None
 
         i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
 

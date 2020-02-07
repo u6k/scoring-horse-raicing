@@ -1609,6 +1609,73 @@ class TestPostgreSQLPipeline:
         assert horse["breeder"] == 'Lansdowne Thoroughbreds, LLC'
         assert horse["breeding_farm"] == '米'
 
+    def test_process_horse_item_4(self):
+        # Setup
+        item = HorseItem()
+        item["birthday"] = ['2013年4月26日']
+        item["breeding_farm"] = ['米']
+        item["coat_color"] = ['芦毛']
+        item["gender"] = ['[外] | せん | 登録抹消 ']
+        item["horse_id"] = ['2013190003']
+        item["name"] = ['サンダリングブルー']
+        item["owner"] = ['C.ウォッシュボーン']
+        item["trainer_id"] = ['/directory/trainer/05730/']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from horse")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["horse_id"] == '2013190003'
+        assert new_item["gender"] == 'せん'
+        assert new_item["name"] == 'サンダリングブルー'
+        assert new_item["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert new_item["coat_color"] == '芦毛'
+        assert new_item["trainer_id"] == '05730'
+        assert new_item["owner"] == 'C.ウォッシュボーン'
+        assert new_item["breeder"] is None
+        assert new_item["breeding_farm"] == '米'
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2013190003'
+        assert horse["gender"] == 'せん'
+        assert horse["name"] == 'サンダリングブルー'
+        assert horse["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '05730'
+        assert horse["owner"] == 'C.ウォッシュボーン'
+        assert horse["breeder"] is None
+        assert horse["breeding_farm"] == '米'
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2013190003'
+        assert horse["gender"] == 'せん'
+        assert horse["name"] == 'サンダリングブルー'
+        assert horse["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '05730'
+        assert horse["owner"] == 'C.ウォッシュボーン'
+        assert horse["breeder"] is None
+        assert horse["breeding_farm"] == '米'
+
     def test_process_trainer_item(self):
         # Setup
         item = TrainerItem()

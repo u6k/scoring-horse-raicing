@@ -355,7 +355,10 @@ class PostgreSQLPipeline(object):
 
         i["owner"] = item["owner"][0].strip()
 
-        i["breeder"] = item["breeder"][0].strip()
+        if "breeder" in item:
+            i["breeder"] = item["breeder"][0].strip()
+        else:
+            i["breeder"] = None
 
         i["breeding_farm"] = item["breeding_farm"][0].strip()
 

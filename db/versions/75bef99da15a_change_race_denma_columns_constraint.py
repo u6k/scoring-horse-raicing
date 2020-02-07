@@ -22,6 +22,8 @@ def upgrade():
     op.alter_column("race_denma", "horse_weight_diff", nullable=True)
     op.alter_column("race_denma", "prize_total_money", type_=sa.Float)
 
+    op.alter_column("horse", "breeder", nullable=True)
+
 
 def downgrade():
     pass

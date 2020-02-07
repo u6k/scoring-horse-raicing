@@ -6,6 +6,7 @@ Create Date: 2020-02-07 10:11:47.461209
 
 """
 from alembic import op
+import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
@@ -19,6 +20,7 @@ def upgrade():
     op.alter_column("race_denma", "trainer_id", nullable=True)
     op.alter_column("race_denma", "horse_weight", nullable=True)
     op.alter_column("race_denma", "horse_weight_diff", nullable=True)
+    op.alter_column("race_denma", "prize_total_money", type_=sa.Float)
 
 
 def downgrade():

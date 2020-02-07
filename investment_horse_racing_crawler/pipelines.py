@@ -279,12 +279,24 @@ class PostgreSQLPipeline(object):
 
         i["horse_id"] = item["horse_id"][0].split("/")[-2]
 
-        i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+        if "trainer_id" in item:
+            i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+        else:
+            i["trainer_id"] = None
 
-        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip())
+        horse_weight_and_diff_reg = re.match("^([\\- 0-9]+)\\(([\\+\\- 0-9]+)\\)$", item["horse_weight_and_diff"][0].strip())
         if horse_weight_and_diff_reg:
-            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
-            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+            horse_weight_str = horse_weight_and_diff_reg.group(1).strip()
+            if horse_weight_str != "-":
+                i["horse_weight"] = float(horse_weight_str)
+            else:
+                i["horse_weight"] = None
+
+            horse_weight_diff_str = horse_weight_and_diff_reg.group(2).strip()
+            if horse_weight_diff_str != "-":
+                i["horse_weight_diff"] = float(horse_weight_diff_str)
+            else:
+                i["horse_weight_diff"] = None
         else:
             raise DropItem("Unknown horse_weight_and_diff")
 

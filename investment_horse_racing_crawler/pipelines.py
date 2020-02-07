@@ -320,7 +320,7 @@ class PostgreSQLPipeline(object):
         i["result_3_count_grade_race"] = int(result_count_grade_race_parts[2])
         i["result_4_count_grade_race"] = int(result_count_grade_race_parts[3])
 
-        i["prize_total_money"] = int(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
+        i["prize_total_money"] = float(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
 
         # Insert db
         race_denma_id = "{}_{}".format(i["race_id"], i["horse_number"])

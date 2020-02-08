@@ -1732,7 +1732,7 @@ class TestPostgreSQLPipeline:
         assert trainer["belong_to"] == "美浦"
         assert trainer["first_licensing_year"] == 1996
 
-    def test_process_jockey_item(self):
+    def test_process_jockey_item_1(self):
         # Setup
         item = JockeyItem()
         item["jockey_id"] = ['01167']
@@ -1787,6 +1787,61 @@ class TestPostgreSQLPipeline:
         assert jockey["birthday"] == datetime(1998, 9, 21, 0, 0, 0)
         assert jockey["belong_to"] == "美浦(藤沢 和雄)"
         assert jockey["first_licensing_year"] == 2017
+
+    def test_process_jockey_item_2(self):
+        # Setup
+        item = JockeyItem()
+        item["belong_to"] = ['\n招待(フリー)']
+        item["first_licensing_year"] = ['0000年']
+        item["jockey_id"] = ['05508']
+        item["name"] = ['島崎      和也']
+        item["name_kana"] = [' ']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from jockey")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["jockey_id"] == '05508'
+        assert new_item["name_kana"] is None
+        assert new_item["name"] == '島崎      和也'
+        assert new_item["birthday"] is None
+        assert new_item["belong_to"] == '招待(フリー)'
+        assert new_item["first_licensing_year"] is None
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from jockey")
+
+        jockeys = self.pipeline.db_cursor.fetchall()
+        assert len(jockeys) == 1
+
+        jockey = jockeys[0]
+        assert jockey["jockey_id"] == '05508'
+        assert jockey["name_kana"] is None
+        assert jockey["name"] == '島崎      和也'
+        assert jockey["birthday"] is None
+        assert jockey["belong_to"] == '招待(フリー)'
+        assert jockey["first_licensing_year"] is None
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from jockey")
+
+        jockeys = self.pipeline.db_cursor.fetchall()
+        assert len(jockeys) == 1
+
+        jockey = jockeys[0]
+        assert jockey["jockey_id"] == '05508'
+        assert jockey["name_kana"] is None
+        assert jockey["name"] == '島崎      和也'
+        assert jockey["birthday"] is None
+        assert jockey["belong_to"] == '招待(フリー)'
+        assert jockey["first_licensing_year"] is None
 
     def test_process_odds_win_place_item_1(self):
         # Setup

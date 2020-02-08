@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#7980: 出馬表でtrainer_idが存在しない場合がある](https://redmine.u6k.me/issues/7980)
 - [#7981: prize_total_moneyには小数点が入る](https://redmine.u6k.me/issues/7981)
 - [#7982: breederが存在しない場合がある](https://redmine.u6k.me/issues/7982)
+- [#7983: 騎手の誕生日が存在しない場合がある](https://redmine.u6k.me/issues/7983)
 
 ## [2.5.0] - 2020-02-05
 ### Fixed

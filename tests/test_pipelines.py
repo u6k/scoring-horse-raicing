@@ -1208,6 +1208,203 @@ class TestPostgreSQLPipeline:
         assert race_denma["result_4_count_grade_race"] == 7
         assert race_denma["prize_total_money"] == 24247
 
+    def test_process_race_denma_item_4(self):
+        # Setup
+        item = RaceDenmaItem()
+        item["bracket_number"] = ['2']
+        item["horse_id"] = ['/directory/horse/2015102358/']
+        item["horse_number"] = ['2']
+        item["horse_weight_and_diff"] = ['\n-( - )']
+        item["jockey_id"] = ['/directory/jocky/00894/']
+        item["jockey_weight"] = ['55.0 ']
+        item["prize_total_money"] = ['\n670万']
+        item["race_id"] = ['2008010104']
+        item["result_count_all_period"] = ['\n0.0.1.21']
+        item["result_count_grade_race"] = ['\n0.0.0.0']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_denma")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["race_id"] == '2008010104'
+        assert new_item["bracket_number"] == 2
+        assert new_item["horse_number"] == 2
+        assert new_item["horse_id"] == '2015102358'
+        assert new_item["trainer_id"] is None
+        assert new_item["horse_weight"] is None
+        assert new_item["horse_weight_diff"] is None
+        assert new_item["jockey_id"] == '00894'
+        assert new_item["jockey_weight"] == 55.0
+        assert new_item["result_1_count_all_period"] == 0
+        assert new_item["result_2_count_all_period"] == 0
+        assert new_item["result_3_count_all_period"] == 1
+        assert new_item["result_4_count_all_period"] == 21
+        assert new_item["result_1_count_grade_race"] == 0
+        assert new_item["result_2_count_grade_race"] == 0
+        assert new_item["result_3_count_grade_race"] == 0
+        assert new_item["result_4_count_grade_race"] == 0
+        assert new_item["prize_total_money"] == 670
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_denma")
+
+        race_denmas = self.pipeline.db_cursor.fetchall()
+        assert len(race_denmas) == 1
+
+        race_denma = race_denmas[0]
+        assert race_denma["race_denma_id"] == '2008010104_2'
+        assert race_denma["race_id"] == '2008010104'
+        assert race_denma["bracket_number"] == 2
+        assert race_denma["horse_number"] == 2
+        assert race_denma["horse_id"] == '2015102358'
+        assert race_denma["trainer_id"] is None
+        assert race_denma["horse_weight"] is None
+        assert race_denma["horse_weight_diff"] is None
+        assert race_denma["jockey_id"] == '00894'
+        assert race_denma["jockey_weight"] == 55.0
+        assert race_denma["result_1_count_all_period"] == 0
+        assert race_denma["result_2_count_all_period"] == 0
+        assert race_denma["result_3_count_all_period"] == 1
+        assert race_denma["result_4_count_all_period"] == 21
+        assert race_denma["result_1_count_grade_race"] == 0
+        assert race_denma["result_2_count_grade_race"] == 0
+        assert race_denma["result_3_count_grade_race"] == 0
+        assert race_denma["result_4_count_grade_race"] == 0
+        assert race_denma["prize_total_money"] == 670
+
+        # Execute (2)
+        self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from race_denma")
+
+        race_denmas = self.pipeline.db_cursor.fetchall()
+        assert len(race_denmas) == 1
+
+        race_denma = race_denmas[0]
+        assert race_denma["race_denma_id"] == '2008010104_2'
+        assert race_denma["race_id"] == '2008010104'
+        assert race_denma["bracket_number"] == 2
+        assert race_denma["horse_number"] == 2
+        assert race_denma["horse_id"] == '2015102358'
+        assert race_denma["trainer_id"] is None
+        assert race_denma["horse_weight"] is None
+        assert race_denma["horse_weight_diff"] is None
+        assert race_denma["jockey_id"] == '00894'
+        assert race_denma["jockey_weight"] == 55.0
+        assert race_denma["result_1_count_all_period"] == 0
+        assert race_denma["result_2_count_all_period"] == 0
+        assert race_denma["result_3_count_all_period"] == 1
+        assert race_denma["result_4_count_all_period"] == 21
+        assert race_denma["result_1_count_grade_race"] == 0
+        assert race_denma["result_2_count_grade_race"] == 0
+        assert race_denma["result_3_count_grade_race"] == 0
+        assert race_denma["result_4_count_grade_race"] == 0
+        assert race_denma["prize_total_money"] == 670
+
+    def test_process_race_denma_item_5(self):
+        # Setup
+        item = RaceDenmaItem()
+        item["bracket_number"] = ['3']
+        item["horse_id"] = ['/directory/horse/2014105282/']
+        item["horse_number"] = ['6']
+        item["horse_weight_and_diff"] = ['\n438(-2)\n']
+        item["jockey_id"] = ['/directory/jocky/01075/']
+        item["jockey_weight"] = ['55.0 ']
+        item["prize_total_money"] = ['\n2751.5万']
+        item["race_id"] = ['2006010112']
+        item["result_count_all_period"] = ['\n2.0.4.14']
+        item["result_count_grade_race"] = ['\n0.0.0.0']
+        item["trainer_id"] = ['/directory/trainer/01097/']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_denma")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["race_id"] == '2006010112'
+        assert new_item["bracket_number"] == 3
+        assert new_item["horse_number"] == 6
+        assert new_item["horse_id"] == '2014105282'
+        assert new_item["trainer_id"] == '01097'
+        assert new_item["horse_weight"] == 438.0
+        assert new_item["horse_weight_diff"] == -2.0
+        assert new_item["jockey_id"] == '01075'
+        assert new_item["jockey_weight"] == 55.0
+        assert new_item["result_1_count_all_period"] == 2
+        assert new_item["result_2_count_all_period"] == 0
+        assert new_item["result_3_count_all_period"] == 4
+        assert new_item["result_4_count_all_period"] == 14
+        assert new_item["result_1_count_grade_race"] == 0
+        assert new_item["result_2_count_grade_race"] == 0
+        assert new_item["result_3_count_grade_race"] == 0
+        assert new_item["result_4_count_grade_race"] == 0
+        assert new_item["prize_total_money"] == 2751.5
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_denma")
+
+        race_denmas = self.pipeline.db_cursor.fetchall()
+        assert len(race_denmas) == 1
+
+        race_denma = race_denmas[0]
+        assert race_denma["race_denma_id"] == '2006010112_6'
+        assert race_denma["race_id"] == '2006010112'
+        assert race_denma["bracket_number"] == 3
+        assert race_denma["horse_number"] == 6
+        assert race_denma["horse_id"] == '2014105282'
+        assert race_denma["trainer_id"] == '01097'
+        assert race_denma["horse_weight"] == 438.0
+        assert race_denma["horse_weight_diff"] == -2.0
+        assert race_denma["jockey_id"] == '01075'
+        assert race_denma["jockey_weight"] == 55.0
+        assert race_denma["result_1_count_all_period"] == 2
+        assert race_denma["result_2_count_all_period"] == 0
+        assert race_denma["result_3_count_all_period"] == 4
+        assert race_denma["result_4_count_all_period"] == 14
+        assert race_denma["result_1_count_grade_race"] == 0
+        assert race_denma["result_2_count_grade_race"] == 0
+        assert race_denma["result_3_count_grade_race"] == 0
+        assert race_denma["result_4_count_grade_race"] == 0
+        assert race_denma["prize_total_money"] == 2751.5
+
+        # Execute (2)
+        self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from race_denma")
+
+        race_denmas = self.pipeline.db_cursor.fetchall()
+        assert len(race_denmas) == 1
+
+        race_denma = race_denmas[0]
+        assert race_denma["race_denma_id"] == '2006010112_6'
+        assert race_denma["race_id"] == '2006010112'
+        assert race_denma["bracket_number"] == 3
+        assert race_denma["horse_number"] == 6
+        assert race_denma["horse_id"] == '2014105282'
+        assert race_denma["trainer_id"] == '01097'
+        assert race_denma["horse_weight"] == 438.0
+        assert race_denma["horse_weight_diff"] == -2.0
+        assert race_denma["jockey_id"] == '01075'
+        assert race_denma["jockey_weight"] == 55.0
+        assert race_denma["result_1_count_all_period"] == 2
+        assert race_denma["result_2_count_all_period"] == 0
+        assert race_denma["result_3_count_all_period"] == 4
+        assert race_denma["result_4_count_all_period"] == 14
+        assert race_denma["result_1_count_grade_race"] == 0
+        assert race_denma["result_2_count_grade_race"] == 0
+        assert race_denma["result_3_count_grade_race"] == 0
+        assert race_denma["result_4_count_grade_race"] == 0
+        assert race_denma["prize_total_money"] == 2751.5
+
     def test_process_horse_item_1(self):
         # Setup
         item = HorseItem()
@@ -1412,6 +1609,73 @@ class TestPostgreSQLPipeline:
         assert horse["breeder"] == 'Lansdowne Thoroughbreds, LLC'
         assert horse["breeding_farm"] == '米'
 
+    def test_process_horse_item_4(self):
+        # Setup
+        item = HorseItem()
+        item["birthday"] = ['2013年4月26日']
+        item["breeding_farm"] = ['米']
+        item["coat_color"] = ['芦毛']
+        item["gender"] = ['[外] | せん | 登録抹消 ']
+        item["horse_id"] = ['2013190003']
+        item["name"] = ['サンダリングブルー']
+        item["owner"] = ['C.ウォッシュボーン']
+        item["trainer_id"] = ['/directory/trainer/05730/']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from horse")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["horse_id"] == '2013190003'
+        assert new_item["gender"] == 'せん'
+        assert new_item["name"] == 'サンダリングブルー'
+        assert new_item["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert new_item["coat_color"] == '芦毛'
+        assert new_item["trainer_id"] == '05730'
+        assert new_item["owner"] == 'C.ウォッシュボーン'
+        assert new_item["breeder"] is None
+        assert new_item["breeding_farm"] == '米'
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2013190003'
+        assert horse["gender"] == 'せん'
+        assert horse["name"] == 'サンダリングブルー'
+        assert horse["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '05730'
+        assert horse["owner"] == 'C.ウォッシュボーン'
+        assert horse["breeder"] is None
+        assert horse["breeding_farm"] == '米'
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from horse")
+
+        horses = self.pipeline.db_cursor.fetchall()
+        assert len(horses) == 1
+
+        horse = horses[0]
+        assert horse["horse_id"] == '2013190003'
+        assert horse["gender"] == 'せん'
+        assert horse["name"] == 'サンダリングブルー'
+        assert horse["birthday"] == datetime(2013, 4, 26, 0, 0, 0)
+        assert horse["coat_color"] == '芦毛'
+        assert horse["trainer_id"] == '05730'
+        assert horse["owner"] == 'C.ウォッシュボーン'
+        assert horse["breeder"] is None
+        assert horse["breeding_farm"] == '米'
+
     def test_process_trainer_item(self):
         # Setup
         item = TrainerItem()
@@ -1468,7 +1732,7 @@ class TestPostgreSQLPipeline:
         assert trainer["belong_to"] == "美浦"
         assert trainer["first_licensing_year"] == 1996
 
-    def test_process_jockey_item(self):
+    def test_process_jockey_item_1(self):
         # Setup
         item = JockeyItem()
         item["jockey_id"] = ['01167']
@@ -1523,6 +1787,61 @@ class TestPostgreSQLPipeline:
         assert jockey["birthday"] == datetime(1998, 9, 21, 0, 0, 0)
         assert jockey["belong_to"] == "美浦(藤沢 和雄)"
         assert jockey["first_licensing_year"] == 2017
+
+    def test_process_jockey_item_2(self):
+        # Setup
+        item = JockeyItem()
+        item["belong_to"] = ['\n招待(フリー)']
+        item["first_licensing_year"] = ['0000年']
+        item["jockey_id"] = ['05508']
+        item["name"] = ['島崎      和也']
+        item["name_kana"] = [' ']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from jockey")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["jockey_id"] == '05508'
+        assert new_item["name_kana"] is None
+        assert new_item["name"] == '島崎      和也'
+        assert new_item["birthday"] is None
+        assert new_item["belong_to"] == '招待(フリー)'
+        assert new_item["first_licensing_year"] is None
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from jockey")
+
+        jockeys = self.pipeline.db_cursor.fetchall()
+        assert len(jockeys) == 1
+
+        jockey = jockeys[0]
+        assert jockey["jockey_id"] == '05508'
+        assert jockey["name_kana"] is None
+        assert jockey["name"] == '島崎      和也'
+        assert jockey["birthday"] is None
+        assert jockey["belong_to"] == '招待(フリー)'
+        assert jockey["first_licensing_year"] is None
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from jockey")
+
+        jockeys = self.pipeline.db_cursor.fetchall()
+        assert len(jockeys) == 1
+
+        jockey = jockeys[0]
+        assert jockey["jockey_id"] == '05508'
+        assert jockey["name_kana"] is None
+        assert jockey["name"] == '島崎      和也'
+        assert jockey["birthday"] is None
+        assert jockey["belong_to"] == '招待(フリー)'
+        assert jockey["first_licensing_year"] is None
 
     def test_process_odds_win_place_item_1(self):
         # Setup

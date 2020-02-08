@@ -279,12 +279,24 @@ class PostgreSQLPipeline(object):
 
         i["horse_id"] = item["horse_id"][0].split("/")[-2]
 
-        i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+        if "trainer_id" in item:
+            i["trainer_id"] = item["trainer_id"][0].split("/")[-2]
+        else:
+            i["trainer_id"] = None
 
-        horse_weight_and_diff_reg = re.match("^([0-9]+)\\(([\\+\\-0-9]+)\\)$", item["horse_weight_and_diff"][0].strip())
+        horse_weight_and_diff_reg = re.match("^([\\- 0-9]+)\\(([\\+\\- 0-9]+)\\)$", item["horse_weight_and_diff"][0].strip())
         if horse_weight_and_diff_reg:
-            i["horse_weight"] = float(horse_weight_and_diff_reg.group(1))
-            i["horse_weight_diff"] = float(horse_weight_and_diff_reg.group(2))
+            horse_weight_str = horse_weight_and_diff_reg.group(1).strip()
+            if horse_weight_str != "-":
+                i["horse_weight"] = float(horse_weight_str)
+            else:
+                i["horse_weight"] = None
+
+            horse_weight_diff_str = horse_weight_and_diff_reg.group(2).strip()
+            if horse_weight_diff_str != "-":
+                i["horse_weight_diff"] = float(horse_weight_diff_str)
+            else:
+                i["horse_weight_diff"] = None
         else:
             raise DropItem("Unknown horse_weight_and_diff")
 
@@ -308,7 +320,7 @@ class PostgreSQLPipeline(object):
         i["result_3_count_grade_race"] = int(result_count_grade_race_parts[2])
         i["result_4_count_grade_race"] = int(result_count_grade_race_parts[3])
 
-        i["prize_total_money"] = int(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
+        i["prize_total_money"] = float(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
 
         # Insert db
         race_denma_id = "{}_{}".format(i["race_id"], i["horse_number"])
@@ -343,7 +355,10 @@ class PostgreSQLPipeline(object):
 
         i["owner"] = item["owner"][0].strip()
 
-        i["breeder"] = item["breeder"][0].strip()
+        if "breeder" in item:
+            i["breeder"] = item["breeder"][0].strip()
+        else:
+            i["breeder"] = None
 
         i["breeding_farm"] = item["breeding_farm"][0].strip()
 
@@ -395,21 +410,32 @@ class PostgreSQLPipeline(object):
 
         i["jockey_id"] = item["jockey_id"][0]
 
-        i["name_kana"] = item["name_kana"][0].strip()
+        name_kana_str = item["name_kana"][0].strip()
+        if len(name_kana_str) > 0:
+            i["name_kana"] = name_kana_str
+        else:
+            i["name_kana"] = None
 
         i["name"] = item["name"][0].strip()
 
-        birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
-        if birthday_reg:
-            i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+        if "birthday" in item:
+            birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
+            if birthday_reg:
+                i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+            else:
+                raise DropItem("Unknown birthday pattern")
         else:
-            raise DropItem("Unknown birthday pattern")
+            i["birthday"] = None
 
         i["belong_to"] = item["belong_to"][0].strip()
 
         first_licensing_year_reg = re.match("^([0-9]+)年.*$", item["first_licensing_year"][0].strip())
         if first_licensing_year_reg:
-            i["first_licensing_year"] = int(first_licensing_year_reg.group(1))
+            first_licensing_year_int = int(first_licensing_year_reg.group(1))
+            if first_licensing_year_int > 0:
+                i["first_licensing_year"] = first_licensing_year_int
+            else:
+                i["first_licensing_year"] = None
         else:
             raise DropItem("Unknown first_licensing_year pattern")
 

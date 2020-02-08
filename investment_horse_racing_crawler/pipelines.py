@@ -410,21 +410,32 @@ class PostgreSQLPipeline(object):
 
         i["jockey_id"] = item["jockey_id"][0]
 
-        i["name_kana"] = item["name_kana"][0].strip()
+        name_kana_str = item["name_kana"][0].strip()
+        if len(name_kana_str) > 0:
+            i["name_kana"] = name_kana_str
+        else:
+            i["name_kana"] = None
 
         i["name"] = item["name"][0].strip()
 
-        birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
-        if birthday_reg:
-            i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+        if "birthday" in item:
+            birthday_reg = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日$", item["birthday"][0].strip())
+            if birthday_reg:
+                i["birthday"] = datetime(int(birthday_reg.group(1)), int(birthday_reg.group(2)), int(birthday_reg.group(3)), 0, 0, 0)
+            else:
+                raise DropItem("Unknown birthday pattern")
         else:
-            raise DropItem("Unknown birthday pattern")
+            i["birthday"] = None
 
         i["belong_to"] = item["belong_to"][0].strip()
 
         first_licensing_year_reg = re.match("^([0-9]+)年.*$", item["first_licensing_year"][0].strip())
         if first_licensing_year_reg:
-            i["first_licensing_year"] = int(first_licensing_year_reg.group(1))
+            first_licensing_year_int = int(first_licensing_year_reg.group(1))
+            if first_licensing_year_int > 0:
+                i["first_licensing_year"] = first_licensing_year_int
+            else:
+                i["first_licensing_year"] = None
         else:
             raise DropItem("Unknown first_licensing_year pattern")
 

@@ -24,6 +24,10 @@ def upgrade():
 
     op.alter_column("horse", "breeder", nullable=True)
 
+    op.alter_column("jockey", "name_kana", nullable=True)
+    op.alter_column("jockey", "birthday", nullable=True)
+    op.alter_column("jockey", "first_licensing_year", nullable=True)
+
 
 def downgrade():
     pass

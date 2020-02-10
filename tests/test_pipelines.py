@@ -267,6 +267,60 @@ class TestPostgreSQLPipeline:
         self.pipeline.db_cursor.execute("select * from race_payoff")
         assert len(self.pipeline.db_cursor.fetchall()) == 0
 
+    def test_process_race_payoff_item_5(self):
+        # Setup
+        item = RacePayoffItem()
+        item["favorite_order"] = ['-番人気']
+        item["horse_number"] = ['2']
+        item["odds"] = ['1,630円']
+        item["payoff_type"] = ['単勝']
+        item["race_id"] = ['1702020412']
+
+        # Before check
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+        assert len(self.pipeline.db_cursor.fetchall()) == 0
+
+        # Execute
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check return
+        assert new_item["race_id"] == '1702020412'
+        assert new_item["payoff_type"] == "win"
+        assert new_item["horse_number"] == 2
+        assert new_item["odds"] == 16.3
+        assert new_item["favorite_order"] is None
+
+        # Check db
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+
+        race_payoffs = self.pipeline.db_cursor.fetchall()
+        assert len(race_payoffs) == 1
+
+        race_payoff = race_payoffs[0]
+        assert race_payoff["race_payoff_id"] == '1702020412_win_2'
+        assert race_payoff["race_id"] == '1702020412'
+        assert race_payoff["payoff_type"] == "win"
+        assert race_payoff["horse_number"] == 2
+        assert race_payoff["odds"] == 16.3
+        assert race_payoff["favorite_order"] is None
+
+        # Execute (2)
+        new_item = self.pipeline.process_item(item, None)
+
+        # Check db (2)
+        self.pipeline.db_cursor.execute("select * from race_payoff")
+
+        race_payoffs = self.pipeline.db_cursor.fetchall()
+        assert len(race_payoffs) == 1
+
+        race_payoff = race_payoffs[0]
+        assert race_payoff["race_payoff_id"] == '1702020412_win_2'
+        assert race_payoff["race_id"] == '1702020412'
+        assert race_payoff["payoff_type"] == "win"
+        assert race_payoff["horse_number"] == 2
+        assert race_payoff["odds"] == 16.3
+        assert race_payoff["favorite_order"] is None
+
     def test_process_race_result_item_1(self):
         # Setup
         item = RaceResultItem()

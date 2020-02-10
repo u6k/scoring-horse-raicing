@@ -157,7 +157,11 @@ class PostgreSQLPipeline(object):
 
         i["odds"] = int(item["odds"][0].replace("円", "").replace(",", ""))/100.0
 
-        i["favorite_order"] = int(item["favorite_order"][0].replace("番人気", ""))
+        favorite_order_str = item["favorite_order"][0].replace("番人気", "").strip()
+        if favorite_order_str != "-":
+            i["favorite_order"] = int(favorite_order_str)
+        else:
+            i["favorite_order"] = None
 
         # Insert db
         race_payoff_id = "{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number"])

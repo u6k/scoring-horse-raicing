@@ -277,9 +277,17 @@ class PostgreSQLPipeline(object):
 
         i["race_id"] = item["race_id"][0]
 
-        i["bracket_number"] = int(item["bracket_number"][0].strip())
+        bracket_number_str = item["bracket_number"][0].strip()
+        if bracket_number_str != "-":
+            i["bracket_number"] = int(bracket_number_str)
+        else:
+            i["bracket_number"] = None
 
-        i["horse_number"] = int(item["horse_number"][0].strip())
+        horse_number_str = item["horse_number"][0].strip()
+        if horse_number_str != "-":
+            i["horse_number"] = int(horse_number_str)
+        else:
+            i["horse_number"] = None
 
         i["horse_id"] = item["horse_id"][0].split("/")[-2]
 
@@ -327,7 +335,7 @@ class PostgreSQLPipeline(object):
         i["prize_total_money"] = float(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
 
         # Insert db
-        race_denma_id = "{}_{}".format(i["race_id"], i["horse_number"])
+        race_denma_id = "{}_{}".format(i["race_id"], i["horse_id"])
 
         self.db_cursor.execute("delete from race_denma where race_denma_id=%s", (race_denma_id,))
         self.db_cursor.execute("insert into race_denma (race_denma_id, race_id, bracket_number, horse_number, horse_id, trainer_id, horse_weight, horse_weight_diff, jockey_id, jockey_weight, result_1_count_all_period, result_2_count_all_period, result_3_count_all_period, result_4_count_all_period, result_1_count_grade_race, result_2_count_grade_race, result_3_count_grade_race, result_4_count_grade_race, prize_total_money) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (race_denma_id, i["race_id"], i["bracket_number"], i["horse_number"], i["horse_id"], i["trainer_id"], i["horse_weight"], i["horse_weight_diff"], i["jockey_id"], i["jockey_weight"], i["result_1_count_all_period"], i["result_2_count_all_period"], i["result_3_count_all_period"], i["result_4_count_all_period"], i["result_1_count_grade_race"], i["result_2_count_grade_race"], i["result_3_count_grade_race"], i["result_4_count_grade_race"], i["prize_total_money"]))

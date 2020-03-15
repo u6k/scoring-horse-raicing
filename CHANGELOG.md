@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- [#8040: 払い戻し、オッズ情報を、単勝・複勝以外も取得する](https://redmine.u6k.me/issues/8040)
+
 ## [2.7.0] - 2020-02-17
 ### Fixed
 - [#7987: 人気順に"-"が入ることがある](https://redmine.u6k.me/issues/7987)

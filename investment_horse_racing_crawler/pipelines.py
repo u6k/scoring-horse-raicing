@@ -147,11 +147,38 @@ class PostgreSQLPipeline(object):
             i["payoff_type"] = "win"
         elif item["payoff_type"][0] == "複勝":
             i["payoff_type"] = "place"
+        elif item["payoff_type"][0] == "枠連":
+            i["payoff_type"] = "bracket_quinella"
+        elif item["payoff_type"][0] == "馬連":
+            i["payoff_type"] = "quinella"
+        elif item["payoff_type"][0] == "ワイド":
+            i["payoff_type"] = "quinella_place"
+        elif item["payoff_type"][0] == "馬単":
+            i["payoff_type"] = "exacta"
+        elif item["payoff_type"][0] == "3連複":
+            i["payoff_type"] = "trio"
+        elif item["payoff_type"][0] == "3連単":
+            i["payoff_type"] = "trifecta"
         else:
             raise DropItem("Unknown payoff_type")
 
         if "horse_number" in item:
-            i["horse_number"] = int(item["horse_number"][0])
+            horse_number_parts = item["horse_number"][0].split("－")
+
+            if len(horse_number_parts) == 1:
+                i["horse_number_1"] = int(horse_number_parts[0])
+                i["horse_number_2"] = None
+                i["horse_number_3"] = None
+            elif len(horse_number_parts) == 2:
+                i["horse_number_1"] = int(horse_number_parts[0])
+                i["horse_number_2"] = int(horse_number_parts[1])
+                i["horse_number_3"] = None
+            elif len(horse_number_parts) == 3:
+                i["horse_number_1"] = int(horse_number_parts[0])
+                i["horse_number_2"] = int(horse_number_parts[1])
+                i["horse_number_3"] = int(horse_number_parts[2])
+            else:
+                raise DropItem("Unknown horse_number")
         else:
             raise DropItem("Empty race payoff record")
 
@@ -164,10 +191,15 @@ class PostgreSQLPipeline(object):
             i["favorite_order"] = None
 
         # Insert db
-        race_payoff_id = "{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number"])
+        if i["horse_number_3"] is not None:
+            race_payoff_id = "{}_{}_{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number_1"], i["horse_number_2"], i["horse_number_3"])
+        elif i["horse_number_2"] is not None:
+            race_payoff_id = "{}_{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number_1"], i["horse_number_2"])
+        else:
+            race_payoff_id = "{}_{}_{}".format(i["race_id"], i["payoff_type"], i["horse_number_1"])
 
         self.db_cursor.execute("delete from race_payoff where race_payoff_id=%s", (race_payoff_id,))
-        self.db_cursor.execute("insert into race_payoff (race_payoff_id, race_id, payoff_type, horse_number, odds, favorite_order) values (%s, %s, %s, %s, %s, %s)", (race_payoff_id, i["race_id"], i["payoff_type"], i["horse_number"], i["odds"], i["favorite_order"]))
+        self.db_cursor.execute("insert into race_payoff (race_payoff_id, race_id, payoff_type, horse_number_1, horse_number_2, horse_number_3, odds, favorite_order) values (%s, %s, %s, %s, %s, %s, %s, %s)", (race_payoff_id, i["race_id"], i["payoff_type"], i["horse_number_1"], i["horse_number_2"], i["horse_number_3"], i["odds"], i["favorite_order"]))
         self.db_conn.commit()
 
         return i

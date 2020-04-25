@@ -12,6 +12,9 @@ class HorseRacingSpider(scrapy.Spider):
         'https://keiba.yahoo.co.jp/schedule/list/',
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(HorseRacingSpider, self).__init__(*args, **kwargs)
+
     def parse(self, response):
         """ Parse schedule list page.
 

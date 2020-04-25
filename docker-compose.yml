@@ -5,6 +5,8 @@ services:
     build: .
     volumes:
       - ".:/var/myapp"
+    ports:
+      - "55000:5000"
     environment:
       - "S3_ENDPOINT=${S3_ENDPOINT}"
       - "S3_REGION=${S3_REGION}"

@@ -1,6 +1,8 @@
+import re
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import scrapy
 from scrapy.loader import ItemLoader
-
 
 from investment_horse_racing_crawler.app_logging import get_logger
 from investment_horse_racing_crawler.scrapy.items import RaceInfoItem, RacePayoffItem, RaceResultItem, RaceDenmaItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
@@ -12,12 +14,20 @@ logger = get_logger(__name__)
 class HorseRacingSpider(scrapy.Spider):
     name = "horse_racing"
 
-    start_urls = [
-        'https://keiba.yahoo.co.jp/schedule/list/',
-    ]
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, start_url='https://keiba.yahoo.co.jp/schedule/list/', recrawl_period="all", recrawl_race_id=None, recache_race=False, recache_horse=False, *args, **kwargs):
         super(HorseRacingSpider, self).__init__(*args, **kwargs)
+
+        self.start_urls = [start_url]
+
+        if recrawl_period == "all":
+            recrawl_period = 100000
+        recrawl_period = int(recrawl_period)
+        self.recrawl_end_date = datetime(datetime.now().year, datetime.now().month, datetime.now().day, 0, 0, 0, 0) + timedelta(days=1)
+        self.recrawl_start_date = self.recrawl_end_date - timedelta(days=recrawl_period)
+
+        self.recrawl_race_id = recrawl_race_id
+        self.recache_race = recache_race
+        self.recache_horse = recache_horse
 
     def parse(self, response):
         """ Parse schedule list page.
@@ -29,11 +39,35 @@ class HorseRacingSpider(scrapy.Spider):
         """
         logger.info("#parse: start: url=%s" % response.url)
 
+        logger.debug(f"#parse: recrawl_start_date={self.recrawl_start_date}")
+        logger.debug(f"#parse: recrawl_end_date={self.recrawl_end_date}")
+        logger.debug(f"#parse: recrawl_race_id={self.recrawl_race_id}")
+        logger.debug(f"#parse: recache_race={self.recache_race}")
+        logger.debug(f"#parse: recache_horse={self.recache_horse}")
+
+        if self.recrawl_race_id:
+            logger.debug(f"#parse: re-crawl race: {self.recrawl_race_id}")
+
+            url = f"https://keiba.yahoo.co.jp/race/result/{self.recrawl_race_id}/"
+            yield response.follow(url, callback=self.parse_race_result)
+
+            return
+
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
-            if href.startswith("/schedule/list/"):
+            target_re = re.match("^/schedule/list/([0-9]+)/\\?month=([0-9]+)$", href)
+            if target_re:
                 logger.debug("#parse: other schedule list page: href=%s" % href)
+
+                # Check re-crawl
+                target_start = datetime(int(target_re.group(1)), int(target_re.group(2)), 1, 0, 0, 0)
+                target_end = target_start + relativedelta(months=1)
+
+                if not (self.recrawl_start_date <= target_end and self.recrawl_end_date >= target_start):
+                    logger.debug(f"#parse: cancel other schedule list page: target={target_start} to {target_end}, settings={self.recrawl_start_date} to {self.recrawl_end_date}")
+                    continue
+
                 yield response.follow(a, callback=self.parse)
 
             if href.startswith("/race/list/"):
@@ -50,6 +84,16 @@ class HorseRacingSpider(scrapy.Spider):
         """
         logger.info("#parse_race_list: start: url=%s" % response.url)
 
+        # Check re-crawl
+        target_date_re = re.match("^([0-9]+)年([0-9]+)月([0-9]+)日.*$", response.xpath("//div[@id='cornerTit']/h4/text()").get())
+        if not target_date_re:
+            raise RuntimeError("#parse_race_list: target date not found")
+
+        target_date = datetime(int(target_date_re.group(1)), int(target_date_re.group(2)), int(target_date_re.group(3)), 0, 0, 0, 0)
+        if not (self.recrawl_start_date <= target_date < self.recrawl_end_date):
+            logger.debug(f"#parse_race_list: cancel race list: target={target_date}, settings={self.recrawl_start_date} to {self.recrawl_end_date}")
+            return
+
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
@@ -65,7 +109,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 2 2
         @race_result
         """
-        logger.debug("#parse_race_result: start: url=%s" % response.url)
+        logger.info("#parse_race_result: start: url=%s" % response.url)
 
         # Parse race info
         logger.debug("#parse_race_result: parse race info")
@@ -155,7 +199,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 1
         @race_denma
         """
-        logger.debug("#parse_race_denma: start: url=%s" % response.url)
+        logger.info("#parse_race_denma: start: url=%s" % response.url)
 
         # Parse race denma
         logger.debug("#parse_race_denma: parse race denma")
@@ -206,7 +250,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @horse
         """
-        logger.debug("#parse_horse: start: url=%s" % response.url)
+        logger.info("#parse_horse: start: url=%s" % response.url)
 
         horse_id = response.url.split("/")[-2]
 
@@ -233,7 +277,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @trainer
         """
-        logger.debug("#parse_trainer: start: url=%s" % response.url)
+        logger.info("#parse_trainer: start: url=%s" % response.url)
 
         trainer_id = response.url.split("/")[-2]
 
@@ -257,7 +301,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @jockey
         """
-        logger.debug("#parse_jockey: start: url=%s" % response.url)
+        logger.info("#parse_jockey: start: url=%s" % response.url)
 
         jockey_id = response.url.split("/")[-2]
 
@@ -281,7 +325,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @odds_win_place
         """
-        logger.debug("#parse_odds: start: url=%s" % response.url)
+        logger.info("#parse_odds: start: url=%s" % response.url)
 
         race_id = response.url.split("/")[-2]
 

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [#8266: Flaskアプリに変更して、ジョブ登録はFlaskで定義したWebAPIで受け付ける](https://redmine.u6k.me/issues/8266)
+- [#7878: キャッシュ有効期限をページによって変える](https://redmine.u6k.me/issues/7878)
 
 ## [2.8.0] - 2020-03-15
 ### Changed

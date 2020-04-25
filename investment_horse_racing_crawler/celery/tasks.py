@@ -29,9 +29,9 @@ def health():
 
 
 @app.task
-def crawl():
-    logger.info("#crawl: start")
+def crawl(start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse):
+    logger.info(f"#crawl: start: start_url={start_url}, recrawl_period={recrawl_period}, recrawl_race_id={recrawl_race_id}, recache_race={recache_race}, recache_horse={recache_horse}")
 
-    scrapy_crawl()
+    scrapy_crawl(start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse)
 
     return "ok"

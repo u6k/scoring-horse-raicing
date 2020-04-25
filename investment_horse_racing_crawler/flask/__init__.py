@@ -18,3 +18,12 @@ def health():
     logger.info(f"celery.result={result.get()}")
 
     return "ok"
+
+
+@app.route("/api/crawl", methods=["POST"])
+def crawl():
+    logger.info("#crawl: start")
+
+    tasks.crawl.delay()
+
+    return "ok"

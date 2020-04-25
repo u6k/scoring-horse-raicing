@@ -166,6 +166,14 @@ class S3CacheStorage(object):
             else:
                 raise err
 
+        if spider.recache_race and (("/schedule/list" in request.url) or ("/race/list" in request.url) or ("/race/result" in request.url) or ("/race/denma" in request.url) or ("/odds" in request.url)):
+            logger.debug("#retrieve_response: re-cache race")
+            return
+
+        if spider.recache_horse and (("/directory/horse" in request.url) or ("/directory/trainer" in request.url) or ("/directory/jocky" in request.url)):
+            logger.debug("#retrieve_response: re-cache horse/jockey/trainer")
+            return
+
         data = pickle.loads(s3_obj.get()["Body"].read())
 
         url = data["url"]

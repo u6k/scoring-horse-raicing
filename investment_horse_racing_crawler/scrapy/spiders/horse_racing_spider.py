@@ -2,7 +2,11 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 
+from investment_horse_racing_crawler.app_logging import get_logger
 from investment_horse_racing_crawler.scrapy.items import RaceInfoItem, RacePayoffItem, RaceResultItem, RaceDenmaItem, HorseItem, TrainerItem, JockeyItem, OddsWinPlaceItem
+
+
+logger = get_logger(__name__)
 
 
 class HorseRacingSpider(scrapy.Spider):
@@ -23,17 +27,17 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 1
         @schedule_list
         """
-        self.logger.debug("#parse: start: url=%s" % response.url)
+        logger.info("#parse: start: url=%s" % response.url)
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
             if href.startswith("/schedule/list/"):
-                self.logger.debug("#parse: other schedule list page: href=%s" % href)
+                logger.debug("#parse: other schedule list page: href=%s" % href)
                 yield response.follow(a, callback=self.parse)
 
             if href.startswith("/race/list/"):
-                self.logger.debug("#parse: race list page: href=%s" % href)
+                logger.debug("#parse: race list page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_race_list)
 
     def parse_race_list(self, response):
@@ -44,13 +48,13 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 1
         @race_list
         """
-        self.logger.debug("#parse_race_list: start: url=%s" % response.url)
+        logger.info("#parse_race_list: start: url=%s" % response.url)
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
             if href.startswith("/race/result/"):
-                self.logger.debug("#parse_race_list: race result page: href=%s" % href)
+                logger.debug("#parse_race_list: race result page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_race_result)
 
     def parse_race_result(self, response):
@@ -61,10 +65,10 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 2 2
         @race_result
         """
-        self.logger.debug("#parse_race_result: start: url=%s" % response.url)
+        logger.debug("#parse_race_result: start: url=%s" % response.url)
 
         # Parse race info
-        self.logger.debug("#parse_race_result: parse race info")
+        logger.debug("#parse_race_result: parse race info")
 
         loader = ItemLoader(item=RaceInfoItem(), response=response)
         race_id = response.url.split("/")[-2]
@@ -80,11 +84,11 @@ class HorseRacingSpider(scrapy.Spider):
         loader.add_xpath("added_money", "//p[@id='raceTitMeta']/text()[8]")
         i = loader.load_item()
 
-        self.logger.debug("#parse_race_result: race info=%s" % i)
+        logger.debug("#parse_race_result: race info=%s" % i)
         yield i
 
         # Parse race payoff
-        self.logger.debug("#parse_race_result: parse race payoff")
+        logger.debug("#parse_race_result: parse race payoff")
 
         payoff_type = None
         for tr in response.xpath("//table[contains(@class, 'resultYen')]/tr"):
@@ -100,11 +104,11 @@ class HorseRacingSpider(scrapy.Spider):
             loader.add_xpath("favorite_order", "td[3]/span/text()")
             i = loader.load_item()
 
-            self.logger.debug("#parse_race_result: race payoff=%s" % i)
+            logger.debug("#parse_race_result: race payoff=%s" % i)
             yield i
 
         # Parse race result
-        self.logger.debug("#parse_race_result: parse race result")
+        logger.debug("#parse_race_result: parse race result")
 
         for tr in response.xpath("//table[@id='raceScore']/tbody/tr"):
             loader = ItemLoader(item=RaceResultItem(), selector=tr)
@@ -126,21 +130,21 @@ class HorseRacingSpider(scrapy.Spider):
             loader.add_xpath("trainer_name", "td[9]/a/text()")
             i = loader.load_item()
 
-            self.logger.debug("#parse_race_result: race result=%s" % i)
+            logger.debug("#parse_race_result: race result=%s" % i)
             yield i
 
         # Parse link
-        self.logger.debug("#parse_race_result: parse link")
+        logger.debug("#parse_race_result: parse link")
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
             if href.startswith("/race/denma/"):
-                self.logger.debug("#parse_race_result: race denma page: href=%s" % href)
+                logger.debug("#parse_race_result: race denma page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_race_denma)
 
             if href.startswith("/odds/tfw/"):
-                self.logger.debug("#parse_race_result: odds page: href=%s" % href)
+                logger.debug("#parse_race_result: odds page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_odds)
 
     def parse_race_denma(self, response):
@@ -151,10 +155,10 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 1
         @race_denma
         """
-        self.logger.debug("#parse_race_denma: start: url=%s" % response.url)
+        logger.debug("#parse_race_denma: start: url=%s" % response.url)
 
         # Parse race denma
-        self.logger.debug("#parse_race_denma: parse race denma")
+        logger.debug("#parse_race_denma: parse race denma")
 
         race_id = response.url.split("/")[-2]
 
@@ -173,25 +177,25 @@ class HorseRacingSpider(scrapy.Spider):
             loader.add_xpath("prize_total_money", "td[7]/text()[3]")
             i = loader.load_item()
 
-            self.logger.debug("#parse_race_denma: race denma=%s" % i)
+            logger.debug("#parse_race_denma: race denma=%s" % i)
             yield i
 
         # Parse link
-        self.logger.debug("#parse_race_denma: parse link")
+        logger.debug("#parse_race_denma: parse link")
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
             if href.startswith("/directory/horse/"):
-                self.logger.debug("#parse_race_denma: horse page: href=%s" % href)
+                logger.debug("#parse_race_denma: horse page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_horse)
 
             if href.startswith("/directory/trainer/"):
-                self.logger.debug("#parse_race_denma: trainer page: href=%s" % href)
+                logger.debug("#parse_race_denma: trainer page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_trainer)
 
             if href.startswith("/directory/jocky/"):
-                self.logger.debug("#parse_race_denma: jockey page: href=%s" % href)
+                logger.debug("#parse_race_denma: jockey page: href=%s" % href)
                 yield response.follow(a, callback=self.parse_jockey)
 
     def parse_horse(self, response):
@@ -202,7 +206,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @horse
         """
-        self.logger.debug("#parse_horse: start: url=%s" % response.url)
+        logger.debug("#parse_horse: start: url=%s" % response.url)
 
         horse_id = response.url.split("/")[-2]
 
@@ -218,7 +222,7 @@ class HorseRacingSpider(scrapy.Spider):
         loader.add_xpath("breeding_farm", "//div[@id='dirTitName']/ul/li[6]/text()")
         i = loader.load_item()
 
-        self.logger.debug("#parse_horse: horse=%s" % i)
+        logger.debug("#parse_horse: horse=%s" % i)
         yield i
 
     def parse_trainer(self, response):
@@ -229,7 +233,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @trainer
         """
-        self.logger.debug("#parse_trainer: start: url=%s" % response.url)
+        logger.debug("#parse_trainer: start: url=%s" % response.url)
 
         trainer_id = response.url.split("/")[-2]
 
@@ -242,7 +246,7 @@ class HorseRacingSpider(scrapy.Spider):
         loader.add_xpath("first_licensing_year", "//div[@id='dirTitName']/ul/li[3]/text()")
         i = loader.load_item()
 
-        self.logger.debug("#parse_trainer: trainer=%s" % i)
+        logger.debug("#parse_trainer: trainer=%s" % i)
         yield i
 
     def parse_jockey(self, response):
@@ -253,7 +257,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @jockey
         """
-        self.logger.debug("#parse_jockey: start: url=%s" % response.url)
+        logger.debug("#parse_jockey: start: url=%s" % response.url)
 
         jockey_id = response.url.split("/")[-2]
 
@@ -266,7 +270,7 @@ class HorseRacingSpider(scrapy.Spider):
         loader.add_xpath("first_licensing_year", "//div[@id='dirTitName']/ul/li[3]/text()")
         i = loader.load_item()
 
-        self.logger.debug("#parse_jockey: jockey=%s" % i)
+        logger.debug("#parse_jockey: jockey=%s" % i)
         yield i
 
     def parse_odds(self, response):
@@ -277,7 +281,7 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 0 0
         @odds_win_place
         """
-        self.logger.debug("#parse_odds: start: url=%s" % response.url)
+        logger.debug("#parse_odds: start: url=%s" % response.url)
 
         race_id = response.url.split("/")[-2]
 
@@ -295,5 +299,5 @@ class HorseRacingSpider(scrapy.Spider):
 
             i = loader.load_item()
 
-            self.logger.debug("#parse_odds: odds=%s" % i)
+            logger.debug("#parse_odds: odds=%s" % i)
             yield i

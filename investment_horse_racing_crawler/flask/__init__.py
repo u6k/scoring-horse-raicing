@@ -1,16 +1,16 @@
 from flask import Flask
 
-from investment_horse_racing_crawler.scrapy.app import crawler
+from investment_horse_racing_crawler.app_logging import get_logger
+
+
+logger = get_logger(__name__)
 
 
 app = Flask(__name__)
 
 
-@app.route("/")
-def hello():
-    return "Hello, world!"
+@app.route("/api/health")
+def health():
+    logger.info("#health: start")
 
-
-@app.route("/api/crawl", methods=["POST"])
-def crawl():
-    crawler.crawl()
+    return "ok"

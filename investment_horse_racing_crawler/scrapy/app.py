@@ -2,6 +2,11 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from billiard import Process
 
+from investment_horse_racing_crawler.app_logging import get_logger
+
+
+logger = get_logger(__name__)
+
 
 class CrawlerScript():
     def __init__(self):
@@ -19,4 +24,8 @@ class CrawlerScript():
         process.join()
 
 
-crawler = CrawlerScript()
+def crawl():
+    logger.info("#crawl: start")
+
+    crawler = CrawlerScript()
+    crawler.crawl()

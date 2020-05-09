@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2020-05-10
+### Changed
+- [#8394: Flaskアプリに変更して、ジョブ登録はFlaskで定義したWebAPIで受け付ける](https://redmine.u6k.me/issues/8394)
+    - いろいろとFlaskアプリになりきれていなかったため
+
+### Added
+- [#8185: 毎日10:00にクロールを開始して、当日の全レース情報を取得して、投票処理を予約実行する](https://redmine.u6k.me/issues/8185)
+
 ## [3.0.1] - 2020-04-26
 ### Fixed
 - [#8299: 本番コンテナの起動が失敗した](https://redmine.u6k.me/issues/8299)

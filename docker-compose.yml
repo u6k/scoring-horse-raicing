@@ -1,26 +1,7 @@
 version: '2'
 
 services:
-  web:
-    build: .
-    volumes:
-      - ".:/var/myapp"
-    ports:
-      - "55000:5000"
-    environment:
-      - "TZ=Asia/Tokyo"
-      - "DB_HOST=${DB_HOST}"
-      - "DB_PORT=${DB_PORT}"
-      - "DB_USERNAME=${DB_USERNAME}"
-      - "DB_PASSWORD=${DB_PASSWORD}"
-      - "DB_DATABASE=${DB_DATABASE}"
-      - "CELERY_REDIS_URL=${CELERY_REDIS_URL}"
-    command: pipenv run flask
-    depends_on:
-      - "db"
-      - "redis"
-
-  crawler:
+  app:
     build: .
     volumes:
       - ".:/var/myapp"
@@ -37,12 +18,14 @@ services:
       - "DB_USERNAME=${DB_USERNAME}"
       - "DB_PASSWORD=${DB_PASSWORD}"
       - "DB_DATABASE=${DB_DATABASE}"
-      - "CELERY_REDIS_URL=${CELERY_REDIS_URL}"
-    command: pipenv run celery
+      - "API_CRAWL_AND_VOTE_URL=${API_CRAWL_AND_VOTE_URL}"
+      - "API_CRAWL_AND_CLOSE_URL=${API_CRAWL_AND_CLOSE_URL}"
+      - "API_RUNDECK_AUTH_TOKEN=${API_RUNDECK_AUTH_TOKEN}"
+    ports:
+      - "5000:5000"
     depends_on:
       - "s3"
       - "db"
-      - "redis"
 
   s3:
     image: minio/minio
@@ -58,6 +41,3 @@ services:
       - "POSTGRES_USER=${DB_USERNAME}"
       - "POSTGRES_PASSWORD=${DB_PASSWORD}"
       - "POSTGRES_DB=${DB_DATABASE}"
-
-  redis:
-    image: redis

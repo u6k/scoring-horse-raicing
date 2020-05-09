@@ -1,3 +1,4 @@
+import warnings
 import logging
 import logging.config
 
@@ -25,8 +26,16 @@ logging.config.dictConfig({
             "level": logging.DEBUG,
             "propagate": 0,
         },
+        "boto3": {
+            "level": logging.INFO,
+        },
+        "botocore": {
+            "level": logging.INFO,
+        },
     },
 })
+
+warnings.simplefilter("ignore")
 
 
 def get_logger(name):

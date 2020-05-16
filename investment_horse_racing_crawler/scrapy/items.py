@@ -53,8 +53,6 @@ class RaceDenmaItem(Item):
     horse_weight_and_diff = Field()
     jockey_id = Field()
     jockey_weight = Field()
-    result_count_all_period = Field()
-    result_count_grade_race = Field()
     prize_total_money = Field()
 
 

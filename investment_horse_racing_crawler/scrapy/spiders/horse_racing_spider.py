@@ -33,7 +33,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse schedule list page.
 
         @url https://keiba.yahoo.co.jp/schedule/list/2019/?month=12
-        @returns items 0
+        @returns items 0 0
         @returns requests 1
         @schedule_list
         """
@@ -48,8 +48,9 @@ class HorseRacingSpider(scrapy.Spider):
         if self.recrawl_race_id:
             logger.debug(f"#parse: re-crawl race: {self.recrawl_race_id}")
 
-            url = f"https://keiba.yahoo.co.jp/race/result/{self.recrawl_race_id}/"
-            yield response.follow(url, callback=self.parse_race_result)
+            yield response.follow(f"/race/denma/{self.recrawl_race_id}/", callback=self.parse_race_denma)
+            yield response.follow(f"/odds/tfw/{self.recrawl_race_id}/", callback=self.parse_odds)
+            yield response.follow(f"/race/result/{self.recrawl_race_id}/", callback=self.parse_race_result)
 
             return
 
@@ -78,7 +79,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse race list page.
 
         @url https://keiba.yahoo.co.jp/race/list/19060502/
-        @returns items 0
+        @returns items 0 0
         @returns requests 1
         @race_list
         """
@@ -95,44 +96,29 @@ class HorseRacingSpider(scrapy.Spider):
             return
 
         for a in response.xpath("//a"):
-            href = a.xpath("@href").get()
+            race_id_re = re.match("^/race/result/([0-9]+)/$", a.xpath("@href").get())
+            if race_id_re:
+                race_id = race_id_re.group(1)
+                logger.debug(f"#parse_race_list: race result page: race_id={race_id}")
 
-            if href.startswith("/race/result/"):
-                logger.debug("#parse_race_list: race result page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_race_result)
+                yield response.follow(f"/race/denma/{race_id}/", callback=self.parse_race_denma)
+                yield response.follow(f"/odds/tfw/{race_id}/", callback=self.parse_odds)
+                yield response.follow(f"/race/result/{race_id}/", callback=self.parse_race_result)
 
     def parse_race_result(self, response):
         """ Parse race result page.
 
         @url https://keiba.yahoo.co.jp/race/result/1906050201/
         @returns items 1
-        @returns requests 2 2
+        @returns requests 0 0
         @race_result
         """
         logger.info("#parse_race_result: start: url=%s" % response.url)
 
-        # Parse race info
-        logger.debug("#parse_race_result: parse race info")
-
-        loader = ItemLoader(item=RaceInfoItem(), response=response)
-        race_id = response.url.split("/")[-2]
-        loader.add_value("race_id", race_id)
-        loader.add_xpath("race_round", "//td[@id='raceNo']/text()")
-        loader.add_xpath("start_date", "//p[@id='raceTitDay']/text()[1]")
-        loader.add_xpath("start_time", "//p[@id='raceTitDay']/text()[3]")
-        loader.add_xpath("place_name", "//p[@id='raceTitDay']/text()[2]")
-        loader.add_xpath("race_name", "//div[@id='raceTitName']/h1/text()")
-        loader.add_xpath("course_type_length", "//p[@id='raceTitMeta']/text()[1]")
-        loader.add_xpath("weather", "//p[@id='raceTitMeta']/img[1]/@alt")
-        loader.add_xpath("course_condition", "//p[@id='raceTitMeta']/img[2]/@alt")
-        loader.add_xpath("added_money", "//p[@id='raceTitMeta']/text()[8]")
-        i = loader.load_item()
-
-        logger.debug("#parse_race_result: race info=%s" % i)
-        yield i
-
         # Parse race payoff
         logger.debug("#parse_race_result: parse race payoff")
+
+        race_id = response.url.split("/")[-2]
 
         payoff_type = None
         for tr in response.xpath("//table[contains(@class, 'resultYen')]/tr"):
@@ -177,34 +163,38 @@ class HorseRacingSpider(scrapy.Spider):
             logger.debug("#parse_race_result: race result=%s" % i)
             yield i
 
-        # Parse link
-        logger.debug("#parse_race_result: parse link")
-
-        for a in response.xpath("//a"):
-            href = a.xpath("@href").get()
-
-            if href.startswith("/race/denma/"):
-                logger.debug("#parse_race_result: race denma page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_race_denma)
-
-            if href.startswith("/odds/tfw/"):
-                logger.debug("#parse_race_result: odds page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_odds)
-
     def parse_race_denma(self, response):
         """ Parse denma page.
 
         @url https://keiba.yahoo.co.jp/race/denma/1906050201/
-        @returns items 0
+        @returns items 1
         @returns requests 1
         @race_denma
         """
         logger.info("#parse_race_denma: start: url=%s" % response.url)
 
+        # Parse race info
+        logger.debug("#parse_race_denma: parse race info")
+
+        loader = ItemLoader(item=RaceInfoItem(), response=response)
+        race_id = response.url.split("/")[-2]
+        loader.add_value("race_id", race_id)
+        loader.add_xpath("race_round", "//td[@id='raceNo']/text()")
+        loader.add_xpath("start_date", "//p[@id='raceTitDay']/text()[1]")
+        loader.add_xpath("start_time", "//p[@id='raceTitDay']/text()[3]")
+        loader.add_xpath("place_name", "//p[@id='raceTitDay']/text()[2]")
+        loader.add_xpath("race_name", "//div[@id='raceTitName']/h1/text()")
+        loader.add_xpath("course_type_length", "//p[@id='raceTitMeta']/text()[1]")
+        loader.add_xpath("weather", "//p[@id='raceTitMeta']/img[1]/@alt")
+        loader.add_xpath("course_condition", "//p[@id='raceTitMeta']/img[2]/@alt")
+        loader.add_xpath("added_money", "//p[@id='raceTitMeta']/text()[8]")
+        i = loader.load_item()
+
+        logger.debug("#parse_race_denma: race info=%s" % i)
+        yield i
+
         # Parse race denma
         logger.debug("#parse_race_denma: parse race denma")
-
-        race_id = response.url.split("/")[-2]
 
         for tr in response.xpath("//table[contains(@class, 'denmaLs')]/tr[position()>1]"):
             loader = ItemLoader(item=RaceDenmaItem(), selector=tr)
@@ -216,8 +206,6 @@ class HorseRacingSpider(scrapy.Spider):
             loader.add_xpath("horse_weight_and_diff", "string(td[4])")
             loader.add_xpath("jockey_id", "td[5]/a/@href")
             loader.add_xpath("jockey_weight", "td[5]/text()")
-            loader.add_xpath("result_count_all_period", "td[7]/text()[1]")
-            loader.add_xpath("result_count_grade_race", "td[7]/text()[2]")
             loader.add_xpath("prize_total_money", "td[7]/text()[3]")
             i = loader.load_item()
 
@@ -273,7 +261,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse trainer page.
 
         @url https://keiba.yahoo.co.jp/directory/trainer/01012/
-        @returns items 0
+        @returns items 1
         @returns requests 0 0
         @trainer
         """
@@ -297,7 +285,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse jockey page.
 
         @url https://keiba.yahoo.co.jp/directory/jocky/01167/
-        @returns items 0
+        @returns items 1
         @returns requests 0 0
         @jockey
         """
@@ -321,7 +309,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse odds page.
 
         @url https://keiba.yahoo.co.jp/odds/tfw/1906050201/
-        @returns items 0
+        @returns items 1
         @returns requests 0 0
         @odds_win_place
         """

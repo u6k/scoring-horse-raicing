@@ -352,25 +352,37 @@ class PostgreSQLPipeline(object):
         else:
             raise DropItem("Unknown jockey_weight pattern")
 
-        result_count_all_period_parts = item["result_count_all_period"][0].strip().split(".")
-        i["result_1_count_all_period"] = int(result_count_all_period_parts[0])
-        i["result_2_count_all_period"] = int(result_count_all_period_parts[1])
-        i["result_3_count_all_period"] = int(result_count_all_period_parts[2])
-        i["result_4_count_all_period"] = int(result_count_all_period_parts[3])
-
-        result_count_grade_race_parts = item["result_count_grade_race"][0].strip().split(".")
-        i["result_1_count_grade_race"] = int(result_count_grade_race_parts[0])
-        i["result_2_count_grade_race"] = int(result_count_grade_race_parts[1])
-        i["result_3_count_grade_race"] = int(result_count_grade_race_parts[2])
-        i["result_4_count_grade_race"] = int(result_count_grade_race_parts[3])
-
         i["prize_total_money"] = float(item["prize_total_money"][0].strip().replace("億", "").replace("万", ""))
 
         # Insert db
         race_denma_id = "{}_{}".format(i["race_id"], i["horse_id"])
 
         self.db_cursor.execute("delete from race_denma where race_denma_id=%s", (race_denma_id,))
-        self.db_cursor.execute("insert into race_denma (race_denma_id, race_id, bracket_number, horse_number, horse_id, trainer_id, horse_weight, horse_weight_diff, jockey_id, jockey_weight, result_1_count_all_period, result_2_count_all_period, result_3_count_all_period, result_4_count_all_period, result_1_count_grade_race, result_2_count_grade_race, result_3_count_grade_race, result_4_count_grade_race, prize_total_money) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (race_denma_id, i["race_id"], i["bracket_number"], i["horse_number"], i["horse_id"], i["trainer_id"], i["horse_weight"], i["horse_weight_diff"], i["jockey_id"], i["jockey_weight"], i["result_1_count_all_period"], i["result_2_count_all_period"], i["result_3_count_all_period"], i["result_4_count_all_period"], i["result_1_count_grade_race"], i["result_2_count_grade_race"], i["result_3_count_grade_race"], i["result_4_count_grade_race"], i["prize_total_money"]))
+        self.db_cursor.execute("""insert into race_denma (
+            race_denma_id,
+            race_id,
+            bracket_number,
+            horse_number,
+            horse_id,
+            trainer_id,
+            horse_weight,
+            horse_weight_diff,
+            jockey_id,
+            jockey_weight,
+            prize_total_money
+        ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
+            race_denma_id,
+            i["race_id"],
+            i["bracket_number"],
+            i["horse_number"],
+            i["horse_id"],
+            i["trainer_id"],
+            i["horse_weight"],
+            i["horse_weight_diff"],
+            i["jockey_id"],
+            i["jockey_weight"],
+            i["prize_total_money"]
+        ))
         self.db_conn.commit()
 
         return i

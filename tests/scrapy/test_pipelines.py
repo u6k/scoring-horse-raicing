@@ -1329,8 +1329,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['55.0 ']
         item["prize_total_money"] = ['\n280万']
         item["race_id"] = ['1906050201']
-        item["result_count_all_period"] = ['\n0.1.0.0']
-        item["result_count_grade_race"] = ['\n0.0.0.0']
         item["trainer_id"] = ['/directory/trainer/01106/']
 
         # Before check
@@ -1350,14 +1348,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] == 12.0
         assert new_item["jockey_id"] == '01077'
         assert new_item["jockey_weight"] == 55.0
-        assert new_item["result_1_count_all_period"] == 0
-        assert new_item["result_2_count_all_period"] == 1
-        assert new_item["result_3_count_all_period"] == 0
-        assert new_item["result_4_count_all_period"] == 0
-        assert new_item["result_1_count_grade_race"] == 0
-        assert new_item["result_2_count_grade_race"] == 0
-        assert new_item["result_3_count_grade_race"] == 0
-        assert new_item["result_4_count_grade_race"] == 0
         assert new_item["prize_total_money"] == 280
 
         # Check db
@@ -1377,14 +1367,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 12.0
         assert race_denma["jockey_id"] == '01077'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 0
-        assert race_denma["result_4_count_all_period"] == 0
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 280
 
         # Execute (2)
@@ -1407,14 +1389,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 12.0
         assert race_denma["jockey_id"] == '01077'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 0
-        assert race_denma["result_4_count_all_period"] == 0
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 280
 
     def test_process_race_denma_item_2(self):
@@ -1428,8 +1402,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['51.0 ▲']
         item["prize_total_money"] = ['\n355万']
         item["race_id"] = ['1906050201']
-        item["result_count_all_period"] = ['\n0.1.0.2']
-        item["result_count_grade_race"] = ['\n0.0.0.0']
         item["trainer_id"] = ['/directory/trainer/01147/']
 
         # Before check
@@ -1449,14 +1421,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] == 12.0
         assert new_item["jockey_id"] == '01179'
         assert new_item["jockey_weight"] == 51.0
-        assert new_item["result_1_count_all_period"] == 0
-        assert new_item["result_2_count_all_period"] == 1
-        assert new_item["result_3_count_all_period"] == 0
-        assert new_item["result_4_count_all_period"] == 2
-        assert new_item["result_1_count_grade_race"] == 0
-        assert new_item["result_2_count_grade_race"] == 0
-        assert new_item["result_3_count_grade_race"] == 0
-        assert new_item["result_4_count_grade_race"] == 0
         assert new_item["prize_total_money"] == 355
 
         # Check db
@@ -1476,14 +1440,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 12.0
         assert race_denma["jockey_id"] == '01179'
         assert race_denma["jockey_weight"] == 51.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 0
-        assert race_denma["result_4_count_all_period"] == 2
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 355
 
         # Execute (2)
@@ -1506,14 +1462,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 12.0
         assert race_denma["jockey_id"] == '01179'
         assert race_denma["jockey_weight"] == 51.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 0
-        assert race_denma["result_4_count_all_period"] == 2
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 355
 
     def test_process_race_denma_item_3(self):
@@ -1527,8 +1475,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['56.0 ']
         item["prize_total_money"] = ['\n2億4247万']
         item["race_id"] = ['2006010911']
-        item["result_count_all_period"] = ['\n4.3.2.8']
-        item["result_count_grade_race"] = ['\n2.3.1.7']
         item["trainer_id"] = ['/directory/trainer/01115/']
 
         # Before check
@@ -1548,14 +1494,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] == 6.0
         assert new_item["jockey_id"] == '00660'
         assert new_item["jockey_weight"] == 56.0
-        assert new_item["result_1_count_all_period"] == 4
-        assert new_item["result_2_count_all_period"] == 3
-        assert new_item["result_3_count_all_period"] == 2
-        assert new_item["result_4_count_all_period"] == 8
-        assert new_item["result_1_count_grade_race"] == 2
-        assert new_item["result_2_count_grade_race"] == 3
-        assert new_item["result_3_count_grade_race"] == 1
-        assert new_item["result_4_count_grade_race"] == 7
         assert new_item["prize_total_money"] == 24247
 
         # Check db
@@ -1575,14 +1513,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 6.0
         assert race_denma["jockey_id"] == '00660'
         assert race_denma["jockey_weight"] == 56.0
-        assert race_denma["result_1_count_all_period"] == 4
-        assert race_denma["result_2_count_all_period"] == 3
-        assert race_denma["result_3_count_all_period"] == 2
-        assert race_denma["result_4_count_all_period"] == 8
-        assert race_denma["result_1_count_grade_race"] == 2
-        assert race_denma["result_2_count_grade_race"] == 3
-        assert race_denma["result_3_count_grade_race"] == 1
-        assert race_denma["result_4_count_grade_race"] == 7
         assert race_denma["prize_total_money"] == 24247
 
         # Execute (2)
@@ -1605,14 +1535,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == 6.0
         assert race_denma["jockey_id"] == '00660'
         assert race_denma["jockey_weight"] == 56.0
-        assert race_denma["result_1_count_all_period"] == 4
-        assert race_denma["result_2_count_all_period"] == 3
-        assert race_denma["result_3_count_all_period"] == 2
-        assert race_denma["result_4_count_all_period"] == 8
-        assert race_denma["result_1_count_grade_race"] == 2
-        assert race_denma["result_2_count_grade_race"] == 3
-        assert race_denma["result_3_count_grade_race"] == 1
-        assert race_denma["result_4_count_grade_race"] == 7
         assert race_denma["prize_total_money"] == 24247
 
     def test_process_race_denma_item_4(self):
@@ -1626,8 +1548,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['55.0 ']
         item["prize_total_money"] = ['\n670万']
         item["race_id"] = ['2008010104']
-        item["result_count_all_period"] = ['\n0.0.1.21']
-        item["result_count_grade_race"] = ['\n0.0.0.0']
 
         # Before check
         self.pipeline.db_cursor.execute("select * from race_denma")
@@ -1646,14 +1566,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] is None
         assert new_item["jockey_id"] == '00894'
         assert new_item["jockey_weight"] == 55.0
-        assert new_item["result_1_count_all_period"] == 0
-        assert new_item["result_2_count_all_period"] == 0
-        assert new_item["result_3_count_all_period"] == 1
-        assert new_item["result_4_count_all_period"] == 21
-        assert new_item["result_1_count_grade_race"] == 0
-        assert new_item["result_2_count_grade_race"] == 0
-        assert new_item["result_3_count_grade_race"] == 0
-        assert new_item["result_4_count_grade_race"] == 0
         assert new_item["prize_total_money"] == 670
 
         # Check db
@@ -1673,14 +1585,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] is None
         assert race_denma["jockey_id"] == '00894'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 0
-        assert race_denma["result_3_count_all_period"] == 1
-        assert race_denma["result_4_count_all_period"] == 21
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 670
 
         # Execute (2)
@@ -1703,14 +1607,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] is None
         assert race_denma["jockey_id"] == '00894'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 0
-        assert race_denma["result_2_count_all_period"] == 0
-        assert race_denma["result_3_count_all_period"] == 1
-        assert race_denma["result_4_count_all_period"] == 21
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 670
 
     def test_process_race_denma_item_5(self):
@@ -1724,8 +1620,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['55.0 ']
         item["prize_total_money"] = ['\n2751.5万']
         item["race_id"] = ['2006010112']
-        item["result_count_all_period"] = ['\n2.0.4.14']
-        item["result_count_grade_race"] = ['\n0.0.0.0']
         item["trainer_id"] = ['/directory/trainer/01097/']
 
         # Before check
@@ -1745,14 +1639,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] == -2.0
         assert new_item["jockey_id"] == '01075'
         assert new_item["jockey_weight"] == 55.0
-        assert new_item["result_1_count_all_period"] == 2
-        assert new_item["result_2_count_all_period"] == 0
-        assert new_item["result_3_count_all_period"] == 4
-        assert new_item["result_4_count_all_period"] == 14
-        assert new_item["result_1_count_grade_race"] == 0
-        assert new_item["result_2_count_grade_race"] == 0
-        assert new_item["result_3_count_grade_race"] == 0
-        assert new_item["result_4_count_grade_race"] == 0
         assert new_item["prize_total_money"] == 2751.5
 
         # Check db
@@ -1772,14 +1658,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == -2.0
         assert race_denma["jockey_id"] == '01075'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 2
-        assert race_denma["result_2_count_all_period"] == 0
-        assert race_denma["result_3_count_all_period"] == 4
-        assert race_denma["result_4_count_all_period"] == 14
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 2751.5
 
         # Execute (2)
@@ -1802,14 +1680,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] == -2.0
         assert race_denma["jockey_id"] == '01075'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 2
-        assert race_denma["result_2_count_all_period"] == 0
-        assert race_denma["result_3_count_all_period"] == 4
-        assert race_denma["result_4_count_all_period"] == 14
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 2751.5
 
     def test_process_race_denma_item_6(self):
@@ -1823,8 +1693,6 @@ class TestPostgreSQLPipeline:
         item["jockey_weight"] = ['55.0 ']
         item["prize_total_money"] = ['\n1995万']
         item["race_id"] = ['0901010907']
-        item["result_count_all_period"] = ['\n2.1.2.2']
-        item["result_count_grade_race"] = ['\n0.0.0.0']
         item["trainer_id"] = ['/directory/trainer/00208/']
 
         # Before check
@@ -1844,14 +1712,6 @@ class TestPostgreSQLPipeline:
         assert new_item["horse_weight_diff"] is None
         assert new_item["jockey_id"] == '00660'
         assert new_item["jockey_weight"] == 55.0
-        assert new_item["result_1_count_all_period"] == 2
-        assert new_item["result_2_count_all_period"] == 1
-        assert new_item["result_3_count_all_period"] == 2
-        assert new_item["result_4_count_all_period"] == 2
-        assert new_item["result_1_count_grade_race"] == 0
-        assert new_item["result_2_count_grade_race"] == 0
-        assert new_item["result_3_count_grade_race"] == 0
-        assert new_item["result_4_count_grade_race"] == 0
         assert new_item["prize_total_money"] == 1995
 
         # Check db
@@ -1871,14 +1731,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] is None
         assert race_denma["jockey_id"] == '00660'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 2
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 2
-        assert race_denma["result_4_count_all_period"] == 2
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 1995
 
         # Execute (2)
@@ -1901,14 +1753,6 @@ class TestPostgreSQLPipeline:
         assert race_denma["horse_weight_diff"] is None
         assert race_denma["jockey_id"] == '00660'
         assert race_denma["jockey_weight"] == 55.0
-        assert race_denma["result_1_count_all_period"] == 2
-        assert race_denma["result_2_count_all_period"] == 1
-        assert race_denma["result_3_count_all_period"] == 2
-        assert race_denma["result_4_count_all_period"] == 2
-        assert race_denma["result_1_count_grade_race"] == 0
-        assert race_denma["result_2_count_grade_race"] == 0
-        assert race_denma["result_3_count_grade_race"] == 0
-        assert race_denma["result_4_count_grade_race"] == 0
         assert race_denma["prize_total_money"] == 1995
 
     def test_process_horse_item_1(self):

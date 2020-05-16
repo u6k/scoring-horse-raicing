@@ -39,14 +39,33 @@ class RaceListContract(Contract):
         logger.debug("RaceListContract#post_process: start")
 
         requests = [o for o in output if isinstance(o, Request)]
-        if len(requests) < 1:
-            raise ContractFail("Empty requests")
 
+        race_denma_count = 0
+        odds_count = 0
+        race_result_count = 0
         for request in requests:
+            if request.url.startswith("https://keiba.yahoo.co.jp/race/denma/"):
+                race_denma_count += 1
+                continue
+
+            if request.url.startswith("https://keiba.yahoo.co.jp/odds/tfw/"):
+                odds_count += 1
+                continue
+
             if request.url.startswith("https://keiba.yahoo.co.jp/race/result/"):
+                race_result_count += 1
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
+
+        if race_denma_count == 0:
+            raise ContractFail("Empty race_denma request")
+
+        if odds_count == 0:
+            raise ContractFail("Empty odds request")
+
+        if race_result_count == 0:
+            raise ContractFail("Empty race_result request")
 
 
 class RaceResultContract(Contract):
@@ -54,25 +73,6 @@ class RaceResultContract(Contract):
 
     def post_process(self, output):
         logger.debug("RaceResultContract#post_process: start")
-
-        # Check requests
-        requests = [o for o in output if isinstance(o, Request)]
-        if len(requests) < 1:
-            raise ContractFail("Empty requests")
-
-        for request in requests:
-            if request.url.startswith("https://keiba.yahoo.co.jp/race/denma/"):
-                continue
-
-            if request.url.startswith("https://keiba.yahoo.co.jp/odds/tfw/"):
-                continue
-
-            raise ContractFail("Unknown request url: url=%s" % request.url)
-
-        # Check race info item
-        items = [o for o in output if isinstance(o, RaceInfoItem)]
-        if len(items) != 1:
-            raise ContractFail("RaceInfoItem is not 1")
 
         # Check race payoff
         items = [o for o in output if isinstance(o, RacePayoffItem)]
@@ -107,6 +107,11 @@ class RaceDenmaContract(Contract):
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
+
+        # Check race info item
+        items = [o for o in output if isinstance(o, RaceInfoItem)]
+        if len(items) != 1:
+            raise ContractFail("RaceInfoItem is not 1")
 
         # Check race denma item
         items = [o for o in output if isinstance(o, RaceDenmaItem)]

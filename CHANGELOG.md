@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [#8444: 引数を整理する](https://redmine.u6k.me/issues/8444)
+- [#8284: 次のパース移譲は集約して行う](https://redmine.u6k.me/issues/8284)
 
 ## [3.2.0] - 2020-05-17
 ### Fixed

@@ -46,12 +46,8 @@ class HorseRacingSpider(scrapy.Spider):
         logger.debug(f"#parse: recache_race={self.recache_race}")
         logger.debug(f"#parse: recache_horse={self.recache_horse}")
 
-        # FIXME: パース処理を集約したら修正する
-        if response.url.startswith("https://keiba.yahoo.co.jp/race/denma/"):
-            yield response.follow(response.url, callback=self.parse_race_denma)
-        else:
-            path = response.url[25:]
-            yield response.follow(path, callback=self.parse_schedule_list)
+        path = response.url[25:]
+        yield self._follow_delegate(response, path)
 
     def parse_schedule_list(self, response):
         """ Parse schedule list page.
@@ -79,11 +75,10 @@ class HorseRacingSpider(scrapy.Spider):
                     logger.debug(f"#parse_schedule_list: cancel other schedule list page: target={target_start} to {target_end}, settings={self.start_date} to {self.end_date}")
                     continue
 
-                yield response.follow(a, callback=self.parse_schedule_list)
+                yield self._follow_delegate(response, href)
 
             if href.startswith("/race/list/"):
-                logger.debug("#parse_schedule_list: race list page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_race_list)
+                yield self._follow_delegate(response, href)
 
     def parse_race_list(self, response):
         """ Parse race list page.
@@ -110,9 +105,7 @@ class HorseRacingSpider(scrapy.Spider):
             race_id_re = re.match("^/race/result/([0-9]+)/$", a.xpath("@href").get())
             if race_id_re:
                 race_id = race_id_re.group(1)
-                logger.debug(f"#parse_race_list: race result page: race_id={race_id}")
-
-                yield response.follow(f"/race/denma/{race_id}/", callback=self.parse_race_denma)
+                yield self._follow_delegate(response, f"/race/denma/{race_id}/")
 
     def parse_race_result(self, response):
         """ Parse race result page.
@@ -227,21 +220,13 @@ class HorseRacingSpider(scrapy.Spider):
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
-            if href.startswith("/directory/horse/"):
-                logger.debug("#parse_race_denma: horse page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_horse)
+            if href.startswith("/directory/horse/") \
+                    or href.startswith("/directory/trainer/") \
+                    or href.startswith("/directory/jocky/"):
+                yield self._follow_delegate(response, href)
 
-            if href.startswith("/directory/trainer/"):
-                logger.debug("#parse_race_denma: trainer page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_trainer)
-
-            if href.startswith("/directory/jocky/"):
-                logger.debug("#parse_race_denma: jockey page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_jockey)
-
-        logger.debug(f"#parse_race_denma: odds/result page: race_id={race_id}")
-        yield response.follow(f"/odds/tfw/{race_id}/", callback=self.parse_odds)
-        yield response.follow(f"/race/result/{race_id}/", callback=self.parse_race_result)
+        yield self._follow_delegate(response, f"/odds/tfw/{race_id}/")
+        yield self._follow_delegate(response, f"/race/result/{race_id}/")
 
     def parse_horse(self, response):
         """ Parse horse page.
@@ -346,3 +331,43 @@ class HorseRacingSpider(scrapy.Spider):
 
             logger.debug("#parse_odds: odds=%s" % i)
             yield i
+
+
+
+    def _follow_delegate(self, response, path):
+        logger.info(f"#_follow_delegate: start: path={path}")
+
+        if path.startswith("/schedule/list/"):
+            logger.debug(f"#_follow_delegate: follow schedule list page")
+            return response.follow(path, callback=self.parse_schedule_list)
+
+        elif path.startswith("/race/list/"):
+            logger.debug(f"#_follow_delegate: follow race list page")
+            return response.follow(path, callback=self.parse_race_list)
+
+        elif path.startswith("/race/denma/"):
+            logger.debug(f"#_follow_delegate: follow race denma page")
+            return response.follow(path, callback=self.parse_race_denma)
+
+        elif path.startswith("/race/result/"):
+            logger.debug(f"#_follow_delegate: follow race result page")
+            return response.follow(path, callback=self.parse_race_result)
+
+        elif path.startswith("/odds/tfw/"):
+            logger.debug(f"#_follow_delegate: follow odds page")
+            return response.follow(path, callback=self.parse_odds)
+
+        elif path.startswith("/directory/horse/"):
+            logger.debug(f"#_follow_delegate: follow horse page")
+            return response.follow(path, callback=self.parse_horse)
+
+        elif path.startswith("/directory/trainer/"):
+            logger.debug(f"#_follow_delegate: follow trainer page")
+            return response.follow(path, callback=self.parse_trainer)
+
+        elif path.startswith("/directory/jocky/"):
+            logger.debug(f"#_follow_delegate: follow jockey page")
+            return response.follow(path, callback=self.parse_jockey)
+
+        else:
+            logger.warning(f"#_follow_delegate: unknown path pattern")

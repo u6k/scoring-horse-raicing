@@ -24,6 +24,11 @@ def health():
 
     result = {"version": VERSION}
 
+    with get_db().cursor() as db_cursor:
+        db_cursor.execute("select 1")
+
+        result["database"] = True
+
     return result
 
 
@@ -66,18 +71,24 @@ def schedule_crawl_vote_close():
     return "ok"
 
 
+def get_db():
+    db = psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        dbname=os.getenv("DB_DATABASE"),
+        user=os.getenv("DB_USERNAME"),
+        password=os.getenv("DB_PASSWORD")
+    )
+    db.autocommit = False
+    db.set_client_encoding("utf-8")
+    db.cursor_factory = DictCursor
+
+    return db
+
+
 def _get_db():
     if "db" not in g:
-        g.db = psycopg2.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            dbname=os.getenv("DB_DATABASE"),
-            user=os.getenv("DB_USERNAME"),
-            password=os.getenv("DB_PASSWORD")
-        )
-        g.db.autocommit = False
-        g.db.set_client_encoding("utf-8")
-        g.db.cursor_factory = DictCursor
+        g.db = get_db()
 
     return g.db
 

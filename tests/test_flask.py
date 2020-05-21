@@ -58,43 +58,83 @@ class TestFlask:
             db_cursor.execute("select race_id, start_datetime from race_info order by start_datetime, race_id")
             race_infos = db_cursor.fetchall()
 
-        assert len(race_infos) == 36
-        assert race_infos[0]["race_id"] == "2010010501"
-        assert race_infos[1]["race_id"] == "2008020101"
-        assert race_infos[2]["race_id"] == "2005010101"
-        assert race_infos[3]["race_id"] == "2010010502"
-        assert race_infos[4]["race_id"] == "2008020102"
-        assert race_infos[5]["race_id"] == "2005010102"
-        assert race_infos[6]["race_id"] == "2010010503"
-        assert race_infos[7]["race_id"] == "2008020103"
-        assert race_infos[8]["race_id"] == "2005010103"
-        assert race_infos[9]["race_id"] == "2010010504"
-        assert race_infos[10]["race_id"] == "2008020104"
-        assert race_infos[11]["race_id"] == "2005010104"
-        assert race_infos[12]["race_id"] == "2010010505"
-        assert race_infos[13]["race_id"] == "2008020105"
-        assert race_infos[14]["race_id"] == "2005010105"
-        assert race_infos[15]["race_id"] == "2010010506"
-        assert race_infos[16]["race_id"] == "2008020106"
-        assert race_infos[17]["race_id"] == "2005010106"
-        assert race_infos[18]["race_id"] == "2010010507"
-        assert race_infos[19]["race_id"] == "2008020107"
-        assert race_infos[20]["race_id"] == "2005010107"
-        assert race_infos[21]["race_id"] == "2010010508"
-        assert race_infos[22]["race_id"] == "2008020108"
-        assert race_infos[23]["race_id"] == "2005010108"
-        assert race_infos[24]["race_id"] == "2010010509"
-        assert race_infos[25]["race_id"] == "2008020109"
-        assert race_infos[26]["race_id"] == "2005010109"
-        assert race_infos[27]["race_id"] == "2010010510"
-        assert race_infos[28]["race_id"] == "2008020110"
-        assert race_infos[29]["race_id"] == "2005010110"
-        assert race_infos[30]["race_id"] == "2010010511"
-        assert race_infos[31]["race_id"] == "2008020111"
-        assert race_infos[32]["race_id"] == "2005010111"
-        assert race_infos[33]["race_id"] == "2010010512"
-        assert race_infos[34]["race_id"] == "2008020112"
-        assert race_infos[35]["race_id"] == "2005010112"
+            assert len(race_infos) == 36
+            assert race_infos[0]["race_id"] == "2010010501"
+            assert race_infos[1]["race_id"] == "2008020101"
+            assert race_infos[2]["race_id"] == "2005010101"
+            assert race_infos[3]["race_id"] == "2010010502"
+            assert race_infos[4]["race_id"] == "2008020102"
+            assert race_infos[5]["race_id"] == "2005010102"
+            assert race_infos[6]["race_id"] == "2010010503"
+            assert race_infos[7]["race_id"] == "2008020103"
+            assert race_infos[8]["race_id"] == "2005010103"
+            assert race_infos[9]["race_id"] == "2010010504"
+            assert race_infos[10]["race_id"] == "2008020104"
+            assert race_infos[11]["race_id"] == "2005010104"
+            assert race_infos[12]["race_id"] == "2010010505"
+            assert race_infos[13]["race_id"] == "2008020105"
+            assert race_infos[14]["race_id"] == "2005010105"
+            assert race_infos[15]["race_id"] == "2010010506"
+            assert race_infos[16]["race_id"] == "2008020106"
+            assert race_infos[17]["race_id"] == "2005010106"
+            assert race_infos[18]["race_id"] == "2010010507"
+            assert race_infos[19]["race_id"] == "2008020107"
+            assert race_infos[20]["race_id"] == "2005010107"
+            assert race_infos[21]["race_id"] == "2010010508"
+            assert race_infos[22]["race_id"] == "2008020108"
+            assert race_infos[23]["race_id"] == "2005010108"
+            assert race_infos[24]["race_id"] == "2010010509"
+            assert race_infos[25]["race_id"] == "2008020109"
+            assert race_infos[26]["race_id"] == "2005010109"
+            assert race_infos[27]["race_id"] == "2010010510"
+            assert race_infos[28]["race_id"] == "2008020110"
+            assert race_infos[29]["race_id"] == "2005010110"
+            assert race_infos[30]["race_id"] == "2010010511"
+            assert race_infos[31]["race_id"] == "2008020111"
+            assert race_infos[32]["race_id"] == "2005010111"
+            assert race_infos[33]["race_id"] == "2010010512"
+            assert race_infos[34]["race_id"] == "2008020112"
+            assert race_infos[35]["race_id"] == "2005010112"
+
+            db_cursor.execute("select * from race_denma")
+            race_denmas = db_cursor.fetchall()
+
+            assert len(race_denmas) == 470
+
+            db_cursor.execute("select * from race_payoff")
+            race_payoffs = db_cursor.fetchall()
+
+            assert len(race_payoffs) == 430
+
+            db_cursor.execute("select * from race_result")
+            race_results = db_cursor.fetchall()
+
+            assert len(race_results) == 470
+
+            db_cursor.execute("select * from odds_win")
+            odds_wins = db_cursor.fetchall()
+
+            assert len(odds_wins) == 470
+
+            db_cursor.execute("select * from odds_place")
+            odds_places = db_cursor.fetchall()
+
+            assert len(odds_places) == 470
+
+            db_cursor.execute("select * from horse")
+            horses = db_cursor.fetchall()
+
+            assert len(horses) == 470
+
+            db_cursor.execute("select * from jockey")
+            jockeys = db_cursor.fetchall()
+
+            assert len(jockeys) == 115
+
+            db_cursor.execute("select * from trainer")
+            trainers = db_cursor.fetchall()
+
+            assert len(trainers) == 171
 
     def test_crawl_2(self):
         # Setup
@@ -117,5 +157,45 @@ class TestFlask:
             db_cursor.execute("select race_id, start_datetime from race_info order by start_datetime, race_id")
             race_infos = db_cursor.fetchall()
 
-        assert len(race_infos) == 1
-        assert race_infos[0]["race_id"] == "2005010101"
+            assert len(race_infos) == 1
+            assert race_infos[0]["race_id"] == "2005010101"
+
+            db_cursor.execute("select * from race_denma")
+            race_denmas = db_cursor.fetchall()
+
+            assert len(race_denmas) == 15
+
+            db_cursor.execute("select * from race_payoff")
+            race_payoffs = db_cursor.fetchall()
+
+            assert len(race_payoffs) == 12
+
+            db_cursor.execute("select * from race_result")
+            race_results = db_cursor.fetchall()
+
+            assert len(race_results) == 15
+
+            db_cursor.execute("select * from odds_win")
+            odds_wins = db_cursor.fetchall()
+
+            assert len(odds_wins) == 15
+
+            db_cursor.execute("select * from odds_place")
+            odds_places = db_cursor.fetchall()
+
+            assert len(odds_places) == 15
+
+            db_cursor.execute("select * from horse")
+            horses = db_cursor.fetchall()
+
+            assert len(horses) == 15
+
+            db_cursor.execute("select * from jockey")
+            jockeys = db_cursor.fetchall()
+
+            assert len(jockeys) == 15
+
+            db_cursor.execute("select * from trainer")
+            trainers = db_cursor.fetchall()
+
+            assert len(trainers) == 14

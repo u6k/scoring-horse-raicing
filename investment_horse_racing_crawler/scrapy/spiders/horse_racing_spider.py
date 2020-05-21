@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import scrapy
 from scrapy.loader import ItemLoader
@@ -14,22 +14,42 @@ logger = get_logger(__name__)
 class HorseRacingSpider(scrapy.Spider):
     name = "horse_racing"
 
-    def __init__(self, start_url='https://keiba.yahoo.co.jp/schedule/list/', recrawl_period="all", recrawl_race_id=None, recache_race=False, recache_horse=False, *args, **kwargs):
-        super(HorseRacingSpider, self).__init__(*args, **kwargs)
+    def __init__(self, start_url='https://keiba.yahoo.co.jp/schedule/list/', start_date=datetime(1900, 1, 1), end_date=datetime(2100, 1, 1), recache_race=False, recache_horse=False, *args, **kwargs):
+        logger.info(f"#__init__: start: start_url={start_url}, start_date={start_date}, end_date={end_date}, recache_race={recache_race}, recache_horse={recache_horse}")
+        try:
+            super(HorseRacingSpider, self).__init__(*args, **kwargs)
 
-        self.start_urls = [start_url]
+            if start_date is not None and type(start_date) != datetime:
+                raise RuntimeError("type(start_date) is not datetime.")
 
-        if recrawl_period == "all":
-            recrawl_period = 100000
-        recrawl_period = int(recrawl_period)
-        self.recrawl_end_date = datetime(datetime.now().year, datetime.now().month, datetime.now().day, 0, 0, 0, 0) + timedelta(days=1)
-        self.recrawl_start_date = self.recrawl_end_date - timedelta(days=recrawl_period)
+            if end_date is not None and type(end_date) != datetime:
+                raise RuntimeError("type(end_date) is not datetime.")
 
-        self.recrawl_race_id = recrawl_race_id
-        self.recache_race = recache_race
-        self.recache_horse = recache_horse
+            self.start_urls = [start_url]
+            self.start_date = start_date
+            self.end_date = end_date
+            self.recache_race = recache_race
+            self.recache_horse = recache_horse
+        except Exception:
+            logger.exception("#__init__: fail")
 
     def parse(self, response):
+        """ Parse start page.
+
+        @url https://keiba.yahoo.co.jp/schedule/list/
+        @returns items 0 0
+        @returns requests 1 1
+        """
+        logger.debug(f"#parse: start_url={response.url}")
+        logger.debug(f"#parse: start_date={self.start_date}")
+        logger.debug(f"#parse: end_date={self.end_date}")
+        logger.debug(f"#parse: recache_race={self.recache_race}")
+        logger.debug(f"#parse: recache_horse={self.recache_horse}")
+
+        path = response.url[25:]
+        yield self._follow_delegate(response, path)
+
+    def parse_schedule_list(self, response):
         """ Parse schedule list page.
 
         @url https://keiba.yahoo.co.jp/schedule/list/2019/?month=12
@@ -37,43 +57,28 @@ class HorseRacingSpider(scrapy.Spider):
         @returns requests 1
         @schedule_list
         """
-        logger.info("#parse: start: url=%s" % response.url)
-
-        logger.debug(f"#parse: recrawl_start_date={self.recrawl_start_date}")
-        logger.debug(f"#parse: recrawl_end_date={self.recrawl_end_date}")
-        logger.debug(f"#parse: recrawl_race_id={self.recrawl_race_id}")
-        logger.debug(f"#parse: recache_race={self.recache_race}")
-        logger.debug(f"#parse: recache_horse={self.recache_horse}")
-
-        if self.recrawl_race_id:
-            logger.debug(f"#parse: re-crawl race: {self.recrawl_race_id}")
-
-            yield response.follow(f"/race/denma/{self.recrawl_race_id}/", callback=self.parse_race_denma)
-            yield response.follow(f"/odds/tfw/{self.recrawl_race_id}/", callback=self.parse_odds)
-            yield response.follow(f"/race/result/{self.recrawl_race_id}/", callback=self.parse_race_result)
-
-            return
+        logger.info("#parse_schedule_list: start: url=%s" % response.url)
 
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
             target_re = re.match("^/schedule/list/([0-9]+)/\\?month=([0-9]+)$", href)
             if target_re:
-                logger.debug("#parse: other schedule list page: href=%s" % href)
+                logger.debug("#parse_schedule_list: other schedule list page: href=%s" % href)
 
                 # Check re-crawl
                 target_start = datetime(int(target_re.group(1)), int(target_re.group(2)), 1, 0, 0, 0)
-                target_end = target_start + relativedelta(months=1)
+                target_end = target_start + relativedelta(months=1) - relativedelta(days=1)
 
-                if not (self.recrawl_start_date <= target_end and self.recrawl_end_date >= target_start):
-                    logger.debug(f"#parse: cancel other schedule list page: target={target_start} to {target_end}, settings={self.recrawl_start_date} to {self.recrawl_end_date}")
+                logger.debug(f"#parse_schedule_list: schedule list page: target={target_start} to {target_end}")
+                if not (self.start_date <= target_end and self.end_date >= target_start):
+                    logger.debug(f"#parse_schedule_list: cancel other schedule list page: target={target_start} to {target_end}, settings={self.start_date} to {self.end_date}")
                     continue
 
-                yield response.follow(a, callback=self.parse)
+                yield self._follow_delegate(response, href)
 
             if href.startswith("/race/list/"):
-                logger.debug("#parse: race list page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_race_list)
+                yield self._follow_delegate(response, href)
 
     def parse_race_list(self, response):
         """ Parse race list page.
@@ -91,19 +96,16 @@ class HorseRacingSpider(scrapy.Spider):
             raise RuntimeError("#parse_race_list: target date not found")
 
         target_date = datetime(int(target_date_re.group(1)), int(target_date_re.group(2)), int(target_date_re.group(3)), 0, 0, 0, 0)
-        if not (self.recrawl_start_date <= target_date < self.recrawl_end_date):
-            logger.debug(f"#parse_race_list: cancel race list: target={target_date}, settings={self.recrawl_start_date} to {self.recrawl_end_date}")
+        logger.debug(f"#parse_race_list: race list: target={target_date}")
+        if not (self.start_date <= target_date < self.end_date):
+            logger.debug(f"#parse_race_list: cancel race list: target={target_date}, settings={self.start_date} to {self.end_date}")
             return
 
         for a in response.xpath("//a"):
             race_id_re = re.match("^/race/result/([0-9]+)/$", a.xpath("@href").get())
             if race_id_re:
                 race_id = race_id_re.group(1)
-                logger.debug(f"#parse_race_list: race result page: race_id={race_id}")
-
-                yield response.follow(f"/race/denma/{race_id}/", callback=self.parse_race_denma)
-                yield response.follow(f"/odds/tfw/{race_id}/", callback=self.parse_odds)
-                yield response.follow(f"/race/result/{race_id}/", callback=self.parse_race_result)
+                yield self._follow_delegate(response, f"/race/denma/{race_id}/")
 
     def parse_race_result(self, response):
         """ Parse race result page.
@@ -218,17 +220,13 @@ class HorseRacingSpider(scrapy.Spider):
         for a in response.xpath("//a"):
             href = a.xpath("@href").get()
 
-            if href.startswith("/directory/horse/"):
-                logger.debug("#parse_race_denma: horse page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_horse)
+            if href.startswith("/directory/horse/") \
+                    or href.startswith("/directory/trainer/") \
+                    or href.startswith("/directory/jocky/"):
+                yield self._follow_delegate(response, href)
 
-            if href.startswith("/directory/trainer/"):
-                logger.debug("#parse_race_denma: trainer page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_trainer)
-
-            if href.startswith("/directory/jocky/"):
-                logger.debug("#parse_race_denma: jockey page: href=%s" % href)
-                yield response.follow(a, callback=self.parse_jockey)
+        yield self._follow_delegate(response, f"/odds/tfw/{race_id}/")
+        yield self._follow_delegate(response, f"/race/result/{race_id}/")
 
     def parse_horse(self, response):
         """ Parse horse page.
@@ -261,7 +259,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse trainer page.
 
         @url https://keiba.yahoo.co.jp/directory/trainer/01012/
-        @returns items 1
+        @returns items 1 1
         @returns requests 0 0
         @trainer
         """
@@ -285,7 +283,7 @@ class HorseRacingSpider(scrapy.Spider):
         """ Parse jockey page.
 
         @url https://keiba.yahoo.co.jp/directory/jocky/01167/
-        @returns items 1
+        @returns items 1 1
         @returns requests 0 0
         @jockey
         """
@@ -333,3 +331,41 @@ class HorseRacingSpider(scrapy.Spider):
 
             logger.debug("#parse_odds: odds=%s" % i)
             yield i
+
+    def _follow_delegate(self, response, path):
+        logger.info(f"#_follow_delegate: start: path={path}")
+
+        if path.startswith("/schedule/list/"):
+            logger.debug(f"#_follow_delegate: follow schedule list page")
+            return response.follow(path, callback=self.parse_schedule_list)
+
+        elif path.startswith("/race/list/"):
+            logger.debug(f"#_follow_delegate: follow race list page")
+            return response.follow(path, callback=self.parse_race_list)
+
+        elif path.startswith("/race/denma/"):
+            logger.debug(f"#_follow_delegate: follow race denma page")
+            return response.follow(path, callback=self.parse_race_denma)
+
+        elif path.startswith("/race/result/"):
+            logger.debug(f"#_follow_delegate: follow race result page")
+            return response.follow(path, callback=self.parse_race_result)
+
+        elif path.startswith("/odds/tfw/"):
+            logger.debug(f"#_follow_delegate: follow odds page")
+            return response.follow(path, callback=self.parse_odds)
+
+        elif path.startswith("/directory/horse/"):
+            logger.debug(f"#_follow_delegate: follow horse page")
+            return response.follow(path, callback=self.parse_horse)
+
+        elif path.startswith("/directory/trainer/"):
+            logger.debug(f"#_follow_delegate: follow trainer page")
+            return response.follow(path, callback=self.parse_trainer)
+
+        elif path.startswith("/directory/jocky/"):
+            logger.debug(f"#_follow_delegate: follow jockey page")
+            return response.follow(path, callback=self.parse_jockey)
+
+        else:
+            logger.warning(f"#_follow_delegate: unknown path pattern")

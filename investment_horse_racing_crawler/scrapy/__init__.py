@@ -8,13 +8,13 @@ class CrawlerScript():
         settings = get_project_settings()
         self.crawler = CrawlerProcess(settings, install_root_handler=False)
 
-    def _crawl(self, start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse):
-        self.crawler.crawl("horse_racing", start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse)
+    def _crawl(self, start_url, start_date, end_date, recache_race, recache_horse):
+        self.crawler.crawl("horse_racing", start_url, start_date, end_date, recache_race, recache_horse)
         self.crawler.start()
         self.crawler.stop()
 
-    def crawl(self, start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse):
-        process = Process(target=self._crawl, kwargs={"start_url": start_url, "recrawl_period": recrawl_period, "recrawl_race_id": recrawl_race_id, "recache_race": recache_race, "recache_horse": recache_horse})
+    def crawl(self, start_url, start_date, end_date, recache_race, recache_horse):
+        process = Process(target=self._crawl, kwargs={"start_url": start_url, "start_date": start_date, "end_date": end_date, "recache_race": recache_race, "recache_horse": recache_horse})
         process.start()
         process.join()
 

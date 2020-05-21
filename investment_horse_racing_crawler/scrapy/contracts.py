@@ -41,31 +41,15 @@ class RaceListContract(Contract):
         requests = [o for o in output if isinstance(o, Request)]
 
         race_denma_count = 0
-        odds_count = 0
-        race_result_count = 0
         for request in requests:
             if request.url.startswith("https://keiba.yahoo.co.jp/race/denma/"):
                 race_denma_count += 1
-                continue
-
-            if request.url.startswith("https://keiba.yahoo.co.jp/odds/tfw/"):
-                odds_count += 1
-                continue
-
-            if request.url.startswith("https://keiba.yahoo.co.jp/race/result/"):
-                race_result_count += 1
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
 
         if race_denma_count == 0:
             raise ContractFail("Empty race_denma request")
-
-        if odds_count == 0:
-            raise ContractFail("Empty odds request")
-
-        if race_result_count == 0:
-            raise ContractFail("Empty race_result request")
 
 
 class RaceResultContract(Contract):
@@ -93,20 +77,49 @@ class RaceDenmaContract(Contract):
 
         # Check requests
         requests = [o for o in output if isinstance(o, Request)]
-        if len(requests) < 1:
-            raise ContractFail("Empty requests")
 
+        horse_count = 0
+        trainer_count = 0
+        jockey_count = 0
+        odds_count = 0
+        race_result_count = 0
         for request in requests:
             if request.url.startswith("https://keiba.yahoo.co.jp/directory/horse/"):
+                horse_count += 1
                 continue
 
             if request.url.startswith("https://keiba.yahoo.co.jp/directory/trainer/"):
+                trainer_count += 1
                 continue
 
             if request.url.startswith("https://keiba.yahoo.co.jp/directory/jocky/"):
+                jockey_count += 1
+                continue
+
+            if request.url.startswith("https://keiba.yahoo.co.jp/odds/tfw/"):
+                odds_count += 1
+                continue
+
+            if request.url.startswith("https://keiba.yahoo.co.jp/race/result/"):
+                race_result_count += 1
                 continue
 
             raise ContractFail("Unknown request url: url=%s" % request.url)
+
+        if horse_count == 0:
+            raise ContractFail("Empty horse request")
+
+        if jockey_count == 0:
+            raise ContractFail("Empty jockey request")
+
+        if trainer_count == 0:
+            raise ContractFail("Empty trainer request")
+
+        if odds_count == 0:
+            raise ContractFail("Empty odds request")
+
+        if race_result_count == 0:
+            raise ContractFail("Empty race_result request")
 
         # Check race info item
         items = [o for o in output if isinstance(o, RaceInfoItem)]

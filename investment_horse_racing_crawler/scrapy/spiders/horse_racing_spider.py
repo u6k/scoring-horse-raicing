@@ -332,8 +332,6 @@ class HorseRacingSpider(scrapy.Spider):
             logger.debug("#parse_odds: odds=%s" % i)
             yield i
 
-
-
     def _follow_delegate(self, response, path):
         logger.info(f"#_follow_delegate: start: path={path}")
 

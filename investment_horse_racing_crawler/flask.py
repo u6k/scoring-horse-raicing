@@ -42,14 +42,20 @@ def crawl():
     logger.debug(f"#crawl: args={args}")
 
     start_url = args.get("start_url", "https://keiba.yahoo.co.jp/schedule/list/")
-    recrawl_period = args.get("recrawl_period", "all")
-    recrawl_race_id = args.get("recrawl_race_id", None)
+    start_date = args.get("start_date", "1900-01-01")
+    end_date = args.get("end_date", "2100-01-01")
     recache_race = args.get("recache_race", False)
     recache_horse = args.get("recache_horse", False)
 
-    _crawl(start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse)
+    if start_date is not None:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
 
-    return "ok"
+    if end_date is not None:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+    _crawl(start_url, start_date, end_date, recache_race, recache_horse)
+
+    return {"result": True}
 
 
 @app.route("/api/schedule_crawl_vote_close", methods=["POST"])
@@ -100,10 +106,10 @@ def _teardown_db(exc):
         db.close()
 
 
-def _crawl(start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse):
-    logger.debug(f"#_crawl: start: start_url={start_url}, recrawl_period={recrawl_period}, recrawl_race_id={recrawl_race_id}, recache_race={recache_race}, recache_horse={recache_horse}")
+def _crawl(start_url, start_date, end_date, recache_race, recache_horse):
+    logger.debug(f"#_crawl: start: start_url={start_url}, start_date={start_date}, end_date={end_date}, recache_race={recache_race}, recache_horse={recache_horse}")
 
-    crawler.crawl(start_url, recrawl_period, recrawl_race_id, recache_race, recache_horse)
+    crawler.crawl(start_url, start_date, end_date, recache_race, recache_horse)
 
 
 def _schedule_crawl_vote_close(start_date, end_date, vote_time_delta, close_time_delta):

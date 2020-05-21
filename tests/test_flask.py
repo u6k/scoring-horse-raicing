@@ -136,6 +136,129 @@ class TestFlask:
 
             assert len(trainers) == 171
 
+        # Setup (2)
+        req_data = {
+            "target_date": "2020-02-01",
+        }
+
+        # Execute (2)
+        result = self.app.post("/api/schedule_vote_close", json=req_data)
+
+        # Check (2)
+        assert result.status_code == 200
+
+        result_data = result.get_json()
+        races = result_data["races"]
+        assert len(races) == 36
+
+        assert races[0]["race_id"] == "2010010501"
+        assert races[0]["start_datetime"] == "2020-02-01 09:50:00"
+
+        assert races[1]["race_id"] == "2008020101"
+        assert races[1]["start_datetime"] == "2020-02-01 10:01:00"
+
+        assert races[2]["race_id"] == "2005010101"
+        assert races[2]["start_datetime"] == "2020-02-01 10:10:00"
+
+        assert races[3]["race_id"] == "2010010502"
+        assert races[3]["start_datetime"] == "2020-02-01 10:20:00"
+
+        assert races[4]["race_id"] == "2008020102"
+        assert races[4]["start_datetime"] == "2020-02-01 10:30:00"
+
+        assert races[5]["race_id"] == "2005010102"
+        assert races[5]["start_datetime"] == "2020-02-01 10:40:00"
+
+        assert races[6]["race_id"] == "2010010503"
+        assert races[6]["start_datetime"] == "2020-02-01 10:50:00"
+
+        assert races[7]["race_id"] == "2008020103"
+        assert races[7]["start_datetime"] == "2020-02-01 11:00:00"
+
+        assert races[8]["race_id"] == "2005010103"
+        assert races[8]["start_datetime"] == "2020-02-01 11:10:00"
+
+        assert races[9]["race_id"] == "2010010504"
+        assert races[9]["start_datetime"] == "2020-02-01 11:20:00"
+
+        assert races[10]["race_id"] == "2008020104"
+        assert races[10]["start_datetime"] == "2020-02-01 11:30:00"
+
+        assert races[11]["race_id"] == "2005010104"
+        assert races[11]["start_datetime"] == "2020-02-01 11:40:00"
+
+        assert races[12]["race_id"] == "2010010505"
+        assert races[12]["start_datetime"] == "2020-02-01 12:10:00"
+
+        assert races[13]["race_id"] == "2008020105"
+        assert races[13]["start_datetime"] == "2020-02-01 12:20:00"
+
+        assert races[14]["race_id"] == "2005010105"
+        assert races[14]["start_datetime"] == "2020-02-01 12:30:00"
+
+        assert races[15]["race_id"] == "2010010506"
+        assert races[15]["start_datetime"] == "2020-02-01 12:40:00"
+
+        assert races[16]["race_id"] == "2008020106"
+        assert races[16]["start_datetime"] == "2020-02-01 12:50:00"
+
+        assert races[17]["race_id"] == "2005010106"
+        assert races[17]["start_datetime"] == "2020-02-01 13:00:00"
+
+        assert races[18]["race_id"] == "2010010507"
+        assert races[18]["start_datetime"] == "2020-02-01 13:10:00"
+
+        assert races[19]["race_id"] == "2008020107"
+        assert races[19]["start_datetime"] == "2020-02-01 13:20:00"
+
+        assert races[20]["race_id"] == "2005010107"
+        assert races[20]["start_datetime"] == "2020-02-01 13:30:00"
+
+        assert races[21]["race_id"] == "2010010508"
+        assert races[21]["start_datetime"] == "2020-02-01 13:40:00"
+
+        assert races[22]["race_id"] == "2008020108"
+        assert races[22]["start_datetime"] == "2020-02-01 13:50:00"
+
+        assert races[23]["race_id"] == "2005010108"
+        assert races[23]["start_datetime"] == "2020-02-01 14:01:00"
+
+        assert races[24]["race_id"] == "2010010509"
+        assert races[24]["start_datetime"] == "2020-02-01 14:15:00"
+
+        assert races[25]["race_id"] == "2008020109"
+        assert races[25]["start_datetime"] == "2020-02-01 14:25:00"
+
+        assert races[26]["race_id"] == "2005010109"
+        assert races[26]["start_datetime"] == "2020-02-01 14:35:00"
+
+        assert races[27]["race_id"] == "2010010510"
+        assert races[27]["start_datetime"] == "2020-02-01 14:50:00"
+
+        assert races[28]["race_id"] == "2008020110"
+        assert races[28]["start_datetime"] == "2020-02-01 15:01:00"
+
+        assert races[29]["race_id"] == "2005010110"
+        assert races[29]["start_datetime"] == "2020-02-01 15:10:00"
+
+        assert races[30]["race_id"] == "2010010511"
+        assert races[30]["start_datetime"] == "2020-02-01 15:25:00"
+
+        assert races[31]["race_id"] == "2008020111"
+        assert races[31]["start_datetime"] == "2020-02-01 15:35:00"
+
+        assert races[32]["race_id"] == "2005010111"
+        assert races[32]["start_datetime"] == "2020-02-01 15:45:00"
+
+        assert races[33]["race_id"] == "2010010512"
+        assert races[33]["start_datetime"] == "2020-02-01 16:01:00"
+
+        assert races[34]["race_id"] == "2008020112"
+        assert races[34]["start_datetime"] == "2020-02-01 16:10:00"
+
+        assert races[35]["race_id"] == "2005010112"
+        assert races[35]["start_datetime"] == "2020-02-01 16:25:00"
+
     def test_crawl_2(self):
         # Setup
         req_data = {

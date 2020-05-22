@@ -19,7 +19,7 @@ script:
   - docker-compose exec app pipenv run test
 
 after_script:
-  - git clean -xdf
+  - sudo git clean -xdf
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:

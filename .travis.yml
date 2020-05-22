@@ -6,24 +6,20 @@ addons:
     packages:
       - docker-ce
 
-before_script:
-  # Setup test data
-  - curl -o tests/data.tgz $TEST_DATA_URL && tar zxvf tests/data.tgz -C tests/ && rm tests/data.tgz
+before_install:
+  - openssl aes-256-cbc -K $encrypted_2ae82362bbab_key -iv $encrypted_2ae82362bbab_iv -in tests/data/data.tar.xz.enc -out tests/data/data.tar.xz -d
+  - tar Jcvf tests/data/data.tar.xz -C tests/data/
 
 script:
-  # Build
   - docker-compose build
   - docker-compose up -d
-  # Check
   - docker-compose exec app pipenv run lint
   - docker-compose exec app pipenv run migrate
   - docker-compose exec app pipenv run check
   - docker-compose exec app pipenv run test
-  # Cleanup
-  - git clean -xdf
 
 after_script:
-  # Build for production
+  - git clean -xdf
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:

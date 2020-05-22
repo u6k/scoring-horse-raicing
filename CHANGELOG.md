@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Travis CIで`docker push`が失敗した
+    - `after_script`でコンテナ・イメージをビルドしているが、それより先に実行される`after_success`で`docker push`をしようとしていた
+
 ## [3.4.1] - 2020-05-22
 - Travis CIで`after_script`がエラーになった
     - `git clean -xdf`が権限不足で失敗したため、`sudo`を付与した

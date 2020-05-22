@@ -17,8 +17,6 @@ script:
   - docker-compose exec app pipenv run migrate
   - docker-compose exec app pipenv run check
   - docker-compose exec app pipenv run test
-
-after_script:
   - sudo git clean -xdf
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 

@@ -7,12 +7,18 @@ addons:
       - docker-ce
 
 script:
+  # Setup
   - docker-compose build
+  - curl -o tests/data.tgz $TEST_DATA_URL && tar zxvf tests/data.tgz -C tests/ && rm tests/data.tgz
   - docker-compose up -d
+  # Check
   - docker-compose exec app pipenv run lint
   - docker-compose exec app pipenv run migrate
   - docker-compose exec app pipenv run check
   - docker-compose exec app pipenv run test
+  # Cleanup
+  - git clean -xdf
+  # Build
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:

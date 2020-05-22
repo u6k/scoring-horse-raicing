@@ -28,6 +28,8 @@ services:
 
   s3:
     image: minio/minio
+    volumes:
+      - "./tests/data/s3:/data"
     environment:
       - "MINIO_ACCESS_KEY=${S3_ACCESS_KEY}"
       - "MINIO_SECRET_KEY=${S3_SECRET_KEY}"

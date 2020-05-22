@@ -6,10 +6,13 @@ addons:
     packages:
       - docker-ce
 
-script:
-  # Setup
-  - docker-compose build
+before_script:
+  # Setup test data
   - curl -o tests/data.tgz $TEST_DATA_URL && tar zxvf tests/data.tgz -C tests/ && rm tests/data.tgz
+
+script:
+  # Build
+  - docker-compose build
   - docker-compose up -d
   # Check
   - docker-compose exec app pipenv run lint
@@ -18,7 +21,9 @@ script:
   - docker-compose exec app pipenv run test
   # Cleanup
   - git clean -xdf
-  # Build
+
+after_script:
+  # Build for production
   - docker build -t u6kapps/investment-horse-racing-crawler -f Dockerfile.production .
 
 after_success:

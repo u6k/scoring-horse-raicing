@@ -6,7 +6,7 @@ from investment_horse_racing_crawler import flask, VERSION
 
 class TestFlask:
     def setUp(self):
-        logging.disable(logging.DEBUG)
+        #logging.disable(logging.DEBUG)
 
         self.app = flask.app.test_client()
 
@@ -134,17 +134,105 @@ class TestFlask:
             db_cursor.execute("select * from trainer")
             trainers = db_cursor.fetchall()
 
-            assert len(trainers) == 171
+            assert len(trainers) == 172
 
-        # Setup (2)
+    def test_crawl_2(self):
+        # Setup
+        req_data = {
+            "start_url": "https://keiba.yahoo.co.jp/race/denma/2005010101/",
+            "recache_race": True,
+            "recache_horse": False,
+        }
+
+        # Execute
+        result = self.app.post("/api/crawl", json=req_data)
+
+        # Check
+        assert result.status_code == 200
+
+        result_data = result.get_json()
+        assert result_data["result"]
+
+        with flask.get_db().cursor() as db_cursor:
+            db_cursor.execute("select race_id, start_datetime from race_info order by start_datetime, race_id")
+            race_infos = db_cursor.fetchall()
+
+            assert len(race_infos) == 1
+            assert race_infos[0]["race_id"] == "2005010101"
+
+            db_cursor.execute("select * from race_denma")
+            race_denmas = db_cursor.fetchall()
+
+            assert len(race_denmas) == 15
+
+            db_cursor.execute("select * from race_payoff")
+            race_payoffs = db_cursor.fetchall()
+
+            assert len(race_payoffs) == 12
+
+            db_cursor.execute("select * from race_result")
+            race_results = db_cursor.fetchall()
+
+            assert len(race_results) == 15
+
+            db_cursor.execute("select * from odds_win")
+            odds_wins = db_cursor.fetchall()
+
+            assert len(odds_wins) == 15
+
+            db_cursor.execute("select * from odds_place")
+            odds_places = db_cursor.fetchall()
+
+            assert len(odds_places) == 15
+
+            db_cursor.execute("select * from horse")
+            horses = db_cursor.fetchall()
+
+            assert len(horses) == 15
+
+            db_cursor.execute("select * from jockey")
+            jockeys = db_cursor.fetchall()
+
+            assert len(jockeys) == 15
+
+            db_cursor.execute("select * from trainer")
+            trainers = db_cursor.fetchall()
+
+            assert len(trainers) == 14
+
+    def test_schedule_vote_close(self):
+        # Setup
+        with flask.get_db() as db_conn:
+            with db_conn.cursor() as db_cursor:
+                with open("tests/data/db/race_info.tsv") as f:
+                    db_cursor.copy_from(f, "race_info", null="")
+                with open("tests/data/db/race_denma.tsv") as f:
+                    db_cursor.copy_from(f, "race_denma", null="")
+                with open("tests/data/db/race_payoff.tsv") as f:
+                    db_cursor.copy_from(f, "race_payoff", null="")
+                with open("tests/data/db/race_result.tsv") as f:
+                    db_cursor.copy_from(f, "race_result", null="")
+                with open("tests/data/db/odds_win.tsv") as f:
+                    db_cursor.copy_from(f, "odds_win", null="")
+                with open("tests/data/db/odds_place.tsv") as f:
+                    db_cursor.copy_from(f, "odds_place", null="")
+                with open("tests/data/db/horse.tsv") as f:
+                    db_cursor.copy_from(f, "horse", null="")
+                with open("tests/data/db/jockey.tsv") as f:
+                    db_cursor.copy_from(f, "jockey", null="")
+                with open("tests/data/db/trainer.tsv") as f:
+                    db_cursor.copy_from(f, "trainer", null="")
+
+            db_conn.commit()
+
         req_data = {
             "target_date": "2020-02-01",
         }
 
-        # Execute (2)
+        # Execute
         result = self.app.post("/api/schedule_vote_close", json=req_data)
 
-        # Check (2)
+        # Check
         assert result.status_code == 200
 
         result_data = result.get_json()
@@ -258,67 +346,3 @@ class TestFlask:
 
         assert races[35]["race_id"] == "2005010112"
         assert races[35]["start_datetime"] == "2020-02-01 16:25:00"
-
-    def test_crawl_2(self):
-        # Setup
-        req_data = {
-            "start_url": "https://keiba.yahoo.co.jp/race/denma/2005010101/",
-            "recache_race": True,
-            "recache_horse": False,
-        }
-
-        # Execute
-        result = self.app.post("/api/crawl", json=req_data)
-
-        # Check
-        assert result.status_code == 200
-
-        result_data = result.get_json()
-        assert result_data["result"]
-
-        with flask.get_db().cursor() as db_cursor:
-            db_cursor.execute("select race_id, start_datetime from race_info order by start_datetime, race_id")
-            race_infos = db_cursor.fetchall()
-
-            assert len(race_infos) == 1
-            assert race_infos[0]["race_id"] == "2005010101"
-
-            db_cursor.execute("select * from race_denma")
-            race_denmas = db_cursor.fetchall()
-
-            assert len(race_denmas) == 15
-
-            db_cursor.execute("select * from race_payoff")
-            race_payoffs = db_cursor.fetchall()
-
-            assert len(race_payoffs) == 12
-
-            db_cursor.execute("select * from race_result")
-            race_results = db_cursor.fetchall()
-
-            assert len(race_results) == 15
-
-            db_cursor.execute("select * from odds_win")
-            odds_wins = db_cursor.fetchall()
-
-            assert len(odds_wins) == 15
-
-            db_cursor.execute("select * from odds_place")
-            odds_places = db_cursor.fetchall()
-
-            assert len(odds_places) == 15
-
-            db_cursor.execute("select * from horse")
-            horses = db_cursor.fetchall()
-
-            assert len(horses) == 15
-
-            db_cursor.execute("select * from jockey")
-            jockeys = db_cursor.fetchall()
-
-            assert len(jockeys) == 15
-
-            db_cursor.execute("select * from trainer")
-            trainers = db_cursor.fetchall()
-
-            assert len(trainers) == 14

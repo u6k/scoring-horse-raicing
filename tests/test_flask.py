@@ -6,7 +6,7 @@ from investment_horse_racing_crawler import flask, VERSION
 
 class TestFlask:
     def setUp(self):
-        #logging.disable(logging.DEBUG)
+        logging.disable(logging.DEBUG)
 
         self.app = flask.app.test_client()
 

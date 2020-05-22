@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-from dateutil.parser import parse
+from datetime import datetime
 import os
 import requests
 from flask import Flask, request, g
@@ -57,21 +56,41 @@ def crawl():
     return {"result": True}
 
 
-@app.route("/api/schedule_vote_close", methods=["POST"])
-def schedule_vote_close():
-    logger.info("#schedule_vote_close: start")
+@app.route("/api/race_info")
+def find_race_info():
+    logger.info(f"#find_race_info: start: args={request.args}")
 
-    args = request.get_json()
-    logger.debug(f"#schedule_vote_close: args={args}")
+    target_date = request.args.get("target_date", None)
+    race_id = request.args.get("race_id", None)
 
-    target_date = parse(args.get("target_date", datetime.today().strftime("%Y-%m-%d")))
-    start_date = datetime(target_date.year, target_date.month, target_date.day, 0, 0, 0, 0)
-    end_date = start_date + timedelta(days=1)
+    if target_date is not None:
+        target_date = datetime.strptime(target_date, "%Y-%m-%d")
 
-    scheduled_races = _schedule_vote_close(start_date, end_date)
-    logger.debug(f"#schedule_vote_close: scheduled_races={scheduled_races}")
+        with get_db().cursor() as db_cursor:
+            db_cursor.execute("select * from race_info where date(start_datetime)=%s order by start_datetime, race_id", (target_date,))
+            race_infos = db_cursor.fetchall()
 
-    return scheduled_races
+    elif race_id is not None:
+        with get_db().cursor() as db_cursor:
+            db_cursor.execute("select * from race_info where race_id=%s order by start_datetime, race_id", (race_id,))
+            race_infos = db_cursor.fetchall()
+
+    else:
+        raise RuntimeError("Invalid args")
+
+    result = {"race_info": []}
+    for race_info in race_infos:
+        result["race_info"].append({
+            "race_id": race_info["race_id"],
+            "race_round": race_info["race_round"],
+            "start_datetime": race_info["start_datetime"].strftime("%Y-%m-%d %H:%M:%S"),
+            "place_name": race_info["place_name"],
+            "race_name": race_info["race_name"],
+        })
+
+    logger.debug(f"#find_race_info: len(race_info)={len(result['race_info'])}")
+    logger.debug(f"#find_race_info: result={result}")
+    return result
 
 
 def get_db():
